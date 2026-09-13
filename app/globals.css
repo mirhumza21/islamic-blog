@@ -1,26 +1,123 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf8f3;
+  --foreground: #17201e;
+  --ivory: #faf8f3;
+  --cream: #f5f0e7;
+  --green: #075846;
+  --green-dark: #043d32;
+  --green-soft: #0a6b55;
+  --sand: #b8894a;
+  --sand-soft: #e8d4a8;
+  --muted: #68736f;
+  --border: #e6e1d8;
+  --card: #ffffff;
+  --ring: #075846;
+  --radius: 14px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ivory: var(--ivory);
+  --color-cream: var(--cream);
+  --color-green: var(--green);
+  --color-green-dark: var(--green-dark);
+  --color-green-soft: var(--green-soft);
+  --color-sand: var(--sand);
+  --color-sand-soft: var(--sand-soft);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-manrope);
+  --font-serif: var(--font-cormorant);
+  --font-arabic: var(--font-amiri);
+  --font-script: var(--font-script);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-ivory text-foreground font-sans antialiased;
+  }
+
+  ::selection {
+    background: rgba(6, 78, 59, 0.18);
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-green;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .container-editorial {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .prose-editorial {
+    @apply prose prose-lg max-w-none prose-headings:font-serif prose-headings:font-semibold prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-green prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-blockquote:border-sand prose-blockquote:text-muted prose-li:marker:text-green;
+  }
+
+  .pattern-subtle {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .pattern-geometric-cream {
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23075846' stroke-opacity='0.035' stroke-width='1'%3E%3Cpath d='M40 8 L72 40 L40 72 L8 40 Z'/%3E%3Cpath d='M40 20 L60 40 L40 60 L20 40 Z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .font-script {
+    font-family: var(--font-script), var(--font-serif), cursive;
+  }
+
+  .hero-gradient-desktop {
+    background: linear-gradient(
+      90deg,
+      rgba(250, 248, 243, 0.97) 0%,
+      rgba(250, 248, 243, 0.9) 26%,
+      rgba(250, 248, 243, 0.55) 46%,
+      rgba(250, 248, 243, 0.15) 66%,
+      rgba(250, 248, 243, 0) 82%
+    );
+  }
+
+  .silhouette-mosque {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 120' fill='%23063B32'%3E%3Cpath d='M0 120h400v-20H0zM40 100V70c0-8 6-14 14-14h8v44H40zm36 0V55l20-18 20 18v45H76zm48 0V68c0-10 8-18 18-18h10v50h-28zm46 0V45c8-12 24-12 32 0v55h-32zm50 0V60h12c12 0 20 8 20 18v22h-32zm70 0V50l24-22 24 22v50h-48zm56 0V68h14c10 0 16 6 16 16v16h-30z' fill-opacity='0.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: min(420px, 55%) auto;
+  }
 }
