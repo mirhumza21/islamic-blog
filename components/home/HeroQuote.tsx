@@ -5,24 +5,19 @@ export function HeroQuote({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        "w-full max-w-[270px] rounded-[20px] border border-border/70 bg-ivory p-6 shadow-[0_18px_50px_-28px_rgba(23,32,30,0.45)]",
+        "w-full max-w-[280px] rounded-2xl border border-border bg-card p-5 shadow-[0_8px_32px_-12px_rgba(23,32,30,0.18)] sm:max-w-[300px] sm:p-6",
         className
       )}
-      aria-label={heroContent.quote.note}
+      aria-label="Quranic verse"
     >
-      <span
-        className="mb-3.5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-sand/12 text-sand"
-        aria-hidden
-      >
-        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
-          <path d="M12.2 3.4c-3.8 0-6.8 2.4-6.8 5.8 0 2.2 1.2 4 3.1 5-.4 1.6-1.4 3-2.9 4.1-.2.1-.1.4.1.4 2.6-.2 4.9-1.5 6.4-3.5 3.5-.3 6.1-2.8 6.1-5.9 0-3.5-2.7-5.9-6-5.9z" />
-        </svg>
-      </span>
-      <blockquote className="font-serif text-[1.05rem] leading-[1.35] text-foreground/90 italic sm:text-[1.125rem]">
-        “{heroContent.quote.text}”
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sand">
+        Qur&apos;an
+      </p>
+      <blockquote className="mt-3 font-serif text-[1.05rem] leading-[1.45] text-foreground sm:text-[1.1rem]">
+        &ldquo;{heroContent.quote.text}&rdquo;
       </blockquote>
-      <p className="mt-3.5 text-[13px] italic text-muted">
-        — {heroContent.quote.reference}
+      <p className="mt-3 text-[12px] font-medium text-muted">
+        {heroContent.quote.reference}
       </p>
     </aside>
   );

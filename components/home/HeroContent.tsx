@@ -7,7 +7,7 @@ import { heroContent } from "@/data/navigation";
 
 export function HeroContent() {
   return (
-    <div className="relative z-10 w-full max-w-[38rem]">
+    <div className="relative z-10 w-full max-w-[36rem] lg:max-w-[38rem]">
       <HeroReveal delay={0.05}>
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sand/90 sm:text-xs">
           {heroContent.eyebrow}
