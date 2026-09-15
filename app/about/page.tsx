@@ -107,10 +107,7 @@ export default function AboutPage() {
             </ul>
           </div>
 
-          <div
-            id="contact"
-            className="mt-6 rounded-2xl border border-border bg-cream/70 p-6"
-          >
+          <div className="mt-6 rounded-2xl border border-border bg-cream/70 p-6">
             <h2 className="font-serif text-2xl font-semibold text-foreground">
               Contact
             </h2>
@@ -121,7 +118,7 @@ export default function AboutPage() {
               {siteConfig.email}
             </p>
             <Button asChild className="mt-5">
-              <Link href={`mailto:${siteConfig.email}`}>Send a message</Link>
+              <Link href="/contact">Go to contact page</Link>
             </Button>
           </div>
         </aside>

@@ -3,7 +3,7 @@ import { getAllArticles, getAllCategories } from "@/lib/articles";
 import { absoluteUrl } from "@/lib/utils";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/blog", "/about", "/privacy", "/terms", "/search"].map(
+  const staticRoutes = ["", "/blog", "/about", "/contact", "/privacy", "/terms", "/search"].map(
     (path) => ({
       url: absoluteUrl(path || "/"),
       lastModified: new Date(),

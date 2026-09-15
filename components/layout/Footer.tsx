@@ -53,7 +53,7 @@ const topics = [
 const legal = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
-  { label: "Contact", href: "/about#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const social = [
