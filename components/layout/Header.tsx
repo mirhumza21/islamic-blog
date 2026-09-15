@@ -44,17 +44,19 @@ export function Header() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-40 h-20 w-full border-b bg-ivory transition-colors duration-200",
+          "sticky top-0 z-40 w-full border-b bg-ivory transition-[height,background-color,backdrop-filter] duration-200",
           scrolled
-            ? "border-border/70 bg-ivory/95 backdrop-blur-md"
-            : "border-border/50"
+            ? "h-[72px] border-border/70 bg-ivory/92 backdrop-blur-md"
+            : "h-20 border-border/55"
         )}
       >
-        <div className="container-editorial flex h-full items-center justify-between gap-3">
-          <Logo />
+        <div className="container-editorial flex h-full items-center gap-4 lg:gap-6 xl:gap-10">
+          <div className="min-w-0 shrink-0">
+            <Logo />
+          </div>
 
           <nav
-            className="hidden items-center gap-0.5 lg:flex"
+            className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex xl:gap-1"
             aria-label="Primary"
           >
             {mainNav.map((item) => {
@@ -67,19 +69,20 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors xl:px-3 xl:text-sm",
+                    "whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-medium transition-colors xl:px-2.5 xl:text-[13.5px]",
                     active
                       ? "text-green"
-                      : "text-foreground/75 hover:text-green"
+                      : "text-foreground/70 hover:text-green"
                   )}
                 >
-                  <span className="relative inline-block pb-0.5">
+                  <span className="relative inline-block pb-1">
                     {item.label}
                     <span
                       className={cn(
-                        "absolute inset-x-0 -bottom-0.5 h-0.5 origin-left rounded-full bg-green transition-transform duration-200",
+                        "absolute inset-x-0 bottom-0 h-0.5 origin-left rounded-full bg-green transition-transform duration-200",
                         active ? "scale-x-100" : "scale-x-0"
                       )}
+                      aria-hidden
                     />
                   </span>
                 </Link>
@@ -87,11 +90,11 @@ export function Header() {
             })}
           </nav>
 
-          <div className="flex items-center gap-1.5">
+          <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-cream hover:text-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-foreground/75 transition-colors hover:bg-cream hover:text-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green"
               aria-label="Open search"
             >
               <Search className="h-5 w-5" />
@@ -99,7 +102,7 @@ export function Header() {
 
             <Link
               href="/#newsletter"
-              className="hidden h-11 items-center gap-2 rounded-full bg-green px-4 text-sm font-medium text-white transition-colors hover:bg-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-ivory sm:inline-flex xl:px-5"
+              className="hidden h-11 items-center gap-2 rounded-full bg-green px-4 text-sm font-medium text-white shadow-[0_1px_0_rgba(255,255,255,0.12)_inset] transition-all duration-200 hover:-translate-y-px hover:bg-green-dark hover:shadow-[0_8px_20px_-12px_rgba(7,88,70,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-ivory sm:inline-flex xl:px-5"
             >
               <Mail className="h-4 w-4" />
               Subscribe
@@ -109,7 +112,7 @@ export function Header() {
               type="button"
               size="icon"
               variant="outline"
-              className="rounded-full lg:hidden"
+              className="h-11 w-11 rounded-full lg:hidden"
               aria-label="Open menu"
               aria-expanded={mobileOpen}
               onClick={() => setMobileOpen(true)}

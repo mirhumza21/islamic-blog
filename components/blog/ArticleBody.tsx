@@ -50,7 +50,7 @@ export function ArticleBody({ content }: { content: ArticleBlock[] }) {
                     src={block.src}
                     alt={block.alt}
                     fill
-                    sizes="(max-width: 768px) 100vw, 720px"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 900px"
                     className="object-cover"
                   />
                 </div>

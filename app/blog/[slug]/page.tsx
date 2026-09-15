@@ -140,23 +140,23 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           category={category}
         />
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-3 lg:order-1">
+        <div className="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-[minmax(220px,260px)_minmax(0,1fr)] lg:gap-12 xl:gap-16">
+          <aside className="min-w-0 lg:order-1">
             <TableOfContents items={toc} />
-          </div>
+          </aside>
 
-          <div className="mx-auto w-full max-w-[720px] lg:col-span-9 lg:order-2 xl:max-w-[740px]">
-            <div id="article-content">
+          <div className="min-w-0 lg:order-2">
+            <div id="article-content" className="mx-auto w-full max-w-[52rem] xl:max-w-[56rem] lg:mx-0">
               <ArticleBody content={article.content} />
             </div>
 
-            <div className="mt-10 border-t border-border pt-6">
+            <div className="mx-auto mt-10 w-full max-w-[52rem] border-t border-border pt-6 xl:max-w-[56rem] lg:mx-0">
               <ShareArticle title={article.title} url={url} />
             </div>
-
-            <RelatedArticles articles={related} categories={categories} />
           </div>
         </div>
+
+        <RelatedArticles articles={related} categories={categories} />
       </article>
 
       <Newsletter />

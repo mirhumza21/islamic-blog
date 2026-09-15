@@ -80,7 +80,7 @@
 
 @layer utilities {
   .container-editorial {
-    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:px-8;
   }
 
   .text-balance {
@@ -88,7 +88,7 @@
   }
 
   .prose-editorial {
-    @apply prose prose-lg max-w-none prose-headings:font-serif prose-headings:font-semibold prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-a:text-green prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-blockquote:border-sand prose-blockquote:text-muted prose-li:marker:text-green;
+    @apply prose prose-lg max-w-none prose-headings:font-serif prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-[1.75] prose-a:text-green prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-blockquote:border-sand prose-blockquote:text-muted prose-li:marker:text-green lg:prose-xl lg:prose-p:leading-[1.75];
   }
 
   .pattern-subtle {
@@ -104,14 +104,17 @@
   }
 
   .hero-gradient-desktop {
-    background: linear-gradient(
-      90deg,
-      rgba(250, 248, 243, 0.97) 0%,
-      rgba(250, 248, 243, 0.9) 26%,
-      rgba(250, 248, 243, 0.55) 46%,
-      rgba(250, 248, 243, 0.15) 66%,
-      rgba(250, 248, 243, 0) 82%
-    );
+    background:
+      linear-gradient(
+        92deg,
+        rgba(250, 248, 243, 1) 0%,
+        rgba(250, 248, 243, 0.98) 22%,
+        rgba(250, 248, 243, 0.88) 36%,
+        rgba(245, 240, 231, 0.55) 48%,
+        rgba(250, 248, 243, 0.22) 58%,
+        rgba(250, 248, 243, 0.06) 68%,
+        rgba(250, 248, 243, 0) 78%
+      );
   }
 
   .silhouette-mosque {

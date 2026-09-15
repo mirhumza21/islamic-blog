@@ -21,9 +21,9 @@ export function HeroMedia({
     >
       <motion.div
         className="absolute inset-0"
-        initial={reduceMotion ? false : { opacity: 0, scale: 1.03 }}
+        initial={reduceMotion ? false : { opacity: 0, scale: 1.025 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
       >
         <Image
           src={heroContent.image.src}
@@ -31,22 +31,22 @@ export function HeroMedia({
           fill
           priority
           quality={90}
-          sizes="100vw"
+          sizes="(max-width: 1023px) 100vw, 65vw"
           className={cn(
             "object-cover",
             variant === "background"
-              ? "object-[58%_50%]"
-              : "object-[50%_60%]"
+              ? "object-[80%_72%] xl:object-[78%_70%]"
+              : "object-[72%_60%] sm:object-[70%_58%]"
           )}
         />
         {variant === "panel" ? (
           <div
-            className="absolute inset-0 bg-gradient-to-t from-green-dark/30 via-transparent to-transparent"
+            className="absolute inset-0 bg-gradient-to-t from-green-dark/35 via-green-dark/5 to-transparent"
             aria-hidden
           />
         ) : (
           <div
-            className="absolute inset-0 bg-green-dark/10"
+            className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-ivory/10"
             aria-hidden
           />
         )}

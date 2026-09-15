@@ -30,8 +30,8 @@ export const heroContent = {
     isPlaceholder: true as const,
   },
   image: {
-    src: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=2400&q=90",
-    alt: "The Kaaba at Masjid al-Haram in Makkah at golden hour",
+    src: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=2400&h=1600&q=90&crop=focalpoint&fp-x=0.78&fp-y=0.72",
+    alt: "Al-Masjid an-Nabawi in Madinah at sunset with minarets and the green dome",
   },
   trustItems: [
     {
