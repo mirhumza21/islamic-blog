@@ -2,20 +2,23 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #faf8f3;
+  --background: #faf8f5;
   --foreground: #17201e;
-  --ivory: #faf8f3;
-  --cream: #f5f0e7;
+  --ivory: #faf8f5;
+  --cream: #f4eee3;
   --green: #075846;
   --green-dark: #043d32;
+  --green-deep: #064032;
   --green-soft: #0a6b55;
   --sand: #b8894a;
-  --sand-soft: #e8d4a8;
-  --muted: #68736f;
-  --border: #e6e1d8;
+  --sand-soft: #ebdcb9;
+  --gold: #c69249;
+  --gold-soft: #fbf5ea;
+  --muted: #647470;
+  --border: #e6dfd3;
   --card: #ffffff;
   --ring: #075846;
-  --radius: 14px;
+  --radius: 16px;
 }
 
 @theme inline {
@@ -25,9 +28,12 @@
   --color-cream: var(--cream);
   --color-green: var(--green);
   --color-green-dark: var(--green-dark);
+  --color-green-deep: var(--green-deep);
   --color-green-soft: var(--green-soft);
   --color-sand: var(--sand);
   --color-sand-soft: var(--sand-soft);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-card: var(--card);
@@ -40,6 +46,7 @@
   --radius-md: 14px;
   --radius-lg: 18px;
   --radius-xl: 24px;
+  --radius-2xl: 32px;
 }
 
 @layer base {
@@ -121,4 +128,22 @@
     background-position: right bottom;
     background-size: min(420px, 55%) auto;
   }
+
+  .shadow-spiritual {
+    box-shadow: 0 10px 30px -10px rgba(7, 88, 70, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.03);
+  }
+
+  .shadow-emerald-glow {
+    box-shadow: 0 12px 36px -8px rgba(6, 64, 50, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  }
+
+  .shadow-gold-glow {
+    box-shadow: 0 8px 24px -6px rgba(198, 146, 73, 0.25);
+  }
+
+  .arch-curved-top {
+    border-top-left-radius: 9999px;
+    border-top-right-radius: 9999px;
+  }
 }
+

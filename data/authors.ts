@@ -2,12 +2,12 @@ import type { Author } from "@/types/blog";
 
 export const authors: Author[] = [
   {
-    id: "ayesha-khan",
-    name: "Ayesha Khan",
-    role: "Editorial Writer",
+    id: "dr-bilal-mansoor",
+    name: "Dr. Bilal Mansoor",
+    role: "Lead Editorial Writer",
     avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
-    bio: "Writes practical Umrah guides with a focus on clarity, calm preparation, and spiritual intention.",
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
+    bio: "Specializes in practical Umrah preparation, spiritual mindfulness, and verified Sunnah practices.",
   },
   {
     id: "omar-farooq",

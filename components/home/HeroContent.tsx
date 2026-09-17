@@ -5,51 +5,71 @@ import { ArrowRight, BookOpen } from "lucide-react";
 import { HeroReveal } from "@/components/home/HeroReveal";
 import { heroContent } from "@/data/navigation";
 
-export function HeroContent() {
+export function HeroContent({ content }: { content?: typeof heroContent }) {
+  const data = content || heroContent;
+  const titleLines = data.titleLines || heroContent.titleLines;
+
   return (
     <div className="relative z-10 w-full max-w-[36rem] lg:max-w-[38rem]">
       <HeroReveal delay={0.05}>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sand/90 sm:text-xs">
-          {heroContent.eyebrow}
-        </p>
+        <div className="inline-flex items-center gap-2 rounded-full border border-sand/30 bg-cream/80 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-sand shadow-xs backdrop-blur-xs">
+          <span className="h-1.5 w-1.5 rounded-full bg-sand" />
+          {data.eyebrow}
+        </div>
       </HeroReveal>
 
       <HeroReveal delay={0.12}>
         <h1
           id="hero-heading"
-          className="mt-3.5 font-serif text-[clamp(2.75rem,8vw,3.15rem)] font-semibold leading-[0.98] tracking-[-0.02em] text-foreground sm:mt-4 sm:text-[clamp(3rem,6vw,3.4rem)] lg:text-[clamp(3.15rem,4.8vw,4.5rem)] lg:leading-[0.97]"
+          className="mt-4 font-serif text-[clamp(2.75rem,8vw,3.25rem)] font-bold leading-[1.02] tracking-tight text-foreground sm:mt-5 sm:text-[clamp(3.1rem,6vw,3.6rem)] lg:text-[clamp(3.25rem,4.8vw,4.4rem)] lg:leading-[1]"
         >
-          {heroContent.titleLines.map((line) => (
+          {titleLines.map((line) => (
             <span key={line} className="block">
               {line}
             </span>
           ))}
-          <span className="block text-sand">{heroContent.titleAccent}</span>
+          <span className="block text-green-soft font-serif">{data.titleAccent}</span>
         </h1>
       </HeroReveal>
 
       <HeroReveal delay={0.2}>
-        <p className="mt-4 max-w-[34rem] text-[1.0625rem] leading-[1.65] text-muted sm:mt-5 sm:text-[1.125rem] sm:leading-[1.6] lg:text-[1.125rem]">
-          {heroContent.description}
+        <p className="mt-4 max-w-[34rem] text-[1.05rem] leading-[1.65] text-muted sm:mt-5 sm:text-[1.125rem]">
+          {data.description}
         </p>
       </HeroReveal>
 
       <HeroReveal delay={0.28}>
         <div className="mt-6 flex w-full flex-col gap-3 sm:mt-7 sm:w-auto sm:flex-row sm:items-center">
           <Link
-            href={heroContent.primaryCta.href}
-            className="group inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-full bg-green px-6 text-[15px] font-medium text-white shadow-[0_1px_0_rgba(255,255,255,0.12)_inset] transition-all duration-200 hover:-translate-y-px hover:bg-green-dark hover:shadow-[0_10px_24px_-14px_rgba(7,88,70,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-ivory sm:w-auto sm:px-7"
+            href={data.primaryCta?.href || "/blog"}
+            className="group inline-flex h-[48px] w-full items-center justify-center gap-2 rounded-full bg-green px-6 text-[14.5px] font-semibold text-white shadow-emerald-glow transition-all duration-200 hover:-translate-y-px hover:bg-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green sm:w-auto sm:px-7"
           >
-            {heroContent.primaryCta.label}
+            {data.primaryCta?.label || "Explore Latest Articles"}
             <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-[3px]" />
           </Link>
           <Link
-            href={heroContent.secondaryCta.href}
-            className="inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-full border border-border bg-ivory/70 px-6 text-[15px] font-medium text-foreground/85 transition-all duration-200 hover:border-green/40 hover:bg-cream/90 hover:text-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-ivory sm:w-auto sm:px-7"
+            href={data.secondaryCta?.href || "/category/umrah-guides"}
+            className="inline-flex h-[48px] w-full items-center justify-center gap-2 rounded-full border border-border bg-white/80 px-6 text-[14.5px] font-semibold text-foreground transition-all duration-200 hover:border-green hover:bg-cream hover:text-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green sm:w-auto sm:px-7 shadow-xs"
           >
             <BookOpen className="h-4 w-4 text-sand" strokeWidth={1.7} aria-hidden />
-            {heroContent.secondaryCta.label}
+            {data.secondaryCta?.label || "Browse Umrah Guides"}
           </Link>
+        </div>
+      </HeroReveal>
+
+      {/* Quick Spiritual Jump Badges */}
+      <HeroReveal delay={0.35}>
+        <div className="mt-8 flex flex-wrap items-center gap-2 text-xs text-muted">
+          <span className="font-semibold text-foreground/80">Spiritual Hub:</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-white/70 px-2.5 py-1 font-medium text-green shadow-xs">
+            🕌 Live Prayer Times
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-white/70 px-2.5 py-1 font-medium text-sand shadow-xs">
+            🤲 Daily Dua
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-white/70 px-2.5 py-1 font-medium text-foreground/80 shadow-xs">
+            📅 Hijri Calendar
+          </span>
         </div>
       </HeroReveal>
     </div>

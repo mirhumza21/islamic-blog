@@ -1,30 +1,34 @@
-import { AlertTriangle, Info, Lightbulb, StickyNote } from "lucide-react";
+import { AlertTriangle, Info, Lightbulb, StickyNote, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const variants = {
   tip: {
     icon: Lightbulb,
-    className: "border-green/25 bg-green/5",
-    iconClass: "text-green",
-    label: "Tip",
+    badgeBg: "bg-emerald-100 text-emerald-800",
+    borderClass: "border-emerald-200/80 bg-gradient-to-br from-emerald-50/70 to-emerald-50/30",
+    titleColor: "text-emerald-950",
+    label: "Practical Advice",
   },
   note: {
     icon: StickyNote,
-    className: "border-border bg-cream/80",
-    iconClass: "text-muted",
-    label: "Note",
+    badgeBg: "bg-cream text-sand",
+    borderClass: "border-border/80 bg-card",
+    titleColor: "text-foreground",
+    label: "Important Note",
   },
   warning: {
     icon: AlertTriangle,
-    className: "border-amber-300/70 bg-amber-50",
-    iconClass: "text-amber-700",
-    label: "Warning",
+    badgeBg: "bg-amber-100 text-amber-800",
+    borderClass: "border-amber-200/80 bg-gradient-to-br from-amber-50/80 to-amber-50/30",
+    titleColor: "text-amber-950",
+    label: "Cautions & Reminders",
   },
   info: {
-    icon: Info,
-    className: "border-sand/50 bg-sand/10",
-    iconClass: "text-sand",
-    label: "Info",
+    icon: Sparkles,
+    badgeBg: "bg-sand/20 text-sand",
+    borderClass: "border-sand/40 bg-gradient-to-br from-[#faf6ef] to-[#f4ebe0]",
+    titleColor: "text-[#6b4716]",
+    label: "Spiritual Insight",
   },
 } as const;
 
@@ -39,25 +43,40 @@ export function IslamicCallout({
   text: string;
   className?: string;
 }) {
-  const config = variants[variant];
+  const config = variants[variant] ?? variants.note;
   const Icon = config.icon;
 
   return (
     <aside
       className={cn(
-        "my-8 flex gap-3 rounded-2xl border px-4 py-4 sm:px-5",
-        config.className,
+        "my-8 rounded-[22px] border p-5 sm:p-6 shadow-xs not-prose",
+        config.borderClass,
         className
       )}
     >
-      <span className={cn("mt-0.5 shrink-0", config.iconClass)}>
-        <Icon className="h-5 w-5" />
-      </span>
-      <div>
-        <p className="text-sm font-semibold text-foreground">
-          {title ?? config.label}
-        </p>
-        <p className="mt-1 text-sm leading-relaxed text-foreground/85">{text}</p>
+      <div className="flex items-start gap-3.5">
+        <div
+          className={cn(
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-xs",
+            config.badgeBg
+          )}
+        >
+          <Icon className="h-4 w-4" />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <h4
+            className={cn(
+              "font-serif text-base font-bold sm:text-lg",
+              config.titleColor
+            )}
+          >
+            {title ?? config.label}
+          </h4>
+          <p className="mt-1.5 text-sm leading-relaxed text-foreground/80">
+            {text}
+          </p>
+        </div>
       </div>
     </aside>
   );

@@ -1,7 +1,15 @@
 import { heroContent } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 
-export function HeroQuote({ className }: { className?: string }) {
+export function HeroQuote({
+  className,
+  content,
+}: {
+  className?: string;
+  content?: typeof heroContent;
+}) {
+  const data = content || heroContent;
+
   return (
     <aside
       className={cn(
@@ -14,10 +22,10 @@ export function HeroQuote({ className }: { className?: string }) {
         Qur&apos;an
       </p>
       <blockquote className="mt-3 font-serif text-[1.05rem] leading-[1.45] text-foreground sm:text-[1.1rem]">
-        &ldquo;{heroContent.quote.text}&rdquo;
+        &ldquo;{data.quote?.text || heroContent.quote.text}&rdquo;
       </blockquote>
       <p className="mt-3 text-[12px] font-medium text-muted">
-        {heroContent.quote.reference}
+        {data.quote?.reference || heroContent.quote.reference}
       </p>
     </aside>
   );

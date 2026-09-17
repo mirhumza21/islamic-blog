@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Author {
+  id        String    @id @default(cuid())
+  name      String
+  role      String?
+  avatar    String
+  bio       String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  articles  Article[]
+
+  @@map("authors")
+}
+
+model Category {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  name             String
+  description      String
+  shortDescription String
+  image            String
+  icon             String
+  color            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  articles         Article[]
+
+  @@map("categories")
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String
+  content     Json     // Stores ArticleBlock[] as JSON
+  image       String
+  imageAlt    String
+  readingTime Int      @default(5)
+  featured    Boolean  @default(false)
+  popular     Boolean  @default(false)
+  popularRank Int?
+  tags        String[] @default([])
+  status      String   @default("draft") // "draft" | "published"
+  seoTitle    String?
+  seoDesc     String?
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  authorId   String
+  author     Author   @relation(fields: [authorId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@map("articles")
+}
+
+model SiteSettings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  @@map("site_settings")
+}

@@ -64,13 +64,13 @@ export function FeaturedArticle({
             href={`/blog/${article.slug}`}
             className="group relative block overflow-hidden rounded-2xl border border-border transition-colors duration-200 hover:border-green/30"
           >
-            <div className="relative aspect-[16/10] w-full overflow-hidden">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl [clip-path:inset(0)] [transform:translateZ(0)]">
               <Image
                 src={article.image}
                 alt={article.imageAlt}
                 fill
                 sizes="(max-width: 1024px) 100vw, 58vw"
-                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
               />
             </div>
           </Link>

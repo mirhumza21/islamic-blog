@@ -12,7 +12,7 @@ export const articles: Article[] = [
     excerpt:
       "Everything you need to know about Umrah — from preparation to return — explained through a simple and practical guide.",
     categorySlug: "umrah-guides",
-    authorId: "ayesha-khan",
+    authorId: "dr-bilal-mansoor",
     publishedAt: "2025-11-12",
     updatedAt: "2026-01-08",
     readingTime: 12,
@@ -309,7 +309,7 @@ export const articles: Article[] = [
     excerpt:
       "A personal reflection on nerves, awe, and the quiet lessons that stayed long after returning home.",
     categorySlug: "real-stories",
-    authorId: "ayesha-khan",
+    authorId: "dr-bilal-mansoor",
     publishedAt: "2025-09-18",
     readingTime: 9,
     image:
@@ -334,7 +334,7 @@ export const articles: Article[] = [
       {
         type: "blockquote",
         text: "I came asking for a perfect Umrah. I left asking Allah to accept an imperfect one offered with sincerity.",
-        cite: "Ayesha Khan",
+        cite: "Dr. Bilal Mansoor",
       },
       {
         type: "heading",
@@ -460,7 +460,7 @@ export const articles: Article[] = [
     excerpt:
       "Gentle corrections for frequent misunderstandings — so your focus stays on sincerity, safety, and correct practice.",
     categorySlug: "umrah-guides",
-    authorId: "ayesha-khan",
+    authorId: "dr-bilal-mansoor",
     publishedAt: "2025-08-05",
     readingTime: 7,
     image:

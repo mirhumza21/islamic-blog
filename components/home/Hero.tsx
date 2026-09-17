@@ -3,7 +3,7 @@ import { HeroMedia } from "@/components/home/HeroMedia";
 import { HeroQuote } from "@/components/home/HeroQuote";
 import { HeroReveal } from "@/components/home/HeroReveal";
 import { HeroTrustItems } from "@/components/home/HeroTrustItems";
-export function Hero() {
+export function Hero({ content }: { content?: any }) {
   return (
     <>
       <section
@@ -11,7 +11,7 @@ export function Hero() {
         className="relative overflow-hidden border-b border-border bg-ivory"
       >
         <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden>
-          <HeroMedia variant="background" />
+          <HeroMedia variant="background" content={content} />
           <div className="absolute inset-0 hero-gradient-desktop" />
         </div>
 
@@ -23,7 +23,7 @@ export function Hero() {
         <div className="container-editorial relative z-10">
           <div className="grid lg:grid-cols-12 lg:items-center lg:gap-10 lg:py-14 xl:py-16">
             <div className="py-10 sm:py-12 lg:col-span-5 lg:py-0">
-              <HeroContent />
+              <HeroContent content={content} />
 
               <div className="mt-10 hidden items-center gap-2.5 text-muted/70 lg:flex">
                 <span className="inline-flex h-7 w-[18px] items-center justify-center rounded-full border border-border bg-card">
@@ -38,7 +38,7 @@ export function Hero() {
 
             <div className="relative hidden lg:col-span-7 lg:block lg:min-h-[480px]">
               <div className="absolute right-0 top-6 z-20 xl:right-2 xl:top-8">
-                <HeroQuote />
+                <HeroQuote content={content} />
               </div>
             </div>
           </div>
@@ -46,11 +46,11 @@ export function Hero() {
 
         <div className="lg:hidden">
           <div className="relative h-[280px] w-full sm:h-[320px]">
-            <HeroMedia variant="panel" />
+            <HeroMedia variant="panel" content={content} />
           </div>
 
           <div className="container-editorial py-6 sm:py-8">
-            <HeroQuote className="mx-auto" />
+            <HeroQuote className="mx-auto" content={content} />
           </div>
         </div>
       </section>
@@ -61,7 +61,7 @@ export function Hero() {
       >
         <div className="container-editorial py-8 lg:py-10">
           <HeroReveal delay={0.15}>
-            <HeroTrustItems />
+            <HeroTrustItems content={content} />
           </HeroReveal>
         </div>
       </section>

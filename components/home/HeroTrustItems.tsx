@@ -8,11 +8,14 @@ const icons = {
   heart: Heart,
 } as const;
 
-export function HeroTrustItems() {
+export function HeroTrustItems({ content }: { content?: typeof heroContent }) {
+  const data = content || heroContent;
+  const items = data.trustItems || heroContent.trustItems;
+
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-      {heroContent.trustItems.map((item) => {
-        const Icon = icons[item.icon];
+      {items.map((item: any) => {
+        const Icon = (icons as any)[item.icon] || BookOpen;
 
         return (
           <li key={item.title} className="flex items-start gap-3">

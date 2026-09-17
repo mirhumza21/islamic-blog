@@ -1,6 +1,8 @@
 import { CategoryGrid } from "@/components/home/CategoryGrid";
+import { DailySpiritualHub } from "@/components/home/DailySpiritualHub";
 import { FeaturedArticle } from "@/components/home/FeaturedArticle";
 import { Hero } from "@/components/home/Hero";
+import { IslamicCalendarHub } from "@/components/home/IslamicCalendarHub";
 import { LatestArticles } from "@/components/home/LatestArticles";
 import { Newsletter } from "@/components/home/Newsletter";
 import {
@@ -11,8 +13,10 @@ import {
   getLatestArticles,
   getPopularArticles,
 } from "@/lib/articles";
+import { getHomePageContent } from "@/lib/pages";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const homeContent = await getHomePageContent();
   const featured = getFeaturedArticle();
   const author = featured ? getAuthorById(featured.authorId) : undefined;
   const category = featured
@@ -26,8 +30,16 @@ export default function HomePage() {
 
   return (
     <>
-      <Hero />
-      <section className="container-editorial py-16 lg:py-20">
+      <Hero content={homeContent} />
+
+      {/* Daily Spiritual Essentials */}
+      <DailySpiritualHub />
+
+      {/* Islamic Calendar & Event Countdown */}
+      <IslamicCalendarHub />
+
+      {/* Browse by Category */}
+      <section className="container-editorial py-12 lg:py-16">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-green">
@@ -40,6 +52,8 @@ export default function HomePage() {
         </div>
         <CategoryGrid categories={categories} />
       </section>
+
+      {/* Featured Article Guide */}
       {featured && author && category ? (
         <FeaturedArticle
           article={featured}
@@ -47,11 +61,14 @@ export default function HomePage() {
           category={category}
         />
       ) : null}
+
+      {/* Redesigned Latest Articles Stream */}
       <LatestArticles
         articles={latest}
         popular={popular}
         categories={categories}
       />
+
       <Newsletter />
     </>
   );

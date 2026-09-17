@@ -7,10 +7,13 @@ import { cn } from "@/lib/utils";
 
 export function HeroMedia({
   variant = "panel",
+  content,
 }: {
   variant?: "panel" | "background";
+  content?: typeof heroContent;
 }) {
   const reduceMotion = useReducedMotion();
+  const data = content || heroContent;
 
   return (
     <div
@@ -26,8 +29,8 @@ export function HeroMedia({
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <Image
-          src={heroContent.image.src}
-          alt={heroContent.image.alt}
+          src={data.image?.src || heroContent.image.src}
+          alt={data.image?.alt || heroContent.image.alt}
           fill
           priority
           quality={90}

@@ -5,8 +5,7 @@ import {
   Great_Vibes,
   Manrope,
 } from "next/font/google";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
+import { SiteShell } from "@/components/layout/SiteShell";
 import { siteConfig } from "@/data/categories";
 import { absoluteUrl } from "@/lib/utils";
 import "./globals.css";
@@ -125,11 +124,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <Header />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <SiteShell>{children}</SiteShell>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

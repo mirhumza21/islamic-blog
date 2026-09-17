@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleBody } from "@/components/blog/ArticleBody";
+import { ArticleFeedback } from "@/components/blog/ArticleFeedback";
 import { ArticleHeader } from "@/components/blog/ArticleHeader";
+import { ArticleTakeaways } from "@/components/blog/ArticleTakeaways";
+import { AuthorBioCard } from "@/components/blog/AuthorBioCard";
+import { PrevNextNavigation } from "@/components/blog/PrevNextNavigation";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { RelatedArticles } from "@/components/blog/RelatedArticles";
-import { ShareArticle } from "@/components/blog/ShareArticle";
 import { TableOfContents } from "@/components/blog/TableOfContents";
 import { Newsletter } from "@/components/home/Newsletter";
 import {
@@ -14,9 +18,11 @@ import {
   getArticleBySlug,
   getAuthorById,
   getCategoryBySlug,
+  getPrevNextArticles,
   getRelatedArticles,
 } from "@/lib/articles";
 import { absoluteUrl } from "@/lib/utils";
+import { Tag } from "lucide-react";
 
 type ArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -70,6 +76,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const toc = extractTableOfContents(article);
   const related = getRelatedArticles(article, 3);
+  const { prev, next } = getPrevNextArticles(article.slug);
   const categories = getAllCategories();
   const url = absoluteUrl(`/blog/${article.slug}`);
 
@@ -133,31 +140,71 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <>
       <ReadingProgress />
-      <article className="container-editorial py-10 lg:py-14">
+
+      <main className="mx-auto w-full max-w-[1160px] px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        {/* Centered Editorial Header with Featured Image */}
         <ArticleHeader
           article={article}
           author={author}
           category={category}
         />
 
-        <div className="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-[minmax(220px,260px)_minmax(0,1fr)] lg:gap-12 xl:gap-16">
-          <aside className="min-w-0 lg:order-1">
-            <TableOfContents items={toc} />
-          </aside>
+        {/* 2-Column Editorial Reading Layout */}
+        <div className="mx-auto mt-12 grid max-w-5xl gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-10 xl:gap-12 items-start">
+          {/* Left Column: Main Article Content Stream */}
+          <div className="min-w-0 order-last lg:order-1 lg:col-span-8 xl:col-span-8.5">
+            {/* Quick Takeaways Box */}
+            <ArticleTakeaways article={article} />
 
-          <div className="min-w-0 lg:order-2">
-            <div id="article-content" className="mx-auto w-full max-w-[52rem] xl:max-w-[56rem] lg:mx-0">
+            {/* Main Rich Content */}
+            <article id="article-content" className="w-full">
               <ArticleBody content={article.content} />
+            </article>
+
+            {/* Article Tags */}
+            {article.tags && article.tags.length > 0 ? (
+              <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-border/80 pt-6">
+                <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted mr-1">
+                  <Tag className="h-3.5 w-3.5 text-sand" />
+                  Related Topics:
+                </span>
+                {article.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/search?q=${encodeURIComponent(tag)}`}
+                    className="rounded-full border border-border/80 bg-card px-3.5 py-1 text-xs font-medium text-foreground/80 transition-colors hover:border-green hover:bg-cream hover:text-green shadow-xs"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+
+            {/* Reader Feedback (Helpful?) */}
+            <ArticleFeedback />
+
+            {/* Author Bio Card */}
+            <div className="mt-8">
+              <AuthorBioCard author={author} />
             </div>
 
-            <div className="mx-auto mt-10 w-full max-w-[52rem] border-t border-border pt-6 xl:max-w-[56rem] lg:mx-0">
-              <ShareArticle title={article.title} url={url} />
+            {/* Previous / Next Article Navigation */}
+            <div className="mt-8">
+              <PrevNextNavigation prev={prev} next={next} />
             </div>
           </div>
+
+          {/* Right Column: Sticky Table of Contents & Quick Share */}
+          <aside className="min-w-0 order-first lg:order-2 lg:col-span-4 xl:col-span-3.5">
+            <TableOfContents items={toc} articleTitle={article.title} shareUrl={url} />
+          </aside>
         </div>
 
-        <RelatedArticles articles={related} categories={categories} />
-      </article>
+        {/* Related Articles Section */}
+        <div className="mx-auto max-w-5xl">
+          <RelatedArticles articles={related} categories={categories} />
+        </div>
+      </main>
 
       <Newsletter />
 
