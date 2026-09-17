@@ -47,8 +47,9 @@ const sitePages: SitePage[] = [
     slug: "/about",
     type: "Editorial Info",
     description:
-      "Mission statement, scholarly values, team background, and authentic knowledge pillars.",
-    isEditable: false,
+      "Mission statement, scholarly values, team background, authenticity standards, and content principles.",
+    isEditable: true,
+    editUrl: "/admin/pages/about",
     viewUrl: "/about",
     icon: Info,
   },
@@ -115,47 +116,89 @@ export default function AdminPagesPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/admin/pages/home"
+            className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-semibold shadow-2xs transition-all"
+          >
+            <Edit className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Edit Home</span>
+          </Link>
+          <Link
+            href="/admin/pages/about"
             className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all"
           >
             <Edit className="w-3.5 h-3.5" />
-            <span>Edit Home Page</span>
+            <span>Edit About Page</span>
           </Link>
         </div>
       </div>
 
-      {/* Featured Card for Home Page */}
-      <div className="bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-800 text-white rounded-2xl p-6 shadow-sm relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-xl">
+      {/* Featured Cards for Home and About Customizers */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Home Customizer Card */}
+        <div className="bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-800 text-white rounded-2xl p-6 shadow-sm relative overflow-hidden flex flex-col justify-between">
+          <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 border border-white/20 text-emerald-100 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Customizer Active</span>
+              <span>Live Customizer</span>
             </div>
-            <h2 className="text-xl md:text-2xl font-serif font-bold text-white tracking-tight">
+            <h2 className="text-xl font-serif font-bold text-white tracking-tight">
               Home Page Customizer
             </h2>
             <p className="text-emerald-100/80 text-xs leading-relaxed">
-              Update the hero titles, call-to-action buttons, high-resolution hero
-              cover photo, Quranic ayat quote, and trust badges in real-time.
+              Customize hero titles, call-to-action buttons, high-res cover image, Quranic quote, and trust badges.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 pt-5">
             <Link
               href="/admin/pages/home"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-emerald-800 hover:bg-emerald-50 rounded-xl text-xs font-bold shadow-sm transition-all"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-emerald-800 hover:bg-emerald-50 rounded-xl text-xs font-bold shadow-sm transition-all"
             >
-              <Edit className="w-4 h-4" />
-              <span>Edit Home Page Content</span>
+              <Edit className="w-3.5 h-3.5" />
+              <span>Edit Home</span>
             </Link>
             <a
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-900/40 hover:bg-emerald-900/60 border border-white/20 text-white rounded-xl text-xs font-semibold transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-900/40 hover:bg-emerald-900/60 border border-white/20 text-white rounded-xl text-xs font-semibold transition-all"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>Preview Live</span>
+              <span>View</span>
+            </a>
+          </div>
+        </div>
+
+        {/* About Customizer Card */}
+        <div className="bg-gradient-to-br from-teal-900 via-emerald-800 to-emerald-900 text-white rounded-2xl p-6 shadow-sm relative overflow-hidden flex flex-col justify-between">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 border border-white/20 text-emerald-100 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>Live Customizer</span>
+            </div>
+            <h2 className="text-xl font-serif font-bold text-white tracking-tight">
+              About Page Customizer
+            </h2>
+            <p className="text-emerald-100/80 text-xs leading-relaxed">
+              Update mission statement, why we exist, authenticity standards, core principles, and contact details.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 pt-5">
+            <Link
+              href="/admin/pages/about"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-emerald-800 hover:bg-emerald-50 rounded-xl text-xs font-bold shadow-sm transition-all"
+            >
+              <Edit className="w-3.5 h-3.5" />
+              <span>Edit About</span>
+            </Link>
+            <a
+              href="/about"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-900/40 hover:bg-emerald-900/60 border border-white/20 text-white rounded-xl text-xs font-semibold transition-all"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>View</span>
             </a>
           </div>
         </div>
@@ -171,7 +214,7 @@ export default function AdminPagesPage() {
             </span>
           </div>
           <span className="text-[11px] text-gray-500 font-medium">
-            1 Editable via Customizer • 5 Static Core Pages
+            2 Editable via Customizer • 4 Static Core Pages
           </span>
         </div>
 

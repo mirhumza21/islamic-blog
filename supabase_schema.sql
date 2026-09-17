@@ -109,3 +109,29 @@ CREATE INDEX IF NOT EXISTS idx_articles_category ON public.articles(category_slu
 CREATE INDEX IF NOT EXISTS idx_articles_author ON public.articles(author_id);
 CREATE INDEX IF NOT EXISTS idx_articles_published_at ON public.articles(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_categories_slug ON public.categories(slug);
+
+-- ==========================================================
+-- 5. Storage Bucket for Blog Images & Media
+-- ==========================================================
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'blog-images',
+  'blog-images',
+  true,
+  10485760, -- 10MB
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
+)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Policy: Allow public read access to images
+DROP POLICY IF EXISTS "Public blog-images read access" ON storage.objects;
+CREATE POLICY "Public blog-images read access"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'blog-images');
+
+-- Policy: Allow service role / admin full access to upload, update, delete
+DROP POLICY IF EXISTS "Service role full access on blog-images" ON storage.objects;
+CREATE POLICY "Service role full access on blog-images"
+  ON storage.objects FOR ALL
+  USING (bucket_id = 'blog-images')
+  WITH CHECK (bucket_id = 'blog-images');

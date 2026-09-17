@@ -18,6 +18,7 @@ export interface Category {
 }
 
 export type ArticleBlock =
+  | { type: "html"; text: string }
   | { type: "paragraph"; text: string }
   | { type: "heading"; level: 2 | 3; text: string; id?: string }
   | { type: "list"; style: "ordered" | "unordered"; items: string[] }

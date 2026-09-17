@@ -7,16 +7,62 @@ import { QuranQuote } from "@/components/islamic/QuranQuote";
 import { getHeadingId } from "@/lib/articles";
 import type { ArticleBlock } from "@/types/blog";
 
-export function ArticleBody({ content }: { content: ArticleBlock[] }) {
+export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
+  if (!content) return null;
+
+  // 1. If full HTML string
+  if (typeof content === "string") {
+    return (
+      <div
+        className="prose-editorial max-w-none blog-article-body"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
+  }
+
+  // 2. If single HTML block saved from full editor
+  if (Array.isArray(content) && content.length === 1 && content[0]?.type === "html") {
+    return (
+      <div
+        className="prose-editorial max-w-none blog-article-body"
+        dangerouslySetInnerHTML={{ __html: content[0].text }}
+      />
+    );
+  }
+
   let hasRenderedFirstParagraph = false;
 
   return (
     <div className="prose-editorial max-w-none">
       {content.map((block, index) => {
         switch (block.type) {
+          case "html":
+            return (
+              <div
+                key={index}
+                className="my-6 blog-article-body"
+                dangerouslySetInnerHTML={{ __html: block.text }}
+              />
+            );
           case "paragraph": {
             const isFirst = !hasRenderedFirstParagraph;
             hasRenderedFirstParagraph = true;
+            // Support HTML from Tiptap (contains tags) or legacy plain text
+            const isHtml = block.text?.includes("<");
+
+            if (isHtml) {
+              return (
+                <div
+                  key={index}
+                  className={`my-6 text-[17.5px] leading-[1.85] text-foreground/85 sm:text-[18.5px] [&_strong]:font-bold [&_em]:italic [&_a]:text-emerald-700 [&_a]:underline [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 ${
+                    isFirst
+                      ? "first-letter:float-left first-letter:mr-3.5 first-letter:mt-1 first-letter:font-serif first-letter:text-5xl first-letter:font-bold first-letter:leading-none first-letter:text-green-dark sm:first-letter:text-6xl"
+                      : ""
+                  }`}
+                  dangerouslySetInnerHTML={{ __html: block.text }}
+                />
+              );
+            }
 
             return (
               <p
@@ -109,15 +155,23 @@ export function ArticleBody({ content }: { content: ArticleBlock[] }) {
                 ) : null}
               </figure>
             );
-          case "blockquote":
+          case "blockquote": {
+            const isHtml = block.text?.includes("<");
             return (
               <blockquote
                 key={index}
                 className="my-9 rounded-[22px] border-l-4 border-sand bg-gradient-to-r from-cream/80 to-card px-7 py-6 not-italic shadow-xs"
               >
-                <p className="font-serif text-lg leading-relaxed text-foreground sm:text-xl">
-                  “{block.text}”
-                </p>
+                {isHtml ? (
+                  <div
+                    className="font-serif text-lg leading-relaxed text-foreground sm:text-xl [&_strong]:font-bold [&_em]:italic [&_a]:text-emerald-700 [&_a]:underline"
+                    dangerouslySetInnerHTML={{ __html: block.text }}
+                  />
+                ) : (
+                  <p className="font-serif text-lg leading-relaxed text-foreground sm:text-xl">
+                    “{block.text}”
+                  </p>
+                )}
                 {block.cite ? (
                   <cite className="mt-3 block text-xs font-semibold uppercase tracking-wider text-sand not-italic">
                     — {block.cite}
@@ -125,6 +179,7 @@ export function ArticleBody({ content }: { content: ArticleBlock[] }) {
                 ) : null}
               </blockquote>
             );
+          }
           case "quran":
             return (
               <QuranQuote

@@ -18,17 +18,62 @@ export async function POST(request: Request) {
     const ext = file.name.split(".").pop() || "jpg";
     const filename = `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}.${ext}`;
 
+    const BUCKET_NAME = "blog-images";
+
+    // Auto-create bucket if it doesn't exist
+    try {
+      const { data: buckets } = await supabase.storage.listBuckets();
+      const exists = buckets?.some((b) => b.name === BUCKET_NAME);
+      if (!exists) {
+        await supabase.storage.createBucket(BUCKET_NAME, {
+          public: true,
+          fileSizeLimit: 10485760, // 10MB
+        });
+      }
+    } catch (e) {
+      console.warn("Could not check/create bucket automatically:", e);
+    }
+
     const { data, error } = await supabase.storage
-      .from("blog-images")
+      .from(BUCKET_NAME)
       .upload(filename, buffer, {
         contentType: file.type,
         upsert: true,
       });
 
     if (error) {
+      // If error was bucket not found, try createBucket once more explicitly
+      if (error.message?.toLowerCase().includes("not found")) {
+        try {
+          const { error: retryCreateErr } = await supabase.storage.createBucket(BUCKET_NAME, {
+            public: true,
+            fileSizeLimit: 10485760,
+          });
+          if (!retryCreateErr) {
+            const retry = await supabase.storage
+              .from(BUCKET_NAME)
+              .upload(filename, buffer, {
+                contentType: file.type,
+                upsert: true,
+              });
+            if (!retry.error) {
+              const { data: pubData } = supabase.storage
+                .from(BUCKET_NAME)
+                .getPublicUrl(retry.data.path);
+              return NextResponse.json({
+                success: true,
+                url: pubData.publicUrl,
+              });
+            }
+          }
+        } catch (retryErr) {
+          console.error("Retry bucket create failed:", retryErr);
+        }
+      }
+
       return NextResponse.json(
         {
-          error: `Storage error: ${error.message}. Make sure you created a public bucket named 'blog-images' in Supabase -> Storage.`,
+          error: `Storage error: ${error.message}. Please ensure a public bucket named 'blog-images' exists in Supabase Storage.`,
         },
         { status: 500 }
       );
