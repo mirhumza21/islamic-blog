@@ -1,31 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { namesOfAllah, NameOfAllah } from "@/data/islamic-data";
+import { namesOfAllah } from "@/data/islamic-data";
+import type { LiveDailyWord } from "@/lib/spiritual-api";
 import { Search, Sparkles, Volume2 } from "lucide-react";
 
 interface NamesExplorerModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  names?: LiveDailyWord[];
 }
 
 export function NamesExplorerModal({
   open,
   onOpenChange,
+  names,
 }: NamesExplorerModalProps) {
   const [search, setSearch] = useState("");
   const [playingNum, setPlayingNum] = useState<number | null>(null);
 
-  const filtered = namesOfAllah.filter(
-    (n) =>
-      n.transliteration.toLowerCase().includes(search.toLowerCase()) ||
-      n.meaning.toLowerCase().includes(search.toLowerCase()) ||
-      n.explanation.toLowerCase().includes(search.toLowerCase()) ||
-      n.arabic.includes(search)
-  );
+  const source: LiveDailyWord[] =
+    names && names.length > 0
+      ? names
+      : namesOfAllah.map((item) => ({ ...item, isLive: false }));
 
-  const handlePlay = (name: NameOfAllah) => {
+  const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return source;
+    return source.filter(
+      (n) =>
+        n.transliteration.toLowerCase().includes(query) ||
+        n.meaning.toLowerCase().includes(query) ||
+        n.explanation.toLowerCase().includes(query) ||
+        n.arabic.includes(search)
+    );
+  }, [search, source]);
+
+  const handlePlay = (name: LiveDailyWord) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     setPlayingNum(name.number);
@@ -40,7 +52,7 @@ export function NamesExplorerModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-3xl overflow-hidden bg-card p-6 flex flex-col sm:rounded-2xl">
+      <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col overflow-hidden bg-card p-6 sm:rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2.5 font-serif text-2xl font-semibold text-foreground">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-sand text-white">
@@ -49,11 +61,11 @@ export function NamesExplorerModal({
             Asmaul Husna (99 Divine Names)
           </DialogTitle>
           <p className="text-xs text-muted">
-            "And to Allah belong the best names, so invoke Him by them." (Surah Al-A'raf 7:180)
+            &ldquo;And to Allah belong the best names, so invoke Him by them.&rdquo; (Surah Al-A&apos;raf 7:180)
           </p>
         </DialogHeader>
 
-        <div className="mt-3 shrink-0 relative">
+        <div className="relative mt-3 shrink-0">
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           <input
             type="text"
@@ -64,7 +76,7 @@ export function NamesExplorerModal({
           />
         </div>
 
-        <div className="mt-4 flex-1 overflow-y-auto pr-1 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid flex-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2">
           {filtered.map((item) => (
             <div
               key={item.number}
@@ -80,7 +92,7 @@ export function NamesExplorerModal({
                     onClick={() => handlePlay(item)}
                     className={`flex h-7 w-7 items-center justify-center rounded-full transition-colors ${
                       playingNum === item.number
-                        ? "bg-green text-white animate-pulse"
+                        ? "animate-pulse bg-green text-white"
                         : "bg-cream text-foreground/70 hover:bg-green hover:text-white"
                     }`}
                     title="Pronounce name"
@@ -91,7 +103,7 @@ export function NamesExplorerModal({
                 </div>
 
                 <div className="my-2 text-center">
-                  <span className="font-arabic text-3xl font-bold text-green">
+                  <span lang="ar" dir="rtl" className="inline-block font-arabic text-3xl font-bold leading-[2] whitespace-nowrap text-green">
                     {item.arabic}
                   </span>
                   <div className="mt-1 font-serif text-sm font-semibold tracking-wide text-foreground">
@@ -103,7 +115,7 @@ export function NamesExplorerModal({
                 </div>
               </div>
 
-              <p className="mt-2 text-xs leading-relaxed text-muted border-t border-border/60 pt-2">
+              <p className="mt-2 border-t border-border/60 pt-2 text-xs leading-relaxed text-muted">
                 {item.explanation}
               </p>
             </div>

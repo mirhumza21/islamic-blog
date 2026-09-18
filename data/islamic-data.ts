@@ -1,6 +1,6 @@
 export interface DuaItem {
   id: string;
-  category: "Health" | "Guidance" | "Forgiveness" | "Protection" | "Morning & Evening" | "Travel";
+  category: string;
   title: string;
   arabic: string;
   transliteration: string;
@@ -112,73 +112,73 @@ export const curatedDuas: DuaItem[] = [
 export const namesOfAllah: NameOfAllah[] = [
   {
     number: 1,
-    arabic: "حَسَن",
-    transliteration: "HASSAN",
-    meaning: "Handsome, Virtuous",
-    explanation: "Embodying moral excellence, physical grace, and high character. Grandson of the Prophet ﷺ; embodies beauty and goodness."
-  },
-  {
-    number: 2,
     arabic: "الرَّحْمَٰنُ",
     transliteration: "AR-RAHMAN",
     meaning: "The All-Merciful",
-    explanation: "The One Who possesses vast, boundless, and all-encompassing mercy towards all of creation in this world."
+    explanation: "The One Whose mercy encompasses all of creation in this world."
   },
   {
-    number: 3,
+    number: 2,
     arabic: "الرَّحِيمُ",
     transliteration: "AR-RAHEEM",
     meaning: "The Especially Merciful",
-    explanation: "The One Who grants continuous, specialized mercy to the believers, particularly on the Day of Judgment."
+    explanation: "The One Who grants specialized mercy to the believers, particularly on the Day of Judgment."
   },
   {
-    number: 4,
+    number: 3,
     arabic: "الْمَلِكُ",
     transliteration: "AL-MALIK",
     meaning: "The Sovereign King",
-    explanation: "The Absolute Ruler, Master, and Owner of the universe, with supreme authority over all creation."
+    explanation: "The Absolute Ruler, Master, and Owner of the universe."
   },
   {
-    number: 5,
+    number: 4,
     arabic: "الْقُدُّوسُ",
     transliteration: "AL-QUDDUS",
     meaning: "The Most Holy",
-    explanation: "The One Who is pure, spotless, and completely free from any imperfection, error, or fault."
+    explanation: "The One Who is pure and completely free from any imperfection or fault."
   },
   {
-    number: 6,
+    number: 5,
     arabic: "السَّلَامُ",
     transliteration: "AS-SALAM",
     meaning: "The Source of Peace",
-    explanation: "The One Who is free from all flaws and the granter of safety, tranquility, and peace to His servants."
+    explanation: "The One Who is free from all flaws and grants safety and peace to His servants."
   },
   {
-    number: 7,
+    number: 6,
     arabic: "الْمُؤْمِنُ",
     transliteration: "AL-MU'MIN",
     meaning: "The Granter of Security",
-    explanation: "The One Who inspires faith in believers and provides ultimate sanctuary, safety, and truthfulness."
+    explanation: "The One Who inspires faith and provides sanctuary, safety, and truthfulness."
+  },
+  {
+    number: 7,
+    arabic: "الْمُهَيْمِنُ",
+    transliteration: "AL-MUHAYMIN",
+    meaning: "The Guardian",
+    explanation: "The One Who watches over, protects, and is a witness over all things."
   },
   {
     number: 8,
     arabic: "الْعَزِيزُ",
     transliteration: "AL-AZIZ",
-    meaning: "The Almighty & Invincible",
-    explanation: "The All-Powerful and Majestic, Who cannot be defeated, yet governs with wisdom and justice."
+    meaning: "The Almighty",
+    explanation: "The All-Powerful and Majestic, Who cannot be overcome."
   },
   {
     number: 9,
-    arabic: "الْغَفَّارُ",
-    transliteration: "AL-GHAFFAR",
-    meaning: "The Perpetual Forgiver",
-    explanation: "The One Who repeatedly forgives the faults and sins of His servants whenever they turn back in sincere repentance."
+    arabic: "الْجَبَّارُ",
+    transliteration: "AL-JABBAR",
+    meaning: "The Compeller",
+    explanation: "The One Who restores, mends, and whose will cannot be resisted."
   },
   {
     number: 10,
-    arabic: "الرَّزَّاقُ",
-    transliteration: "AR-RAZZAQ",
-    meaning: "The All-Provider",
-    explanation: "The Sustainer Who creates all provisions and distributes sustenance to every living soul."
+    arabic: "الْمُتَكَبِّرُ",
+    transliteration: "AL-MUTAKABBIR",
+    meaning: "The Supreme",
+    explanation: "The One Who is far above the attributes of His creation, in greatness and majesty."
   }
 ];
 

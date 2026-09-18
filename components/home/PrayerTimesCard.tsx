@@ -99,7 +99,7 @@ export function PrayerTimesCard() {
 
   return (
     <>
-      <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-[26px] bg-[#073f32] p-6 text-white shadow-emerald-glow lg:p-7">
+      <div className="relative flex h-full min-h-[28rem] flex-col justify-between overflow-hidden rounded-[26px] bg-[#073f32] p-6 text-white shadow-emerald-glow lg:p-7">
         {/* Subtle geometric pattern overlay */}
         <div
           className="pointer-events-none absolute inset-0 opacity-10 pattern-subtle"

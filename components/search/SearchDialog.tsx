@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { popularSearches } from "@/data/categories";
-import { searchArticles } from "@/lib/articles";
+import type { SearchResult } from "@/types/blog";
 import { cn } from "@/lib/utils";
 
 export function SearchDialog({
@@ -26,8 +26,7 @@ export function SearchDialog({
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-
-  const results = useMemo(() => searchArticles(query).slice(0, 8), [query]);
+  const [results, setResults] = useState<SearchResult[]>([]);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -41,11 +40,29 @@ export function SearchDialog({
     if (!open) {
       setQuery("");
       setActiveIndex(0);
+      setResults([]);
     }
   }, [open]);
 
   useEffect(() => {
     setActiveIndex(0);
+    const q = query.trim();
+    if (!q) {
+      setResults([]);
+      return;
+    }
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        setResults(Array.isArray(data.results) ? data.results : []);
+      } catch {
+        setResults([]);
+      }
+    }, 250);
+
+    return () => window.clearTimeout(timer);
   }, [query]);
 
   const goToSearchPage = (value = query) => {

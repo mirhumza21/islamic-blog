@@ -13,13 +13,13 @@ import { TableOfContents } from "@/components/blog/TableOfContents";
 import { Newsletter } from "@/components/home/Newsletter";
 import {
   extractTableOfContents,
-  getAllArticles,
-  getAllCategories,
-  getArticleBySlug,
-  getAuthorById,
-  getCategoryBySlug,
-  getPrevNextArticles,
-  getRelatedArticles,
+  fetchAllArticles,
+  fetchAllCategories,
+  fetchArticleBySlug,
+  fetchAuthorById,
+  fetchCategoryBySlug,
+  fetchPrevNextArticles,
+  fetchRelatedArticles,
 } from "@/lib/articles";
 import { absoluteUrl } from "@/lib/utils";
 import { Tag } from "lucide-react";
@@ -28,15 +28,11 @@ type ArticlePageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  return getAllArticles().map((article) => ({ slug: article.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await fetchArticleBySlug(slug);
   if (!article) return {};
 
   const title = article.seo?.title ?? article.title;
@@ -67,17 +63,34 @@ export async function generateMetadata({
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await fetchArticleBySlug(slug);
   if (!article) notFound();
 
-  const author = getAuthorById(article.authorId);
-  const category = getCategoryBySlug(article.categorySlug);
-  if (!author || !category) notFound();
+  const [author, category, allArticles, categories] = await Promise.all([
+    fetchAuthorById(article.authorId),
+    fetchCategoryBySlug(article.categorySlug),
+    fetchAllArticles(),
+    fetchAllCategories(),
+  ]);
+  const resolvedAuthor = author ?? {
+    id: article.authorId || "umrahzone",
+    name: "UmrahZone",
+    avatar: "",
+    bio: "UmrahZone editorial team",
+  };
+  const resolvedCategory = category ?? {
+    id: article.categorySlug || "guides",
+    slug: article.categorySlug || "umrah-guides",
+    name: "Guides",
+    description: "",
+    shortDescription: "",
+    image: article.image,
+    icon: "kaaba",
+  };
 
   const toc = extractTableOfContents(article);
-  const related = getRelatedArticles(article, 3);
-  const { prev, next } = getPrevNextArticles(article.slug);
-  const categories = getAllCategories();
+  const related = await fetchRelatedArticles(article, 3, allArticles);
+  const { prev, next } = await fetchPrevNextArticles(article.slug, allArticles);
   const url = absoluteUrl(`/blog/${article.slug}`);
 
   const jsonLd = {
@@ -90,7 +103,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     dateModified: article.updatedAt ?? article.publishedAt,
     author: {
       "@type": "Person",
-      name: author.name,
+      name: resolvedAuthor.name,
     },
     publisher: {
       "@type": "Organization",
@@ -145,8 +158,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {/* Centered Editorial Header with Featured Image */}
         <ArticleHeader
           article={article}
-          author={author}
-          category={category}
+          author={resolvedAuthor}
+          category={resolvedCategory}
         />
 
         {/* 2-Column Editorial Reading Layout */}
@@ -185,7 +198,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
             {/* Author Bio Card */}
             <div className="mt-8">
-              <AuthorBioCard author={author} />
+              <AuthorBioCard author={resolvedAuthor} />
             </div>
 
             {/* Previous / Next Article Navigation */}

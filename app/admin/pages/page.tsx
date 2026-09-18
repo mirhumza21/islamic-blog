@@ -60,7 +60,8 @@ const sitePages: SitePage[] = [
     type: "Inquiries",
     description:
       "Get in touch form, office details, social handles, and reader support information.",
-    isEditable: false,
+    isEditable: true,
+    editUrl: "/admin/pages/contact",
     viewUrl: "/contact",
     icon: Phone,
   },
@@ -71,7 +72,8 @@ const sitePages: SitePage[] = [
     type: "Legal Policy",
     description:
       "Data handling, cookies, user analytics, and privacy compliance guidelines.",
-    isEditable: false,
+    isEditable: true,
+    editUrl: "/admin/pages/privacy",
     viewUrl: "/privacy",
     icon: ShieldCheck,
   },
@@ -82,7 +84,8 @@ const sitePages: SitePage[] = [
     type: "Legal Policy",
     description:
       "Usage rights, copyright conditions, and editorial disclaimers for content readers.",
-    isEditable: false,
+    isEditable: true,
+    editUrl: "/admin/pages/terms",
     viewUrl: "/terms",
     icon: FileText,
   },
@@ -214,7 +217,7 @@ export default function AdminPagesPage() {
             </span>
           </div>
           <span className="text-[11px] text-gray-500 font-medium">
-            2 Editable via Customizer • 4 Static Core Pages
+            5 Editable via Customizer • 1 Dynamic Feed
           </span>
         </div>
 

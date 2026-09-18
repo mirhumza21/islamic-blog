@@ -110,6 +110,11 @@
     font-family: var(--font-script), var(--font-serif), cursive;
   }
 
+  .arabic-verse {
+    line-height: 2.45;
+    overflow-wrap: break-word;
+  }
+
   .hero-gradient-desktop {
     background: linear-gradient(
       90deg,

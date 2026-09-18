@@ -3,7 +3,8 @@
 import { PrayerTimesCard } from "@/components/home/PrayerTimesCard";
 import { DuaOfTheDayCard } from "@/components/home/DuaOfTheDayCard";
 import { WordOfTheDayCard } from "@/components/home/WordOfTheDayCard";
-import { Compass, Sparkles } from "lucide-react";
+import { SpiritualDailyProvider } from "@/components/home/SpiritualDailyProvider";
+import { Sparkles } from "lucide-react";
 
 export function DailySpiritualHub() {
   return (
@@ -26,24 +27,21 @@ export function DailySpiritualHub() {
         </p>
       </div>
 
-      <div className="rounded-[30px] border border-border/80 bg-card/60 p-4 sm:p-6 lg:p-7 shadow-xs">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12 lg:items-stretch lg:gap-6">
-          {/* Prayer Times Widget */}
-          <div className="md:col-span-2 lg:col-span-5 min-h-[440px]">
-            <PrayerTimesCard />
-          </div>
-
-          {/* Dua of the Day Widget */}
-          <div className="md:col-span-1 lg:col-span-4 min-h-[440px]">
-            <DuaOfTheDayCard />
-          </div>
-
-          {/* Word of the Day Widget */}
-          <div className="md:col-span-1 lg:col-span-3 min-h-[440px]">
-            <WordOfTheDayCard />
+      <SpiritualDailyProvider>
+        <div className="rounded-[30px] border border-border/80 bg-card/60 p-4 shadow-xs sm:p-6 lg:p-7">
+          <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12 lg:gap-6">
+            <div className="h-full lg:col-span-5">
+              <PrayerTimesCard />
+            </div>
+            <div className="h-full lg:col-span-4">
+              <DuaOfTheDayCard />
+            </div>
+            <div className="h-full lg:col-span-3">
+              <WordOfTheDayCard />
+            </div>
           </div>
         </div>
-      </div>
+      </SpiritualDailyProvider>
     </section>
   );
 }

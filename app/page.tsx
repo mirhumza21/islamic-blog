@@ -6,27 +6,31 @@ import { IslamicCalendarHub } from "@/components/home/IslamicCalendarHub";
 import { LatestArticles } from "@/components/home/LatestArticles";
 import { Newsletter } from "@/components/home/Newsletter";
 import {
-  getAllCategories,
-  getAuthorById,
-  getCategoryBySlug,
-  getFeaturedArticle,
-  getLatestArticles,
-  getPopularArticles,
+  fetchAllArticles,
+  fetchAllCategories,
+  fetchAuthorById,
+  fetchCategoryBySlug,
+  fetchFeaturedArticle,
+  fetchLatestArticles,
+  fetchPopularArticles,
 } from "@/lib/articles";
 import { getHomePageContent } from "@/lib/pages";
 
 export default async function HomePage() {
-  const homeContent = await getHomePageContent();
-  const featured = getFeaturedArticle();
-  const author = featured ? getAuthorById(featured.authorId) : undefined;
+  const [homeContent, articles, categories] = await Promise.all([
+    getHomePageContent(),
+    fetchAllArticles(),
+    fetchAllCategories(),
+  ]);
+  const featured = await fetchFeaturedArticle(articles);
+  const author = featured ? await fetchAuthorById(featured.authorId) : undefined;
   const category = featured
-    ? getCategoryBySlug(featured.categorySlug)
+    ? await fetchCategoryBySlug(featured.categorySlug)
     : undefined;
-  const categories = getAllCategories();
-  const latest = getLatestArticles(6).filter(
+  const latest = (await fetchLatestArticles(6, articles)).filter(
     (article) => article.id !== featured?.id
   );
-  const popular = getPopularArticles(5);
+  const popular = await fetchPopularArticles(5, articles);
 
   return (
     <>

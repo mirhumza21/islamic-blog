@@ -1,8 +1,12 @@
 import type { MetadataRoute } from "next";
-import { getAllArticles, getAllCategories } from "@/lib/articles";
+import { fetchAllArticles, fetchAllCategories } from "@/lib/articles";
 import { absoluteUrl } from "@/lib/utils";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [articles, categories] = await Promise.all([
+    fetchAllArticles(),
+    fetchAllCategories(),
+  ]);
   const staticRoutes = ["", "/blog", "/about", "/contact", "/privacy", "/terms", "/search"].map(
     (path) => ({
       url: absoluteUrl(path || "/"),
@@ -12,14 +16,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })
   );
 
-  const articleRoutes = getAllArticles().map((article) => ({
+  const articleRoutes = articles.map((article) => ({
     url: absoluteUrl(`/blog/${article.slug}`),
     lastModified: new Date(article.updatedAt ?? article.publishedAt),
     changeFrequency: "monthly" as const,
     priority: 0.8,
   }));
 
-  const categoryRoutes = getAllCategories().map((category) => ({
+  const categoryRoutes = categories.map((category) => ({
     url: absoluteUrl(`/category/${category.slug}`),
     lastModified: new Date(),
     changeFrequency: "weekly" as const,

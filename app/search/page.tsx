@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SearchResults } from "@/components/search/SearchResults";
 import { popularSearches } from "@/data/categories";
-import { searchArticles } from "@/lib/articles";
+import { searchPublishedArticles } from "@/lib/articles";
 import Link from "next/link";
 import { SearchPageForm } from "@/components/search/SearchPageForm";
 
@@ -30,7 +30,7 @@ export async function generateMetadata({
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
-  const results = query ? searchArticles(query) : [];
+  const results = query ? await searchPublishedArticles(query) : [];
 
   return (
     <section className="container-editorial py-14 lg:py-16">

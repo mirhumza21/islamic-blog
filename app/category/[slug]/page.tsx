@@ -6,25 +6,21 @@ import { ArticleGrid } from "@/components/blog/ArticleGrid";
 import { FeaturedArticle } from "@/components/home/FeaturedArticle";
 import { Newsletter } from "@/components/home/Newsletter";
 import {
-  getAllCategories,
-  getArticlesByCategory,
-  getAuthorById,
-  getCategoryBySlug,
+  fetchAllCategories,
+  fetchArticlesByCategory,
+  fetchAuthorById,
+  fetchCategoryBySlug,
 } from "@/lib/articles";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  return getAllCategories().map((category) => ({ slug: category.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await fetchCategoryBySlug(slug);
   if (!category) return {};
 
   return {
@@ -41,13 +37,15 @@ export async function generateMetadata({
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await fetchCategoryBySlug(slug);
   if (!category) notFound();
 
-  const articles = getArticlesByCategory(slug);
+  const [articles, categories] = await Promise.all([
+    fetchArticlesByCategory(slug),
+    fetchAllCategories(),
+  ]);
   const featured = articles[0];
-  const author = featured ? getAuthorById(featured.authorId) : undefined;
-  const categories = getAllCategories();
+  const author = featured ? await fetchAuthorById(featured.authorId) : undefined;
   const relatedCategories = categories
     .filter((item) => item.slug !== slug)
     .slice(0, 4);

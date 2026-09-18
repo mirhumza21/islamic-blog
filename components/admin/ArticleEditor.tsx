@@ -240,9 +240,12 @@ export function ArticleEditor({
     fetch("/api/admin/categories")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) {
-          setCategories(data);
-          if (!categorySlug && data.length > 0) setCategorySlug(data[0].slug);
+        const list = Array.isArray(data) ? data : data.categories || [];
+        if (Array.isArray(list) && list.length > 0) {
+          setCategories(
+            list.map((cat: any) => ({ slug: cat.slug, name: cat.name }))
+          );
+          if (!categorySlug && list[0]?.slug) setCategorySlug(list[0].slug);
         }
       })
       .catch((err) => console.error("Could not load categories:", err));
@@ -250,9 +253,16 @@ export function ArticleEditor({
     fetch("/api/admin/authors")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) {
-          setAuthors(data);
-          if (!authorId && data.length > 0) setAuthorId(data[0].id);
+        const list = Array.isArray(data) ? data : data.authors || [];
+        if (Array.isArray(list) && list.length > 0) {
+          setAuthors(
+            list.map((author: any) => ({
+              id: author.id,
+              name: author.name,
+              avatar: author.avatar,
+            }))
+          );
+          if (!authorId && list[0]?.id) setAuthorId(list[0].id);
         }
       })
       .catch((err) => console.error("Could not load authors:", err));
@@ -299,6 +309,7 @@ export function ArticleEditor({
   // Save Article
   const handleSave = async (publishStatus?: "published" | "draft") => {
     const finalStatus = publishStatus || status;
+    setStatus(finalStatus);
 
     if (!title.trim()) {
       toast.error("Article title is required.");
@@ -449,20 +460,18 @@ export function ArticleEditor({
               </Link>
             )}
 
-            {status === "draft" ? (
-              <button
-                type="button"
-                onClick={() => handleSave("draft")}
-                disabled={saving}
-                className="px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition-all cursor-pointer disabled:opacity-50"
-              >
-                Save Draft
-              </button>
-            ) : null}
+            <button
+              type="button"
+              onClick={() => handleSave("draft")}
+              disabled={saving}
+              className="px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition-all cursor-pointer disabled:opacity-50"
+            >
+              Save Draft
+            </button>
 
             <button
               type="button"
-              onClick={() => handleSave()}
+              onClick={() => handleSave("published")}
               disabled={saving}
               className="inline-flex items-center gap-2 px-5 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-xs transition-all cursor-pointer disabled:opacity-50"
             >
@@ -471,7 +480,15 @@ export function ArticleEditor({
               ) : (
                 <Save className="w-3.5 h-3.5" />
               )}
-              <span>{saving ? "Saving..." : isCreation ? "Publish Article" : "Save Changes"}</span>
+              <span>
+                {saving
+                  ? "Saving..."
+                  : isCreation
+                    ? "Publish Article"
+                    : status === "draft"
+                      ? "Publish Article"
+                      : "Save & Publish"}
+              </span>
             </button>
           </div>
         </div>

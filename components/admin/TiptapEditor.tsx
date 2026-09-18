@@ -8,7 +8,13 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { useEditor, EditorContent, Extension } from "@tiptap/react";
+import {
+  useEditor,
+  EditorContent,
+  Extension,
+  Node,
+  mergeAttributes,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Link } from "@tiptap/extension-link";
 import { Image as TiptapImage } from "@tiptap/extension-image";
@@ -93,9 +99,75 @@ const FONT_SIZE_OPTIONS: { value: string; label: string }[] = [
   { value: "40px", label: "40px" },
 ];
 
-/**
- * Adds direction (ltr / rtl) to blocks so Quranic verses and Urdu stay perfectly oriented
- */
+const PreserveCard = Node.create({
+  name: "preserveCard",
+  group: "block",
+  content: "block*",
+  defining: true,
+  parseHTML() {
+    return [
+      { tag: "div[data-quran]" },
+      { tag: "div[data-hadith]" },
+      { tag: "div[data-dua]" },
+      { tag: "div[data-callout]" },
+      { tag: "div.quran-quote-card" },
+      { tag: "div.hadith-quote-card" },
+      { tag: "div.dua-card" },
+      { tag: "div.islamic-callout" },
+    ];
+  },
+  addAttributes() {
+    return {
+      class: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("class"),
+        renderHTML: (attributes) =>
+          attributes.class ? { class: attributes.class } : {},
+      },
+      dir: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("dir"),
+        renderHTML: (attributes) =>
+          attributes.dir ? { dir: attributes.dir } : {},
+      },
+      "data-quran": {
+        default: null,
+        parseHTML: (element) => element.getAttribute("data-quran"),
+        renderHTML: (attributes) =>
+          attributes["data-quran"] != null
+            ? { "data-quran": attributes["data-quran"] }
+            : {},
+      },
+      "data-hadith": {
+        default: null,
+        parseHTML: (element) => element.getAttribute("data-hadith"),
+        renderHTML: (attributes) =>
+          attributes["data-hadith"] != null
+            ? { "data-hadith": attributes["data-hadith"] }
+            : {},
+      },
+      "data-dua": {
+        default: null,
+        parseHTML: (element) => element.getAttribute("data-dua"),
+        renderHTML: (attributes) =>
+          attributes["data-dua"] != null
+            ? { "data-dua": attributes["data-dua"] }
+            : {},
+      },
+      "data-callout": {
+        default: null,
+        parseHTML: (element) => element.getAttribute("data-callout"),
+        renderHTML: (attributes) =>
+          attributes["data-callout"] != null
+            ? { "data-callout": attributes["data-callout"] }
+            : {},
+      },
+    };
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ["div", mergeAttributes(HTMLAttributes), 0];
+  },
+});
 const TextDirection = Extension.create({
   name: "textDirection",
   addGlobalAttributes() {
@@ -195,7 +267,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
       extensions: [
         StarterKit.configure({
           heading: { levels: [1, 2, 3, 4, 5, 6] },
-          // Note: link is handled separately via @tiptap/extension-link
+          link: false,
         }),
         Link.configure({
           openOnClick: false,
@@ -205,6 +277,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
             rel: "noopener noreferrer",
           },
         }),
+        PreserveCard,
         TiptapImage.configure({ inline: false, allowBase64: false }),
         TextAlign.configure({ types: ["heading", "paragraph"] }),
         TextStyle,

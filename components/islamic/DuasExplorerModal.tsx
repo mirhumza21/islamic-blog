@@ -1,39 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { curatedDuas, DuaItem } from "@/data/islamic-data";
+import { curatedDuas } from "@/data/islamic-data";
+import type { LiveDailyDua } from "@/lib/spiritual-api";
 import { BookOpen, Check, Copy, Search, Volume2 } from "lucide-react";
 
 interface DuasExplorerModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialCategory?: string;
+  duas?: LiveDailyDua[];
 }
 
 export function DuasExplorerModal({
   open,
   onOpenChange,
   initialCategory,
+  duas,
 }: DuasExplorerModalProps) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory || "All");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
-  const categories = ["All", "Health", "Guidance", "Forgiveness", "Protection", "Travel"];
+  const source: LiveDailyDua[] =
+    duas && duas.length > 0
+      ? duas
+      : curatedDuas.map((item) => ({ ...item, isLive: false }));
+  const categories = useMemo(() => {
+    const unique = Array.from(new Set(source.map((dua) => dua.category)));
+    return ["All", ...unique];
+  }, [source]);
 
-  const filtered = curatedDuas.filter((dua) => {
+  const filtered = source.filter((dua) => {
     const matchesCat = activeCategory === "All" || dua.category === activeCategory;
+    const query = search.trim().toLowerCase();
     const matchesQuery =
-      dua.title.toLowerCase().includes(search.toLowerCase()) ||
-      dua.translation.toLowerCase().includes(search.toLowerCase()) ||
-      dua.transliteration.toLowerCase().includes(search.toLowerCase()) ||
-      dua.reference.toLowerCase().includes(search.toLowerCase());
+      !query ||
+      dua.title.toLowerCase().includes(query) ||
+      dua.translation.toLowerCase().includes(query) ||
+      dua.transliteration.toLowerCase().includes(query) ||
+      dua.reference.toLowerCase().includes(query);
     return matchesCat && matchesQuery;
   });
 
-  const handlePlay = (dua: DuaItem) => {
+  const handlePlay = (dua: LiveDailyDua) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     setPlayingId(dua.id);
@@ -46,9 +58,11 @@ export function DuasExplorerModal({
     window.speechSynthesis.speak(utterance);
   };
 
-  const handleCopy = (dua: DuaItem) => {
+  const handleCopy = (dua: LiveDailyDua) => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(`${dua.arabic}\n\n${dua.transliteration}\n\n${dua.translation}\n(${dua.reference})`);
+      navigator.clipboard.writeText(
+        `${dua.arabic}\n\n${dua.transliteration}\n\n${dua.translation}\n(${dua.reference})`
+      );
       setCopiedId(dua.id);
       setTimeout(() => setCopiedId(null), 2000);
     }
@@ -56,7 +70,7 @@ export function DuasExplorerModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-3xl overflow-hidden bg-card p-6 flex flex-col sm:rounded-2xl">
+      <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col overflow-hidden bg-card p-6 sm:rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2.5 font-serif text-2xl font-semibold text-foreground">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-green text-white">
@@ -65,12 +79,11 @@ export function DuasExplorerModal({
             Authentic Duas & Azkar
           </DialogTitle>
           <p className="text-xs text-muted">
-            Supplications from the Holy Qur'an and authentic Sunnah of the Prophet Muhammad ﷺ.
+            Supplications from the Holy Qur&apos;an and authentic Sunnah of the Prophet Muhammad ﷺ.
           </p>
         </DialogHeader>
 
-        {/* Search & Category Pills */}
-        <div className="mt-3 space-y-3 shrink-0">
+        <div className="mt-3 shrink-0 space-y-3">
           <div className="relative">
             <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <input
@@ -100,8 +113,7 @@ export function DuasExplorerModal({
           </div>
         </div>
 
-        {/* Duas Scrollable List */}
-        <div className="mt-4 flex-1 overflow-y-auto space-y-4 pr-1">
+        <div className="mt-4 flex-1 space-y-4 overflow-y-auto pr-1">
           {filtered.map((dua) => (
             <div
               key={dua.id}
@@ -117,7 +129,7 @@ export function DuasExplorerModal({
                     onClick={() => handlePlay(dua)}
                     className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
                       playingId === dua.id
-                        ? "bg-green text-white animate-pulse"
+                        ? "animate-pulse bg-green text-white"
                         : "bg-cream text-foreground/70 hover:bg-green hover:text-white"
                     }`}
                     title="Play Arabic audio"
@@ -145,25 +157,24 @@ export function DuasExplorerModal({
                 {dua.title}
               </h4>
 
-              {/* Arabic Calligraphy */}
               <p
                 dir="rtl"
-                className="mt-3 text-right font-arabic text-2xl font-bold leading-relaxed text-green"
+                lang="ar"
+                className="arabic-verse mt-3 text-right font-arabic text-2xl font-bold text-green"
               >
                 {dua.arabic}
               </p>
 
-              {/* Transliteration */}
-              <p className="mt-3 text-xs italic leading-relaxed text-foreground/75">
-                {dua.transliteration}
-              </p>
+              {dua.transliteration ? (
+                <p className="mt-3 text-xs italic leading-relaxed text-foreground/75">
+                  {dua.transliteration}
+                </p>
+              ) : null}
 
-              {/* English Translation */}
               <p className="mt-2 text-sm leading-relaxed text-foreground/90">
-                "{dua.translation}"
+                &ldquo;{dua.translation}&rdquo;
               </p>
 
-              {/* Source Reference */}
               <div className="mt-3 text-right text-[11px] font-semibold text-sand">
                 {dua.reference}
               </div>

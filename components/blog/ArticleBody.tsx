@@ -4,7 +4,7 @@ import { DuaCard } from "@/components/islamic/DuaCard";
 import { HadithQuote } from "@/components/islamic/HadithQuote";
 import { IslamicCallout } from "@/components/islamic/IslamicCallout";
 import { QuranQuote } from "@/components/islamic/QuranQuote";
-import { getHeadingId } from "@/lib/articles";
+import { ensureHeadingIds, getHeadingId } from "@/lib/articles";
 import type { ArticleBlock } from "@/types/blog";
 
 export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
@@ -15,7 +15,7 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
     return (
       <div
         className="prose-editorial max-w-none blog-article-body"
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: ensureHeadingIds(content) }}
       />
     );
   }
@@ -25,7 +25,7 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
     return (
       <div
         className="prose-editorial max-w-none blog-article-body"
-        dangerouslySetInnerHTML={{ __html: content[0].text }}
+        dangerouslySetInnerHTML={{ __html: ensureHeadingIds(content[0].text) }}
       />
     );
   }
@@ -41,7 +41,7 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
               <div
                 key={index}
                 className="my-6 blog-article-body"
-                dangerouslySetInnerHTML={{ __html: block.text }}
+                dangerouslySetInnerHTML={{ __html: ensureHeadingIds(block.text) }}
               />
             );
           case "paragraph": {

@@ -5,12 +5,12 @@ import { ArticleGrid } from "@/components/blog/ArticleGrid";
 import { CategoryFilters } from "@/components/blog/CategoryFilters";
 import { Newsletter } from "@/components/home/Newsletter";
 import {
-  getAllArticles,
-  getAllCategories,
-  getArticlesByCategory,
-  getAuthorById,
-  getCategoryBySlug,
-  getPopularArticles,
+  fetchAllArticles,
+  fetchAllCategories,
+  fetchArticlesByCategory,
+  fetchAuthorById,
+  fetchCategoryBySlug,
+  fetchPopularArticles,
   paginateArticles,
 } from "@/lib/articles";
 import { formatDate } from "@/lib/utils";
@@ -33,24 +33,27 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const params = await searchParams;
   const categorySlug = params.category;
   const page = Number(params.page ?? "1") || 1;
-  const categories = getAllCategories();
+  const [categories, articles] = await Promise.all([
+    fetchAllCategories(),
+    fetchAllArticles(),
+  ]);
   const all = categorySlug
-    ? getArticlesByCategory(categorySlug)
-    : getAllArticles();
+    ? await fetchArticlesByCategory(categorySlug, articles)
+    : articles;
 
   const featured = all[0];
-  const author = featured ? getAuthorById(featured.authorId) : undefined;
+  const author = featured ? await fetchAuthorById(featured.authorId) : undefined;
   const featuredCategory = featured
-    ? getCategoryBySlug(featured.categorySlug)
+    ? await fetchCategoryBySlug(featured.categorySlug)
     : undefined;
 
   const remaining = all.filter((article) => article.id !== featured?.id);
   const pagination = paginateArticles(remaining, page, 6);
   const activeCategory = categorySlug
-    ? getCategoryBySlug(categorySlug)
+    ? await fetchCategoryBySlug(categorySlug)
     : undefined;
 
-  const popular = getPopularArticles(4);
+  const popular = await fetchPopularArticles(4, articles);
 
   return (
     <>

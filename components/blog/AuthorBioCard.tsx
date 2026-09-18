@@ -11,7 +11,10 @@ export function AuthorBioCard({ author }: { author: Author }) {
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="relative shrink-0">
           <Image
-            src={author.avatar}
+            src={
+              author.avatar ||
+              "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80"
+            }
             alt={author.name}
             width={72}
             height={72}

@@ -1,4 +1,4 @@
-import { curatedDuas, DuaItem, namesOfAllah, NameOfAllah } from "@/data/islamic-data";
+import { curatedDuas, namesOfAllah } from "@/data/islamic-data";
 
 export interface LiveDailyWord {
   number: number;
@@ -20,107 +20,170 @@ export interface LiveDailyDua {
   isLive: boolean;
 }
 
-// Helper to compute day of year (1 to 365)
+export interface SpiritualDailyPayload {
+  word: LiveDailyWord;
+  dua: LiveDailyDua;
+  names: LiveDailyWord[];
+  duas: LiveDailyDua[];
+}
+
+const QURANIC_DUAS: Array<{
+  key: string;
+  category: string;
+  title: string;
+}> = [
+  { key: "2:201", category: "Guidance", title: "Dua for good in this life and the Hereafter" },
+  { key: "3:8", category: "Guidance", title: "Dua for a steadfast heart" },
+  { key: "7:23", category: "Forgiveness", title: "Dua of Adam for forgiveness" },
+  { key: "14:40", category: "Prayer", title: "Dua to establish prayer" },
+  { key: "17:24", category: "Family", title: "Dua of mercy for parents" },
+  { key: "18:10", category: "Guidance", title: "Dua of the People of the Cave" },
+  { key: "20:114", category: "Knowledge", title: "Dua for increase in knowledge" },
+  { key: "21:83", category: "Patience", title: "Dua of Ayyub in hardship" },
+  { key: "21:87", category: "Forgiveness", title: "Dua of Yunus" },
+  { key: "23:118", category: "Forgiveness", title: "Dua for forgiveness and mercy" },
+  { key: "26:83", category: "Wisdom", title: "Dua of Ibrahim for wisdom" },
+  { key: "28:16", category: "Forgiveness", title: "Dua of Musa for forgiveness" },
+];
+
 function getDayOfYear(date: Date = new Date()): number {
   const start = new Date(date.getFullYear(), 0, 0);
   const diff = date.getTime() - start.getTime();
-  const oneDay = 1000 * 60 * 60 * 24;
-  return Math.floor(diff / oneDay);
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
-// Fetch real Word / Name of the Day from Aladhan Asmaul Husna API
-export async function fetchLiveWordOfTheDay(date: Date = new Date()): Promise<LiveDailyWord> {
-  const dayOfYear = getDayOfYear(date);
-  const fallbackIndex = dayOfYear % namesOfAllah.length;
-  const fallback = namesOfAllah[fallbackIndex] || namesOfAllah[0];
-
+async function fetchJson<T>(url: string, timeoutMs = 8000): Promise<T> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const targetNumber = ((dayOfYear - 1) % 99) + 1;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
-
-    const res = await fetch(`https://api.aladhan.com/v1/asmaAlHusna/${targetNumber}`, {
+    const res = await fetch(url, {
       signal: controller.signal,
       next: { revalidate: 86400 },
     });
-    clearTimeout(timeoutId);
-
     if (!res.ok) {
-      return { ...fallback, isLive: false };
+      throw new Error(`Request failed: ${res.status}`);
     }
-
-    const json = await res.json();
-    if (json.code === 200 && json.data && json.data[0]) {
-      const item = json.data[0];
-      return {
-        number: item.number,
-        arabic: item.name,
-        transliteration: item.transliteration.toUpperCase(),
-        meaning: item.en?.meaning || fallback.meaning,
-        explanation: fallback.explanation,
-        isLive: true,
-      };
-    }
-    return { ...fallback, isLive: false };
-  } catch {
-    return { ...fallback, isLive: false };
+    return (await res.json()) as T;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
-// Fetch real Dua / Verse of the Day from Quran & Hadith Cloud API
-export async function fetchLiveDuaOfTheDay(date: Date = new Date()): Promise<LiveDailyDua> {
-  const dayOfYear = getDayOfYear(date);
-  const fallbackIndex = dayOfYear % curatedDuas.length;
-  const fallback = curatedDuas[fallbackIndex] || curatedDuas[0];
+function fallbackNames(): LiveDailyWord[] {
+  return namesOfAllah.map((item) => ({
+    ...item,
+    isLive: false,
+  }));
+}
 
-  // Specific Quranic Duas (Ayah IDs that are supplications)
-  const duaAyahs = [
-    { ayah: 201, surah: "Surah Al-Baqarah 2:201", category: "Guidance", title: "Dua for Good in this Life & Hereafter" },
-    { ayah: 286, surah: "Surah Al-Baqarah 2:286", category: "Forgiveness", title: "Dua for Forgiveness & Protection" },
-    { ayah: 358, surah: "Surah Ali 'Imran 3:8", category: "Guidance", title: "Dua for Steadfastness of Heart" },
-    { ayah: 376, surah: "Surah Ali 'Imran 3:26", category: "Praise", title: "Dua Acknowledging Allah's Sovereignty" },
-    { ayah: 1054, surah: "Surah Al-A'raf 7:23", category: "Forgiveness", title: "Dua of Adam & Hawwa for Mercy" },
-    { ayah: 1918, surah: "Surah Ibrahim 14:40", category: "Prayer", title: "Dua for Establishing Regular Prayer" },
-    { ayah: 2154, surah: "Surah Al-Isra 17:24", category: "Family", title: "Dua of Mercy for Parents" },
-    { ayah: 2424, surah: "Surah Ta-Ha 20:114", category: "Knowledge", title: "Dua for Increase in Beneficial Knowledge" },
-    { ayah: 2714, surah: "Surah Al-Furqan 25:74", category: "Family", title: "Dua for Comfort in Spouse & Children" },
-    { ayah: 3000, surah: "Surah Ash-Shu'ara 26:83", category: "Wisdom", title: "Dua of Ibrahim for Wisdom and Righteous Companionship" }
-  ];
+function fallbackDuas(): LiveDailyDua[] {
+  return curatedDuas.map((item) => ({
+    ...item,
+    isLive: false,
+  }));
+}
 
-  const target = duaAyahs[dayOfYear % duaAyahs.length];
+function mapAsmaName(item: {
+  number: number;
+  name: string;
+  transliteration: string;
+  en?: { meaning?: string };
+}): LiveDailyWord {
+  const meaning = item.en?.meaning?.trim() || "A beautiful name of Allah";
+  const local = namesOfAllah.find((n) => n.number === item.number);
+  return {
+    number: item.number,
+    arabic: item.name,
+    transliteration: (item.transliteration || "").toUpperCase().trim(),
+    meaning,
+    explanation: local?.explanation || `One of the beautiful names of Allah — ${meaning}.`,
+    isLive: true,
+  };
+}
 
+export async function fetchAllAsmaAlHusna(): Promise<LiveDailyWord[]> {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const json = await fetchJson<{
+      code: number;
+      data?: Array<{
+        number: number;
+        name: string;
+        transliteration: string;
+        en?: { meaning?: string };
+      }>;
+    }>("https://api.aladhan.com/v1/asmaAlHusna");
 
-    const res = await fetch(`https://api.alquran.cloud/v1/ayah/${target.ayah}/editions/quran-uthmani,en.sahih`, {
-      signal: controller.signal,
-      next: { revalidate: 86400 },
-    });
-    clearTimeout(timeoutId);
-
-    if (!res.ok) {
-      return { ...fallback, isLive: false };
+    if (json.code === 200 && Array.isArray(json.data) && json.data.length > 0) {
+      return json.data.map(mapAsmaName);
     }
-
-    const json = await res.json();
-    if (json.code === 200 && Array.isArray(json.data) && json.data.length >= 2) {
-      const arabicAyah = json.data[0].text;
-      const translation = json.data[1].text;
-
-      return {
-        id: `live-ayah-${target.ayah}`,
-        category: target.category,
-        title: target.title,
-        arabic: arabicAyah,
-        transliteration: fallback.transliteration,
-        translation: translation,
-        reference: target.surah,
-        isLive: true,
-      };
-    }
-    return { ...fallback, isLive: false };
   } catch {
-    return { ...fallback, isLive: false };
+    // Use local names if Aladhan is unavailable.
   }
+  return fallbackNames();
+}
+
+async function fetchQuranicDua(entry: (typeof QURANIC_DUAS)[number]): Promise<LiveDailyDua | null> {
+  try {
+    const json = await fetchJson<{
+      code: number;
+      data?: Array<{
+        text?: string;
+        surah?: { englishName?: string };
+      }>;
+    }>(
+      `https://api.alquran.cloud/v1/ayah/${entry.key}/editions/quran-uthmani,en.transliteration,en.sahih`
+    );
+
+    if (json.code !== 200 || !Array.isArray(json.data) || json.data.length < 3) {
+      return null;
+    }
+
+    const [arabicAyah, transliterationAyah, translationAyah] = json.data;
+    const arabic = arabicAyah.text?.trim();
+    const translation = translationAyah.text?.trim();
+    if (!arabic || !translation) return null;
+
+    const surahName = arabicAyah.surah?.englishName || "Qur'an";
+
+    return {
+      id: `quran-${entry.key}`,
+      category: entry.category,
+      title: entry.title,
+      arabic,
+      transliteration: transliterationAyah.text?.trim() || "",
+      translation,
+      reference: `Surah ${surahName} ${entry.key}`,
+      isLive: true,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchQuranicDuas(): Promise<LiveDailyDua[]> {
+  const results = await Promise.allSettled(QURANIC_DUAS.map((entry) => fetchQuranicDua(entry)));
+  const live = results
+    .map((result) => (result.status === "fulfilled" ? result.value : null))
+    .filter((item): item is LiveDailyDua => Boolean(item));
+
+  const sunnah = fallbackDuas();
+  const combined = [...live, ...sunnah];
+  return combined.length > 0 ? combined : sunnah;
+}
+
+export async function fetchSpiritualDaily(date: Date = new Date()): Promise<SpiritualDailyPayload> {
+  const dayOfYear = getDayOfYear(date);
+  const [names, duas] = await Promise.all([fetchAllAsmaAlHusna(), fetchQuranicDuas()]);
+
+  const safeNames = names.length > 0 ? names : fallbackNames();
+  const safeDuas = duas.length > 0 ? duas : fallbackDuas();
+  const liveDuas = safeDuas.filter((dua) => dua.isLive);
+  const dailyDuaPool = liveDuas.length > 0 ? liveDuas : safeDuas;
+
+  return {
+    names: safeNames,
+    duas: safeDuas,
+    word: safeNames[(dayOfYear - 1) % safeNames.length],
+    dua: dailyDuaPool[dayOfYear % dailyDuaPool.length],
+  };
 }

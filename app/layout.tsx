@@ -10,6 +10,8 @@ import { siteConfig } from "@/data/categories";
 import { absoluteUrl } from "@/lib/utils";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",

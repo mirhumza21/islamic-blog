@@ -4,6 +4,7 @@ import { Mail, MessageSquare, PenLine, Users } from "lucide-react";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { Newsletter } from "@/components/home/Newsletter";
 import { siteConfig } from "@/data/categories";
+import { getContactPageContent } from "@/lib/pages";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -12,38 +13,24 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-const contactReasons = [
-  {
-    icon: MessageSquare,
-    title: "General questions",
-    text: "Ask about our articles, guides, or how to find content on UmrahZone.",
-  },
-  {
-    icon: PenLine,
-    title: "Content corrections",
-    text: "Spotted an error in a verse, reference, or factual detail? Let us know.",
-  },
-  {
-    icon: Users,
-    title: "Collaboration",
-    text: "Writers, educators, and partners with aligned values are welcome to reach out.",
-  },
-];
+const reasonIcons = [MessageSquare, PenLine, Users];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const content = await getContactPageContent();
+  const reasons = content.reasons || [];
+
   return (
     <>
       <section className="border-b border-border bg-cream/50 py-16 lg:py-20">
         <div className="container-editorial max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-green">
-            Contact
+            {content.eyebrow}
           </p>
           <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            We&apos;d love to hear from you
+            {content.headline}
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-muted">
-            Questions, corrections, or thoughtful feedback — send us a message
-            and we&apos;ll get back to you as soon as we can.
+            {content.subheadline}
           </p>
         </div>
       </section>
@@ -53,11 +40,10 @@ export default function ContactPage() {
           <div className="lg:col-span-7">
             <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
               <h2 className="font-serif text-2xl font-semibold text-foreground">
-                Send a message
+                {content.formTitle}
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">
-                Fill in the form below and your email app will open with everything
-                ready to send.
+                {content.formText}
               </p>
               <div className="mt-8">
                 <ContactForm />
@@ -68,10 +54,10 @@ export default function ContactPage() {
           <aside className="space-y-6 lg:col-span-5">
             <div className="rounded-2xl border border-border bg-cream/60 p-6">
               <h2 className="font-serif text-2xl font-semibold text-foreground">
-                Direct email
+                {content.emailTitle}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted">
-                Prefer email? Write to us directly.
+                {content.emailText}
               </p>
               <a
                 href={`mailto:${siteConfig.email}`}
@@ -84,35 +70,36 @@ export default function ContactPage() {
 
             <div className="rounded-2xl border border-border bg-card p-6">
               <h2 className="font-serif text-2xl font-semibold text-foreground">
-                What can we help with?
+                {content.helpTitle}
               </h2>
               <ul className="mt-6 space-y-5">
-                {contactReasons.map((item) => (
-                  <li key={item.title} className="flex gap-3">
-                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-cream/80 text-sand">
-                      <item.icon className="h-4 w-4" strokeWidth={1.6} aria-hidden />
-                    </span>
-                    <span>
-                      <h3 className="text-sm font-semibold text-foreground">
-                        {item.title}
-                      </h3>
-                      <p className="mt-1 text-sm leading-relaxed text-muted">
-                        {item.text}
-                      </p>
-                    </span>
-                  </li>
-                ))}
+                {reasons.map((item: { title: string; text: string }, index: number) => {
+                  const Icon = reasonIcons[index] || MessageSquare;
+                  return (
+                    <li key={item.title} className="flex gap-3">
+                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-cream/80 text-sand">
+                        <Icon className="h-4 w-4" strokeWidth={1.6} aria-hidden />
+                      </span>
+                      <span>
+                        <h3 className="text-sm font-semibold text-foreground">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-sm leading-relaxed text-muted">
+                          {item.text}
+                        </p>
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
             <div className="rounded-2xl border border-border bg-card/80 p-6">
               <h2 className="text-sm font-semibold text-foreground">
-                Before you write
+                {content.noteTitle}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted">
-                UmrahZone is a content platform. We do not offer travel booking,
-                visa services, or package sales. For sacred text corrections,
-                please include the article link and source if possible.
+                {content.noteText}
               </p>
               <p className="mt-4 text-sm text-muted">
                 See also{" "}

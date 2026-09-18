@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArticleCard } from "@/components/blog/ArticleCard";
 import type { SearchResult } from "@/types/blog";
-import { getCategoryBySlug } from "@/lib/articles";
 
 export function SearchResults({
   query,
@@ -35,7 +34,15 @@ export function SearchResults({
         <ArticleCard
           key={result.article.id}
           article={result.article}
-          category={getCategoryBySlug(result.article.categorySlug)}
+          category={{
+            id: result.article.categorySlug,
+            slug: result.article.categorySlug,
+            name: result.categoryName,
+            description: "",
+            shortDescription: "",
+            image: result.article.image,
+            icon: "book",
+          }}
         />
       ))}
     </div>

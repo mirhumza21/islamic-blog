@@ -54,7 +54,7 @@ export async function getHomePageContent() {
       .maybeSingle();
 
     if (data?.value) {
-      return data.value;
+      return { ...defaultHeroContent, ...data.value };
     }
   } catch (err) {
     console.error("Could not fetch page_home from Supabase, using default:", err);
@@ -64,20 +64,90 @@ export async function getHomePageContent() {
 }
 
 export async function getAboutPageContent() {
+  return getPageSetting("page_about", defaultAboutContent);
+}
+
+export const defaultContactContent = {
+  eyebrow: "Contact",
+  headline: "We'd love to hear from you",
+  subheadline:
+    "Questions, corrections, or thoughtful feedback — send us a message and we'll get back to you as soon as we can.",
+  formTitle: "Send a message",
+  formText:
+    "Fill in the form below and your email app will open with everything ready to send.",
+  emailTitle: "Direct email",
+  emailText: "Prefer email? Write to us directly.",
+  helpTitle: "What can we help with?",
+  reasons: [
+    {
+      title: "General questions",
+      text: "Ask about our articles, guides, or how to find content on UmrahZone.",
+    },
+    {
+      title: "Content corrections",
+      text: "Spotted an error in a verse, reference, or factual detail? Let us know.",
+    },
+    {
+      title: "Collaboration",
+      text: "Writers, educators, and partners with aligned values are welcome to reach out.",
+    },
+  ],
+  noteTitle: "Before you write",
+  noteText:
+    "UmrahZone is a content platform. We do not offer travel booking, visa services, or package sales. For sacred text corrections, please include the article link and source if possible.",
+};
+
+export const defaultPrivacyContent = {
+  title: "Privacy Policy",
+  lastUpdated: "March 10, 2026",
+  body: `<p>UmrahZone respects your privacy. This page explains what information we may collect when you browse the site or subscribe to updates.</p>
+<h2>Information we collect</h2>
+<p>If you subscribe to our newsletter, we collect the email address you provide. Standard analytics or hosting logs may collect technical data such as browser type and approximate location.</p>
+<h2>How we use information</h2>
+<p>Email addresses are used only to send requested updates. We do not sell personal information.</p>
+<h2>Contact</h2>
+<p>For privacy questions, email <a href="mailto:hello@umrahzone.com">hello@umrahzone.com</a>.</p>`,
+};
+
+export const defaultTermsContent = {
+  title: "Terms of Use",
+  lastUpdated: "March 10, 2026",
+  body: `<p>By using UmrahZone, you agree to read content for personal educational and inspirational purposes. Articles are general information and are not a substitute for qualified scholarly or legal advice.</p>
+<h2>Content accuracy</h2>
+<p>We strive for clarity and care. Ritual details can vary by school of thought. Always verify important religious rulings with a trusted scholar.</p>
+<h2>Intellectual property</h2>
+<p>Site design and original editorial content belong to UmrahZone unless otherwise noted. Please do not republish substantial content without permission.</p>
+<h2>Contact</h2>
+<p>Questions about these terms can be sent to <a href="mailto:hello@umrahzone.com">hello@umrahzone.com</a>.</p>`,
+};
+
+export async function getPageSetting<T>(key: string, fallback: T): Promise<T> {
   try {
     const supabase = getAdminSupabase();
     const { data } = await supabase
       .from("site_settings")
       .select("value")
-      .eq("key", "page_about")
+      .eq("key", key)
       .maybeSingle();
 
-    if (data?.value) {
-      return { ...defaultAboutContent, ...data.value };
+    if (data?.value && typeof data.value === "object") {
+      return { ...fallback, ...data.value };
     }
   } catch (err) {
-    console.error("Could not fetch page_about from Supabase, using default:", err);
+    console.error(`Could not fetch ${key} from Supabase, using default:`, err);
   }
 
-  return defaultAboutContent;
+  return fallback;
+}
+
+export async function getContactPageContent() {
+  return getPageSetting("page_contact", defaultContactContent);
+}
+
+export async function getPrivacyPageContent() {
+  return getPageSetting("page_privacy", defaultPrivacyContent);
+}
+
+export async function getTermsPageContent() {
+  return getPageSetting("page_terms", defaultTermsContent);
 }
