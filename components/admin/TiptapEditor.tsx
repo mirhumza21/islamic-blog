@@ -12,7 +12,7 @@ import {
   useEditor,
   EditorContent,
   Extension,
-  Node,
+  Node as TiptapNode,
   mergeAttributes,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -100,7 +100,7 @@ const FONT_SIZE_OPTIONS: { value: string; label: string }[] = [
   { value: "40px", label: "40px" },
 ];
 
-const PreserveCard = Node.create({
+const PreserveCard = TiptapNode.create({
   name: "preserveCard",
   group: "block",
   content: "block*",
@@ -254,7 +254,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
       const handleOutside = (e: MouseEvent) => {
         if (
           islamicMenuRef.current &&
-          !islamicMenuRef.current.contains(e.target as Node)
+          !islamicMenuRef.current.contains(e.target as HTMLElement)
         ) {
           setShowIslamicMenu(false);
         }
