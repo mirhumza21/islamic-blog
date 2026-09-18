@@ -11,7 +11,7 @@ export function formatDate(date: string): string {
     month: "short",
     year: "numeric",
   }).format(new Date(date));
-}
+}  
 
 export function absoluteUrl(path = ""): string {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://umrahzone.com";

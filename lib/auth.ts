@@ -14,7 +14,7 @@ export interface AdminUser {
 }
 
 /**
- * Sign a JWT for the admin session valid for 7 days
+ * Sign a JWT for the  admin session valid for 7 days
  */
 export async function signAdminToken(user: AdminUser): Promise<string> {
   return await new SignJWT({ email: user.email, role: user.role })
