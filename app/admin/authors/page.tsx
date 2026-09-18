@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Users, Plus, Edit, Trash2, X, Sparkles } from "lucide-react";
 import { getHeadingId } from "@/lib/articles";
+import { CardGridSkeleton } from "@/components/admin/AdminSkeletons";
 
 export default function AdminAuthorsPage() {
   const [authors, setAuthors] = useState<any[]>([]);
@@ -18,7 +19,8 @@ export default function AdminAuthorsPage() {
   const [saving, setSaving] = useState(false);
 
   const fetchAuthors = async () => {
-    setLoading(true);
+    const isFirstLoad = authors.length === 0;
+    if (isFirstLoad) setLoading(true);
     try {
       const res = await fetch("/api/admin/authors");
       if (res.ok) {
@@ -140,8 +142,8 @@ export default function AdminAuthorsPage() {
       {/* Authors Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {loading ? (
-          <div className="col-span-full py-20 text-center text-xs text-gray-400">
-            Loading authors...
+          <div className="col-span-full">
+            <CardGridSkeleton count={6} />
           </div>
         ) : authors.length === 0 ? (
           <div className="col-span-full py-20 text-center text-xs text-gray-500">

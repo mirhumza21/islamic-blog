@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, RotateCcw, Save } from "lucide-react";
+import { FormPageSkeleton } from "@/components/admin/AdminSkeletons";
 
 type Field =
   | { key: string; label: string; type: "text" | "textarea"; rows?: number }
@@ -61,11 +62,7 @@ export function CmsPageEditor({
   };
 
   if (loading) {
-    return (
-      <div className="py-24 text-center text-sm text-gray-400">
-        Loading {title.toLowerCase()} editor...
-      </div>
-    );
+    return <FormPageSkeleton />;
   }
 
   return (

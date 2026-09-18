@@ -41,7 +41,7 @@ export function AdminSidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 select-none shadow-sm">
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 select-none shadow-sm sticky top-0 h-screen overflow-y-auto">
       <div>
         {/* Logo / Brand */}
         <div className="p-5 border-b border-gray-100 flex items-center gap-3">

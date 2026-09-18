@@ -1,15 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Plus, Database, CheckCircle2, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function AdminTopNav() {
+  const pathname = usePathname();
+  const [routeBusy, setRouteBusy] = useState(false);
   const [seeding, setSeeding] = useState(false);
   const [seedStatus, setSeedStatus] = useState<{
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+
+  useEffect(() => {
+    setRouteBusy(true);
+    const timer = window.setTimeout(() => setRouteBusy(false), 450);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
 
   const handleSyncDatabase = async () => {
     if (
@@ -50,7 +59,14 @@ export function AdminTopNav() {
   };
 
   return (
-    <header className="h-14 border-b border-gray-200 bg-white px-6 flex items-center justify-between shrink-0 shadow-sm">
+    <header className="relative h-14 border-b border-gray-200 bg-white px-6 flex items-center justify-between shrink-0 shadow-sm sticky top-0 z-40">
+      <div
+        className={`pointer-events-none absolute inset-x-0 top-0 h-0.5 overflow-hidden ${
+          routeBusy ? "opacity-100" : "opacity-0"
+        } transition-opacity`}
+      >
+        <div className="h-full w-1/3 bg-emerald-600 animate-[admin-progress_0.45s_ease-out]" />
+      </div>
       <div className="flex items-center gap-3">
         <span className="text-sm font-semibold text-gray-700">
           Content Management

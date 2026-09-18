@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Save, Sparkles, Globe, Mail, Share2, CheckCircle2 } from "lucide-react";
 import { siteConfig as defaultSiteConfig } from "@/data/categories";
+import { FormPageSkeleton } from "@/components/admin/AdminSkeletons";
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<any>(defaultSiteConfig);
@@ -29,6 +30,10 @@ export default function AdminSettingsPage() {
     }
     loadSettings();
   }, []);
+
+  if (loading) {
+    return <FormPageSkeleton titleWidth="w-72" />;
+  }
 
   const handleChange = (key: string, value: any) => {
     setSettings((prev: any) => ({ ...prev, [key]: value }));

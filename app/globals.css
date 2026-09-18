@@ -115,6 +115,15 @@
     overflow-wrap: break-word;
   }
 
+  @keyframes admin-progress {
+    from {
+      transform: translateX(-120%);
+    }
+    to {
+      transform: translateX(420%);
+    }
+  }
+
   .hero-gradient-desktop {
     background: linear-gradient(
       90deg,

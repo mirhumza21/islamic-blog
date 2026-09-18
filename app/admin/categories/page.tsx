@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { getHeadingId } from "@/lib/articles";
+import { CardGridSkeleton } from "@/components/admin/AdminSkeletons";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -29,7 +30,8 @@ export default function AdminCategoriesPage() {
   const [saving, setSaving] = useState(false);
 
   const fetchCategories = async () => {
-    setLoading(true);
+    const isFirstLoad = categories.length === 0;
+    if (isFirstLoad) setLoading(true);
     try {
       const res = await fetch("/api/admin/categories");
       if (res.ok) {
@@ -162,8 +164,8 @@ export default function AdminCategoriesPage() {
       {/* Categories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {loading ? (
-          <div className="col-span-full py-20 text-center text-xs text-gray-400">
-            Loading categories...
+          <div className="col-span-full">
+            <CardGridSkeleton count={6} />
           </div>
         ) : categories.length === 0 ? (
           <div className="col-span-full py-20 text-center text-xs text-gray-500">

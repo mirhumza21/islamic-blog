@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { ArticleEditor } from "@/components/admin/ArticleEditor";
+import { ArticleEditorSkeleton } from "@/components/admin/AdminSkeletons";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -36,11 +37,7 @@ export default function EditArticlePage({
   }, [resolvedParams.id]);
 
   if (loading) {
-    return (
-      <div className="py-24 text-center text-xs text-gray-400">
-        Loading article details...
-      </div>
-    );
+    return <ArticleEditorSkeleton />;
   }
 
   if (error || !article) {

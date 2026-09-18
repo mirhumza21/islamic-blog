@@ -55,6 +55,7 @@ import {
 import { uploadClientImage } from "@/lib/uploadClientImage";
 import { toast } from "@/components/admin/Toast";
 import { CustomSelect } from "./CustomSelect";
+import { EditorChromeSkeleton } from "./AdminSkeletons";
 
 export interface TiptapEditorHandle {
   insertHTML: (html: string) => void;
@@ -348,11 +349,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
     }, [imageAltModal]);
 
     if (!editor) {
-      return (
-        <div className="h-[520px] bg-gray-50 flex items-center justify-center text-sm text-gray-400 rounded-xl border border-gray-200">
-          Loading rich editor...
-        </div>
-      );
+      return <EditorChromeSkeleton minHeight={minHeight} />;
     }
 
     const openAltModal = (state: Exclude<ImageAltModalState, null>) => {

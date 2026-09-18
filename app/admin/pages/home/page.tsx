@@ -15,6 +15,7 @@ import {
   Quote,
   ShieldCheck,
 } from "lucide-react";
+import { FormPageSkeleton } from "@/components/admin/AdminSkeletons";
 import { heroContent as defaultHeroContent } from "@/data/navigation";
 
 export default function EditHomePage() {
@@ -102,11 +103,7 @@ export default function EditHomePage() {
   };
 
   if (loading) {
-    return (
-      <div className="py-24 text-center text-xs text-gray-400">
-        Loading home page editor...
-      </div>
-    );
+    return <FormPageSkeleton titleWidth="w-48" />;
   }
 
   const titleLines = content.titleLines || ["Guidance for", "Every Step of"];

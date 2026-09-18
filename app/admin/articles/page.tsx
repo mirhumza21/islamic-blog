@@ -14,6 +14,7 @@ import {
   Clock,
   Filter,
 } from "lucide-react";
+import { TableSkeleton } from "@/components/admin/AdminSkeletons";
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<any[]>([]);
@@ -25,7 +26,8 @@ export default function AdminArticlesPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchArticles = async () => {
-    setLoading(true);
+    const isFirstLoad = articles.length === 0;
+    if (isFirstLoad) setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
@@ -169,9 +171,7 @@ export default function AdminArticlesPage() {
       {/* Articles Table */}
       <div className="bg-white border border-gray-200 shadow-sm rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="py-20 text-center text-gray-400 text-xs">
-            Loading articles...
-          </div>
+          <TableSkeleton rows={8} cols={7} />
         ) : articles.length === 0 ? (
           <div className="py-20 text-center">
             <p className="text-sm font-semibold text-gray-700">

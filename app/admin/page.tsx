@@ -16,6 +16,7 @@ import {
   Clock,
   CheckCircle2,
 } from "lucide-react";
+import { Pulse } from "@/components/admin/AdminSkeletons";
 
 interface DashboardStats {
   totalArticles: number;
@@ -157,7 +158,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-gray-900">
-              {loading ? "..." : stats.totalArticles}
+              {loading ? <Pulse className="inline-block h-7 w-12" /> : stats.totalArticles}
             </span>
             <span className="text-xs font-medium text-emerald-600">
               {stats.publishedArticles} published
@@ -174,7 +175,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-gray-900">
-              {loading ? "..." : stats.totalCategories}
+              {loading ? <Pulse className="inline-block h-7 w-12" /> : stats.totalCategories}
             </span>
             <span className="text-xs text-gray-500">topics</span>
           </div>
@@ -189,7 +190,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-gray-900">
-              {loading ? "..." : stats.totalAuthors}
+              {loading ? <Pulse className="inline-block h-7 w-12" /> : stats.totalAuthors}
             </span>
             <span className="text-xs text-gray-500">contributors</span>
           </div>
@@ -204,7 +205,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-gray-900">
-              {loading ? "..." : stats.draftArticles}
+              {loading ? <Pulse className="inline-block h-7 w-12" /> : stats.draftArticles}
             </span>
             <span className="text-xs font-medium text-purple-600">in progress</span>
           </div>
@@ -233,7 +234,13 @@ export default function AdminDashboardPage() {
             </Link>
           </div>
 
-          {stats.recentArticles.length === 0 ? (
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Pulse key={i} className="h-14 w-full rounded-lg" />
+              ))}
+            </div>
+          ) : stats.recentArticles.length === 0 ? (
             <div className="text-center py-12 border border-dashed border-gray-200 rounded-xl">
               <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
               <p className="text-sm text-gray-600 font-medium">

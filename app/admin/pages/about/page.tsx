@@ -18,6 +18,7 @@ import {
   HelpCircle,
   Layers,
 } from "lucide-react";
+import { FormPageSkeleton } from "@/components/admin/AdminSkeletons";
 import { defaultAboutContent } from "@/lib/pages";
 
 export default function EditAboutPage() {
@@ -101,11 +102,7 @@ export default function EditAboutPage() {
   };
 
   if (loading) {
-    return (
-      <div className="py-24 text-center text-xs text-gray-400">
-        Loading about page editor...
-      </div>
-    );
+    return <FormPageSkeleton titleWidth="w-52" />;
   }
 
   const principles = content.principles || [];
