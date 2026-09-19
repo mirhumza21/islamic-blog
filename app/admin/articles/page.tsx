@@ -12,7 +12,6 @@ import {
   Flame,
   CheckCircle2,
   Clock,
-  Filter,
 } from "lucide-react";
 import { TableSkeleton } from "@/components/admin/AdminSkeletons";
 
@@ -115,7 +114,7 @@ export default function AdminArticlesPage() {
 
         <Link
           href="/admin/articles/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all self-start sm:self-auto whitespace-nowrap"
         >
           <Plus className="w-4 h-4" />
           <span>Write New Article</span>
@@ -123,8 +122,8 @@ export default function AdminArticlesPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-4 flex flex-col md:flex-row items-center gap-3">
-        <form onSubmit={handleSearchSubmit} className="relative flex-1 w-full">
+      <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-4 flex flex-col gap-3">
+        <form onSubmit={handleSearchSubmit} className="relative w-full">
           <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
@@ -135,7 +134,7 @@ export default function AdminArticlesPage() {
           />
         </form>
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-2">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}

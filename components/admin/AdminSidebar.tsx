@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
@@ -10,55 +10,61 @@ import {
   Settings,
   Layers,
   ExternalLink,
-  LogOut,
   Sparkles,
+  Globe,
+  X,
 } from "lucide-react";
-import { useState } from "react";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "All Articles", href: "/admin/articles", icon: FileText },
   { name: "Pages", href: "/admin/pages", icon: Layers },
+  { name: "Global", href: "/admin/global", icon: Globe },
   { name: "Categories", href: "/admin/categories", icon: FolderTree },
   { name: "Authors", href: "/admin/authors", icon: Users },
   { name: "Site & SEO Settings", href: "/admin/settings", icon: Settings },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const pathname = usePathname();
-  const router = useRouter();
-  const [loggingOut, setLoggingOut] = useState(false);
-
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    try {
-      await fetch("/api/admin/auth/logout", { method: "POST" });
-      router.push("/admin/login");
-      router.refresh();
-    } catch {
-      setLoggingOut(false);
-    }
-  };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 select-none shadow-sm sticky top-0 h-screen overflow-y-auto">
+    <aside
+      className={`fixed md:sticky top-0 left-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 select-none shadow-sm h-screen overflow-y-auto transition-transform duration-200 ${
+        open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+      }`}
+    >
       <div>
-        {/* Logo / Brand */}
-        <div className="p-5 border-b border-gray-100 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-md">
-            <Sparkles className="w-5 h-5 text-white" />
+        <div className="p-5 border-b border-gray-100 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-md shrink-0">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <span className="font-bold text-base text-gray-900 tracking-tight block leading-tight">
+                UmrahZone
+              </span>
+              <span className="text-[11px] uppercase tracking-wider text-emerald-600 font-semibold block">
+                Admin Panel
+              </span>
+            </div>
           </div>
-          <div>
-            <span className="font-bold text-base text-gray-900 tracking-tight block leading-tight">
-              UmrahZone
-            </span>
-            <span className="text-[11px] uppercase tracking-wider text-emerald-600 font-semibold block">
-              Admin Panel
-            </span>
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="md:hidden p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+            aria-label="Close menu"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Navigation items - rock solid stable without layout shifts */}
         <nav className="p-3 space-y-1">
           {navigation.map((item) => {
             const isActive =
@@ -71,6 +77,7 @@ export function AdminSidebar() {
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={onClose}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium border transition-colors duration-150 ${
                   isActive
                     ? "bg-emerald-50 text-emerald-800 border-emerald-200"
@@ -89,8 +96,7 @@ export function AdminSidebar() {
         </nav>
       </div>
 
-      {/* Footer */}
-      <div className="p-3 border-t border-gray-100 space-y-1">
+      <div className="p-3 border-t border-gray-100">
         <a
           href="/"
           target="_blank"
@@ -105,15 +111,6 @@ export function AdminSidebar() {
             ↗ Open
           </span>
         </a>
-
-        <button
-          onClick={handleLogout}
-          disabled={loggingOut}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-lg text-xs font-medium text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-50"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>{loggingOut ? "Signing out..." : "Sign Out"}</span>
-        </button>
       </div>
     </aside>
   );

@@ -4,7 +4,7 @@ import { FeaturedArticle } from "@/components/home/FeaturedArticle";
 import { Hero } from "@/components/home/Hero";
 import { IslamicCalendarHub } from "@/components/home/IslamicCalendarHub";
 import { LatestArticles } from "@/components/home/LatestArticles";
-import { Newsletter } from "@/components/home/Newsletter";
+import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
 import {
   fetchAllArticles,
   fetchAllCategories,
@@ -37,20 +37,20 @@ export default async function HomePage() {
       <Hero content={homeContent} />
 
       {/* Daily Spiritual Essentials */}
-      <DailySpiritualHub />
+      <DailySpiritualHub content={homeContent.dailySpiritual} />
 
       {/* Islamic Calendar & Event Countdown */}
-      <IslamicCalendarHub />
+      <IslamicCalendarHub content={homeContent.calendar} />
 
       {/* Browse by Category */}
       <section className="container-editorial py-12 lg:py-16">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-green">
-              Explore Knowledge
+              {homeContent.categories?.eyebrow}
             </p>
             <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Browse by Category
+              {homeContent.categories?.title}
             </h2>
           </div>
         </div>
@@ -63,6 +63,7 @@ export default async function HomePage() {
           article={featured}
           author={author}
           category={category}
+          content={homeContent.featured}
         />
       ) : null}
 
@@ -71,9 +72,10 @@ export default async function HomePage() {
         articles={latest}
         popular={popular}
         categories={categories}
+        content={homeContent.latest}
       />
 
-      <Newsletter />
+      <GlobalNewsletter />
     </>
   );
 }

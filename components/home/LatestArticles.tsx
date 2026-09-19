@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArticleGrid } from "@/components/blog/ArticleGrid";
 import { SidebarSearch } from "@/components/home/SidebarSearch";
 import { formatDate } from "@/lib/utils";
+import { defaultLatestSection } from "@/data/home-sections";
 import type { Article, Category } from "@/types/blog";
 import {
   ArrowRight,
@@ -20,11 +21,14 @@ export function LatestArticles({
   articles,
   popular,
   categories,
+  content,
 }: {
   articles: Article[];
   popular: Article[];
   categories: Category[];
+  content?: Partial<typeof defaultLatestSection>;
 }) {
+  const copy = { ...defaultLatestSection, ...content };
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const filteredArticles =
@@ -42,18 +46,18 @@ export function LatestArticles({
         <div>
           <div className="inline-flex items-center gap-1.5 rounded-full bg-green/10 px-3 py-0.5 text-[11px] font-bold uppercase tracking-[0.16em] text-green">
             <Sparkles className="h-3 w-3" />
-            Fresh Publications
+            {copy.eyebrow}
           </div>
           <h2 className="mt-2 font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Latest Articles &amp; Practical Guides
+            {copy.title}
           </h2>
         </div>
 
         <Link
-          href="/blog"
+          href={copy.viewAllHref || "/blog"}
           className="group inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-green transition-colors hover:text-green-dark"
         >
-          <span>View All Articles</span>
+          <span>{copy.viewAllLabel}</span>
           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
         </Link>
       </div>
@@ -69,7 +73,7 @@ export function LatestArticles({
               : "border border-border/80 bg-card text-foreground/75 hover:bg-cream"
           }`}
         >
-          All Topics
+          {copy.allTopicsLabel}
         </button>
         {categories.slice(0, 5).map((cat) => (
           <button

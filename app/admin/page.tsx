@@ -14,7 +14,6 @@ import {
   ExternalLink,
   Edit,
   Clock,
-  CheckCircle2,
 } from "lucide-react";
 import { Pulse } from "@/components/admin/AdminSkeletons";
 
@@ -133,16 +132,28 @@ export default function AdminDashboardPage() {
               Supabase Database Connection
             </p>
             <p className="text-xs text-gray-500">
-              {stats.totalArticles > 0
-                ? `Connected! Loaded ${stats.totalArticles} articles, ${stats.totalCategories} categories, and ${stats.totalAuthors} authors.`
-                : "Add your Supabase URL & keys to .env.local, then click 'Sync DB / Seed' to import all content."}
+              {loading
+                ? "Checking connection..."
+                : dbConnected
+                  ? `Connected. ${stats.totalArticles} articles, ${stats.totalCategories} categories, ${stats.totalAuthors} authors.`
+                  : "Could not reach the database. Check your Supabase keys in .env.local."}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            Live Ready
+          <span
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border ${
+              dbConnected === false
+                ? "bg-rose-50 text-rose-700 border-rose-200"
+                : "bg-emerald-50 text-emerald-700 border-emerald-200"
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                dbConnected === false ? "bg-rose-500" : "bg-emerald-500 animate-pulse"
+              }`}
+            />
+            {dbConnected === false ? "Disconnected" : "Connected"}
           </span>
         </div>
       </div>
@@ -244,11 +255,10 @@ export default function AdminDashboardPage() {
             <div className="text-center py-12 border border-dashed border-gray-200 rounded-xl">
               <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
               <p className="text-sm text-gray-600 font-medium">
-                No articles found in database yet
+                No articles yet
               </p>
               <p className="text-xs text-gray-400 mt-1 max-w-sm mx-auto">
-                Click the &quot;Sync DB / Seed&quot; button in the top bar or write your
-                first post to get started!
+                Write your first post from Articles to get started.
               </p>
             </div>
           ) : (

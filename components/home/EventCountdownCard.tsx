@@ -2,9 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { upcomingIslamicEvents, IslamicEvent } from "@/data/islamic-data";
+import { defaultCalendar } from "@/data/home-sections";
 import { Timer } from "lucide-react";
 
-export function EventCountdownCard() {
+export function EventCountdownCard({
+  label = defaultCalendar.countdownLabel,
+  subtitle = defaultCalendar.countdownSubtitle,
+  selectLabel = defaultCalendar.selectMilestoneLabel,
+}: {
+  label?: string;
+  subtitle?: string;
+  selectLabel?: string;
+}) {
   const [selectedEvent, setSelectedEvent] = useState<IslamicEvent>(
     upcomingIslamicEvents[0]
   );
@@ -84,10 +93,10 @@ export function EventCountdownCard() {
         {/* Header */}
         <div className="text-center">
           <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8e6a2c]">
-            EVENT COUNTDOWN
+            {label}
           </div>
           <p className="mt-1 text-xs text-muted">
-            Anticipating the blessed moments of the Islamic calendar
+            {subtitle}
           </p>
         </div>
 
@@ -132,7 +141,7 @@ export function EventCountdownCard() {
       {/* Event Selector Chips */}
       <div className="relative z-10 mt-6 border-t border-[#ebdcc8] pt-4">
         <div className="text-[10px] font-bold uppercase tracking-wider text-muted mb-2 text-center">
-          Select Milestone:
+          {selectLabel}
         </div>
         <div className="flex flex-wrap items-center justify-center gap-1.5">
           {upcomingIslamicEvents.map((evt) => (

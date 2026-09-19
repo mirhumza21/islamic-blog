@@ -10,7 +10,7 @@ import { PrevNextNavigation } from "@/components/blog/PrevNextNavigation";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { RelatedArticles } from "@/components/blog/RelatedArticles";
 import { TableOfContents } from "@/components/blog/TableOfContents";
-import { Newsletter } from "@/components/home/Newsletter";
+import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
 import {
   extractTableOfContents,
   fetchAllArticles,
@@ -154,38 +154,32 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     <>
       <ReadingProgress />
 
-      <main className="mx-auto w-full max-w-[1160px] px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-        {/* Centered Editorial Header with Featured Image */}
+      <main className="container-editorial py-8 sm:py-10 lg:py-12">
         <ArticleHeader
           article={article}
           author={resolvedAuthor}
           category={resolvedCategory}
         />
 
-        {/* 2-Column Editorial Reading Layout */}
-        <div className="mx-auto mt-12 grid max-w-5xl gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-10 xl:gap-12 items-start">
-          {/* Left Column: Main Article Content Stream */}
-          <div className="min-w-0 order-last lg:order-1 lg:col-span-8 xl:col-span-8.5">
-            {/* Quick Takeaways Box */}
+        <div className="mt-10 grid items-start gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
+          <div className="order-last min-w-0 lg:order-1 lg:col-span-8">
             <ArticleTakeaways article={article} />
 
-            {/* Main Rich Content */}
             <article id="article-content" className="w-full">
               <ArticleBody content={article.content} />
             </article>
 
-            {/* Article Tags */}
             {article.tags && article.tags.length > 0 ? (
               <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-border/80 pt-6">
-                <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted mr-1">
+                <span className="mr-1 flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted">
                   <Tag className="h-3.5 w-3.5 text-sand" />
-                  Related Topics:
+                  Topics
                 </span>
                 {article.tags.map((tag) => (
                   <Link
                     key={tag}
                     href={`/search?q=${encodeURIComponent(tag)}`}
-                    className="rounded-full border border-border/80 bg-card px-3.5 py-1 text-xs font-medium text-foreground/80 transition-colors hover:border-green hover:bg-cream hover:text-green shadow-xs"
+                    className="rounded-full border border-border/80 bg-card px-3.5 py-1 text-xs font-medium text-foreground/80 shadow-xs transition-colors hover:border-green hover:bg-cream hover:text-green"
                   >
                     #{tag}
                   </Link>
@@ -193,33 +187,30 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               </div>
             ) : null}
 
-            {/* Reader Feedback (Helpful?) */}
             <ArticleFeedback />
 
-            {/* Author Bio Card */}
             <div className="mt-8">
               <AuthorBioCard author={resolvedAuthor} />
             </div>
 
-            {/* Previous / Next Article Navigation */}
             <div className="mt-8">
               <PrevNextNavigation prev={prev} next={next} />
             </div>
           </div>
 
-          {/* Right Column: Sticky Table of Contents & Quick Share */}
-          <aside className="min-w-0 order-first lg:order-2 lg:col-span-4 xl:col-span-3.5">
-            <TableOfContents items={toc} articleTitle={article.title} shareUrl={url} />
+          <aside className="order-first min-w-0 lg:order-2 lg:col-span-4">
+            <TableOfContents
+              items={toc}
+              articleTitle={article.title}
+              shareUrl={url}
+            />
           </aside>
         </div>
 
-        {/* Related Articles Section */}
-        <div className="mx-auto max-w-5xl">
-          <RelatedArticles articles={related} categories={categories} />
-        </div>
+        <RelatedArticles articles={related} categories={categories} />
       </main>
 
-      <Newsletter />
+      <GlobalNewsletter />
 
       <script
         type="application/ld+json"

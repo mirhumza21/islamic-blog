@@ -1,77 +1,98 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen, Compass } from "lucide-react";
 import { HeroReveal } from "@/components/home/HeroReveal";
 import { heroContent } from "@/data/navigation";
+import { HeroAyatSlider } from "@/components/home/HeroAyatSlider";
 
 export function HeroContent({ content }: { content?: typeof heroContent }) {
   const data = content || heroContent;
-  const titleLines = data.titleLines || heroContent.titleLines;
+  const titleLines = data.titleLines?.length
+    ? data.titleLines
+    : heroContent.titleLines;
+  const accent = data.titleAccent || heroContent.titleAccent;
+  const accentParts = accent.trim().split(/\s+/);
+  const journeyWord = accentParts.pop() || accent;
+  const accentLead = accentParts.join(" ");
 
   return (
-    <div className="relative z-10 w-full max-w-[36rem] lg:max-w-[38rem]">
-      <HeroReveal delay={0.05}>
-        <div className="inline-flex items-center gap-2 rounded-full border border-sand/30 bg-cream/80 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-sand shadow-xs backdrop-blur-xs">
-          <span className="h-1.5 w-1.5 rounded-full bg-sand" />
-          {data.eyebrow}
-        </div>
-      </HeroReveal>
-
-      <HeroReveal delay={0.12}>
+    <div className="relative z-10 flex w-full max-w-[38rem] flex-col lg:max-w-[42rem]">
+      {/* 1. Main Editorial Headline: Exactly 3 Lines matching reference */}
+      <HeroReveal delay={0.04}>
         <h1
           id="hero-heading"
-          className="mt-4 font-serif text-[clamp(2.75rem,8vw,3.25rem)] font-bold leading-[1.02] tracking-tight text-foreground sm:mt-5 sm:text-[clamp(3.1rem,6vw,3.6rem)] lg:text-[clamp(3.25rem,4.8vw,4.4rem)] lg:leading-[1]"
+          className="font-serif pb-2 text-[clamp(3.45rem,6.5vw,5.85rem)] font-bold leading-[1.02] tracking-[-0.018em]"
         >
-          {titleLines.map((line) => (
-            <span key={line} className="block">
-              {line}
+          <span className="block w-fit text-[#141d1a]">
+            {titleLines[0] || "Guidance for"}
+          </span>
+          <span className="block w-fit text-[#141d1a]">
+            {titleLines[1] || "Every Step of"}
+          </span>
+          <span className="inline-block w-fit text-[#063b2f]">
+            {accentLead ? `${accentLead} ` : null}
+            <span className="relative inline-block">
+              {journeyWord}
+              {/* Gold brush underline sits just under Journey */}
+              <svg
+                viewBox="0 0 180 18"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="pointer-events-none absolute top-[1.1em] left-0 w-full overflow-visible text-[#c59a53]"
+                preserveAspectRatio="none"
+                aria-hidden
+              >
+                <path
+                  d="M2 8C38 3 92 2 178 9"
+                  stroke="currentColor"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M14 12C55 6 110 6 168 12"
+                  stroke="#b8894a"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  opacity="0.65"
+                />
+              </svg>
             </span>
-          ))}
-          <span className="block text-green-soft font-serif">{data.titleAccent}</span>
+          </span>
         </h1>
       </HeroReveal>
 
-      <HeroReveal delay={0.2}>
-        <p className="mt-4 max-w-[34rem] text-[1.05rem] leading-[1.65] text-muted sm:mt-5 sm:text-[1.125rem]">
-          {data.description}
+      {/* 2–3. Description + CTAs share the button-row width */}
+      <HeroReveal delay={0.1} className="mt-6 flex w-full flex-col self-start sm:mt-7 sm:w-fit sm:max-w-full">
+        <p className="w-full text-lg leading-[1.55] text-muted sm:w-0 sm:min-w-full">
+          {data.description ||
+            "Inspiring blogs, practical guides and authentic knowledge to help you prepare for Umrah and grow closer to Allah."}
         </p>
-      </HeroReveal>
-
-      <HeroReveal delay={0.28}>
-        <div className="mt-6 flex w-full flex-col gap-3 sm:mt-7 sm:w-auto sm:flex-row sm:items-center">
+        <div className="mt-6 flex flex-wrap items-center gap-3.5 sm:mt-7 sm:flex-nowrap sm:gap-4">
           <Link
             href={data.primaryCta?.href || "/blog"}
-            className="group inline-flex h-[48px] w-full items-center justify-center gap-2 rounded-full bg-green px-6 text-[14.5px] font-semibold text-white shadow-emerald-glow transition-all duration-200 hover:-translate-y-px hover:bg-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green sm:w-auto sm:px-7"
+            className="group inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-[#063b2f] px-6 sm:px-7 text-[14px] font-semibold text-white shadow-[0_2px_12px_rgba(6,59,47,0.25)] transition-[background-color,box-shadow] duration-200 hover:bg-[#042d24] hover:shadow-[0_4px_16px_rgba(6,59,47,0.38)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#063b2f]"
           >
-            {data.primaryCta?.label || "Explore Latest Articles"}
-            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-[3px]" />
+            <BookOpen className="h-4 w-4 text-white/90" strokeWidth={1.8} />
+            <span>{data.primaryCta?.label || "Explore Latest Articles"}</span>
+            <ArrowRight className="h-4 w-4 text-white/90" strokeWidth={1.8} />
           </Link>
+
           <Link
             href={data.secondaryCta?.href || "/category/umrah-guides"}
-            className="inline-flex h-[48px] w-full items-center justify-center gap-2 rounded-full border border-border bg-white/80 px-6 text-[14.5px] font-semibold text-foreground transition-all duration-200 hover:border-green hover:bg-cream hover:text-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green sm:w-auto sm:px-7 shadow-xs"
+            className="group inline-flex h-12 items-center justify-center gap-2.5 rounded-full border border-[#c59a53]/60 bg-white/70 px-6 sm:px-7 text-[14px] font-semibold text-[#141d1a] shadow-2xs backdrop-blur-xs transition-[background-color,border-color,color] duration-200 hover:border-[#063b2f] hover:bg-white hover:text-[#063b2f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#063b2f]"
           >
-            <BookOpen className="h-4 w-4 text-sand" strokeWidth={1.7} aria-hidden />
-            {data.secondaryCta?.label || "Browse Umrah Guides"}
+            <Compass className="h-4 w-4 text-[#c59a53] transition-colors duration-200 group-hover:text-[#063b2f]" strokeWidth={1.8} />
+            <span>{data.secondaryCta?.label || "Browse Umrah Guides"}</span>
+            <ArrowRight className="h-4 w-4 text-[#c59a53] transition-colors duration-200 group-hover:text-[#063b2f]" strokeWidth={1.8} />
           </Link>
         </div>
       </HeroReveal>
 
-      {/* Quick Spiritual Jump Badges */}
-      <HeroReveal delay={0.35}>
-        <div className="mt-8 flex flex-wrap items-center gap-2 text-xs text-muted">
-          <span className="font-semibold text-foreground/80">Spiritual Hub:</span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-white/70 px-2.5 py-1 font-medium text-green shadow-xs">
-            🕌 Live Prayer Times
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-white/70 px-2.5 py-1 font-medium text-sand shadow-xs">
-            🤲 Daily Dua
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-white/70 px-2.5 py-1 font-medium text-foreground/80 shadow-xs">
-            📅 Hijri Calendar
-          </span>
-        </div>
-      </HeroReveal>
+      {/* Mobile-only Ayat Slider */}
+      <div className="mt-6 block lg:hidden">
+        <HeroAyatSlider verses={data.verses} />
+      </div>
     </div>
   );
 }

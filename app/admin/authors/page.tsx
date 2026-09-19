@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Plus, Edit, Trash2, X, Sparkles } from "lucide-react";
+import { Plus, Edit, Trash2, X } from "lucide-react";
 import { getHeadingId } from "@/lib/articles";
 import { CardGridSkeleton } from "@/components/admin/AdminSkeletons";
 
@@ -147,7 +147,7 @@ export default function AdminAuthorsPage() {
           </div>
         ) : authors.length === 0 ? (
           <div className="col-span-full py-20 text-center text-xs text-gray-500">
-            No authors found. Click &quot;Add New Author&quot; or sync database.
+            No authors found. Click &quot;Add New Author&quot; to create one.
           </div>
         ) : (
           authors.map((auth) => (

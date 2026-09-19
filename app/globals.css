@@ -58,6 +58,31 @@
     scroll-behavior: smooth;
   }
 
+  a,
+  button,
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  summary,
+  label[for],
+  select,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  input[type="file"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"],
+  input:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -72,8 +97,41 @@
     }
   }
 
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #c69249 #efe6d4;
+  }
+
   body {
     @apply bg-ivory text-foreground font-sans antialiased;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #c69249 #efe6d4;
+  }
+
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #efe6d4;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #d4a35c 0%, #075846 100%);
+    border-radius: 999px;
+    border: 3px solid #efe6d4;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #c69249 0%, #043d32 100%);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: #efe6d4;
   }
 
   ::selection {
@@ -124,16 +182,45 @@
     }
   }
 
-  .hero-gradient-desktop {
+  .hero-photo-vignette {
     background: linear-gradient(
-      90deg,
-      rgba(250, 248, 243, 1) 0%,
-      rgba(250, 248, 243, 0.96) 22%,
-      rgba(250, 248, 243, 0.78) 38%,
-      rgba(245, 240, 231, 0.42) 50%,
-      rgba(250, 248, 243, 0.12) 62%,
-      rgba(250, 248, 243, 0) 74%
+      180deg,
+      rgba(4, 61, 50, 0.12) 0%,
+      rgba(4, 61, 50, 0) 28%,
+      rgba(4, 61, 50, 0) 62%,
+      rgba(4, 61, 50, 0.42) 100%
     );
+  }
+
+  @keyframes hero-kenburns {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.07);
+    }
+  }
+
+  .hero-kenburns {
+    animation: hero-kenburns 8s ease-out forwards;
+  }
+
+  @keyframes hero-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .hero-progress-bar {
+    transform-origin: left center;
+    animation: hero-progress 7s linear forwards;
+  }
+
+  .hero-progress-bar.is-paused {
+    animation-play-state: paused;
   }
 
   .silhouette-mosque {

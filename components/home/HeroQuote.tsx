@@ -9,23 +9,34 @@ export function HeroQuote({
   content?: typeof heroContent;
 }) {
   const data = content || heroContent;
+  const arabic = data.quote?.arabic?.trim();
+  const text = data.quote?.text || heroContent.quote.text;
+  const reference = data.quote?.reference || heroContent.quote.reference;
 
   return (
     <aside
-      className={cn(
-        "w-full max-w-[280px] rounded-2xl border border-border bg-card p-5 shadow-[0_8px_32px_-12px_rgba(23,32,30,0.18)] sm:max-w-[300px] sm:p-6",
-        className
-      )}
+      className={cn("max-w-[36rem] border-l-2 border-gold/70 pl-4", className)}
       aria-label="Quranic verse"
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sand">
-        Qur&apos;an
-      </p>
-      <blockquote className="mt-3 font-serif text-[1.05rem] leading-[1.45] text-foreground sm:text-[1.1rem]">
-        &ldquo;{data.quote?.text || heroContent.quote.text}&rdquo;
+      {arabic ? (
+        <p
+          dir="rtl"
+          lang="ar"
+          className="arabic-verse font-arabic text-[1.25rem] leading-[1.9] text-green-dark sm:text-[1.35rem]"
+        >
+          {arabic}
+        </p>
+      ) : null}
+      <blockquote
+        className={cn(
+          "font-serif text-[0.98rem] leading-[1.5] text-foreground italic sm:text-[1.02rem]",
+          arabic ? "mt-1.5" : "mt-0"
+        )}
+      >
+        &ldquo;{text}&rdquo;
       </blockquote>
-      <p className="mt-3 text-[12px] font-medium text-muted">
-        {data.quote?.reference || heroContent.quote.reference}
+      <p className="mt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-sand">
+        {reference}
       </p>
     </aside>
   );

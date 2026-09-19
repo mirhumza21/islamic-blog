@@ -7,6 +7,7 @@ import {
 } from "next/font/google";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { siteConfig } from "@/data/categories";
+import { getGlobalSubscribe } from "@/lib/pages";
 import { absoluteUrl } from "@/lib/utils";
 import "./globals.css";
 
@@ -109,11 +110,12 @@ const websiteJsonLd = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const subscribe = await getGlobalSubscribe();
   return (
     <html
       lang="en"
@@ -126,7 +128,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <SiteShell>{children}</SiteShell>
+        <SiteShell subscribeLabel={subscribe.headerButtonLabel}>{children}</SiteShell>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

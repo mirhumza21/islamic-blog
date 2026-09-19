@@ -1,9 +1,16 @@
 "use client";
 
 import { upcomingIslamicEvents } from "@/data/islamic-data";
+import { defaultCalendar } from "@/data/home-sections";
 import { Calendar, Moon, Sparkles } from "lucide-react";
 
-export function IslamicEventsCard() {
+export function IslamicEventsCard({
+  label = defaultCalendar.eventsLabel,
+  todayBlessing = defaultCalendar.todayBlessing,
+}: {
+  label?: string;
+  todayBlessing?: string;
+}) {
   const now = new Date();
   const currentDateFormatted = now.toLocaleDateString("en-US", {
     month: "short",
@@ -16,14 +23,17 @@ export function IslamicEventsCard() {
     month: "long",
     year: "numeric",
   });
-  const todayHijri = `${hijriFormatter.format(now)} AH`;
+  const formattedHijri = hijriFormatter.format(now);
+  const todayHijri = /AH\s*$/i.test(formattedHijri)
+    ? formattedHijri
+    : `${formattedHijri} AH`;
 
   return (
     <div className="flex h-full flex-col justify-between rounded-[26px] border border-border/80 bg-card p-6 shadow-spiritual lg:p-7">
       <div>
         {/* Header */}
         <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground/70">
-          TODAY & UPCOMING EVENTS
+          {label}
         </div>
 
         {/* Today's Milestone Card */}
@@ -47,7 +57,7 @@ export function IslamicEventsCard() {
             </h4>
 
             <p className="mt-1 text-xs leading-relaxed text-foreground/80">
-              The blessed Islamic day. Increase in good deeds, voluntary fasting, daily dhikr, and regular Quran recitation.
+              {todayBlessing}
             </p>
           </div>
         </div>

@@ -4,22 +4,26 @@ import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
+import { defaultFeaturedSection } from "@/data/home-sections";
 import type { Article, Author, Category } from "@/types/blog";
 
 export function FeaturedArticle({
   article,
   author,
   category,
+  content,
 }: {
   article: Article;
   author: Author;
   category: Category;
+  content?: Partial<typeof defaultFeaturedSection>;
 }) {
+  const copy = { ...defaultFeaturedSection, ...content };
   return (
     <section className="bg-cream/60 py-16 lg:py-20">
       <div className="container-editorial grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
         <div className="lg:col-span-5">
-          <Badge>Featured Story</Badge>
+          <Badge>{copy.badge}</Badge>
           <p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-green">
             {category.name}
           </p>
@@ -37,7 +41,7 @@ export function FeaturedArticle({
           <div className="mt-7">
             <Button asChild size="lg">
               <Link href={`/blog/${article.slug}`}>
-                Read Full Article
+                {copy.buttonLabel}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

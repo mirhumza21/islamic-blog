@@ -4,7 +4,13 @@ import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
-export function SiteShell({ children }: { children: React.ReactNode }) {
+export function SiteShell({
+  children,
+  subscribeLabel,
+}: {
+  children: React.ReactNode;
+  subscribeLabel?: string;
+}) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
@@ -14,7 +20,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Header />
+      <Header subscribeLabel={subscribeLabel} />
       <main id="main-content" className="flex-1">
         {children}
       </main>

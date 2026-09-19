@@ -2,14 +2,11 @@
 
 import { useState, useEffect } from "react";
 import {
-  FolderTree,
   Plus,
   Edit,
   Trash2,
-  CheckCircle2,
   ExternalLink,
   X,
-  Sparkles,
 } from "lucide-react";
 import { getHeadingId } from "@/lib/articles";
 import { CardGridSkeleton } from "@/components/admin/AdminSkeletons";
@@ -169,7 +166,7 @@ export default function AdminCategoriesPage() {
           </div>
         ) : categories.length === 0 ? (
           <div className="col-span-full py-20 text-center text-xs text-gray-500">
-            No categories found. Click &quot;Add New Category&quot; or sync database.
+            No categories found. Click &quot;Add New Category&quot; to create one.
           </div>
         ) : (
           categories.map((cat) => (

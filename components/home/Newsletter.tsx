@@ -5,6 +5,7 @@ import { Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { defaultNewsletterSection } from "@/data/home-sections";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -15,7 +16,14 @@ async function subscribe(email: string): Promise<void> {
   }
 }
 
-export function Newsletter({ className }: { className?: string }) {
+export function Newsletter({
+  className,
+  content,
+}: {
+  className?: string;
+  content?: Partial<typeof defaultNewsletterSection>;
+}) {
+  const copy = { ...defaultNewsletterSection, ...content };
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
@@ -27,7 +35,7 @@ export function Newsletter({ className }: { className?: string }) {
     try {
       await subscribe(email.trim());
       setStatus("success");
-      setMessage("You’re subscribed. Welcome to the UmrahZone community.");
+      setMessage(copy.successMessage);
       setEmail("");
     } catch (error) {
       setStatus("error");
@@ -51,11 +59,10 @@ export function Newsletter({ className }: { className?: string }) {
             <Mail className="h-5 w-5" />
           </span>
           <h2 className="mt-4 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
-            Join Our Growing Community
+            {copy.title}
           </h2>
           <p className="mt-3 text-base text-white/80 sm:text-lg">
-            Get the latest blogs, guides and inspiration delivered directly to
-            your inbox.
+            {copy.description}
           </p>
 
           <form
@@ -69,7 +76,7 @@ export function Newsletter({ className }: { className?: string }) {
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="Enter your email"
+              placeholder={copy.placeholder}
               aria-label="Email address"
               aria-invalid={status === "error"}
               className="h-12 border-white/20 bg-white/95 text-foreground placeholder:text-muted focus-visible:ring-sand focus-visible:ring-offset-green"
@@ -84,10 +91,10 @@ export function Newsletter({ className }: { className?: string }) {
               {status === "loading" ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Subscribing
+                  {copy.loadingLabel}
                 </>
               ) : (
-                "Subscribe"
+                copy.buttonLabel
               )}
             </Button>
           </form>

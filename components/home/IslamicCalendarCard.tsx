@@ -2,24 +2,13 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Moon } from "lucide-react";
+import { defaultCalendar } from "@/data/home-sections";
 
-// Hijri calculation helper for displaying the Islamic calendar
-const HIJRI_MONTHS = [
-  "Muḥarram",
-  "Ṣafar",
-  "Rabīʿ al-Awwal",
-  "Rabīʿ al-thānī",
-  "Jumādā al-Ūlā",
-  "Jumādā al-Ākhirah",
-  "Rajab",
-  "Shaʿbān",
-  "Ramaḍān",
-  "Shawwāl",
-  "Dhū al-Qaʿdah",
-  "Dhū al-Ḥijjah",
-];
-
-export function IslamicCalendarCard() {
+export function IslamicCalendarCard({
+  label = defaultCalendar.calendarLabel,
+}: {
+  label?: string;
+}) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDate());
 
@@ -66,7 +55,7 @@ export function IslamicCalendarCard() {
       <div>
         {/* Header */}
         <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground/70">
-          ISLAMIC CALENDAR
+          {label}
         </div>
 
         {/* Month Navigation */}

@@ -15,12 +15,18 @@ export function CmsPageEditor({
   viewUrl,
   defaults,
   fields,
+  backHref = "/admin/pages",
+  backLabel = "Pages",
+  description,
 }: {
   pageKey: string;
   title: string;
   viewUrl: string;
   defaults: Record<string, any>;
   fields: Field[];
+  backHref?: string;
+  backLabel?: string;
+  description?: string;
 }) {
   const [content, setContent] = useState<Record<string, any>>(defaults);
   const [loading, setLoading] = useState(true);
@@ -70,15 +76,18 @@ export function CmsPageEditor({
       <div className="flex items-center justify-between gap-4">
         <div>
           <Link
-            href="/admin/pages"
+            href={backHref}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-800"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Pages
+            {backLabel}
           </Link>
           <h1 className="mt-2 text-2xl font-serif font-bold text-gray-900">
             {title}
           </h1>
+          {description ? (
+            <p className="mt-1 text-xs text-gray-500">{description}</p>
+          ) : null}
         </div>
         <div className="flex items-center gap-2">
           <a

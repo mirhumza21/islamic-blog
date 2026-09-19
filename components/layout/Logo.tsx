@@ -15,7 +15,7 @@ export function Logo({
       aria-label="UmrahZone home"
     >
       {/* Layered Islamic Arch & Crescent Emblem */}
-      <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#064234] to-[#042e24] shadow-xs transition-transform duration-200 group-hover:scale-105">
+      <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#064234] to-[#042e24] shadow-xs">
         <svg
           viewBox="0 0 32 32"
           className="h-6 w-6"

@@ -1,70 +1,52 @@
+"use client";
+
 import { HeroContent } from "@/components/home/HeroContent";
 import { HeroMedia } from "@/components/home/HeroMedia";
-import { HeroQuote } from "@/components/home/HeroQuote";
-import { HeroReveal } from "@/components/home/HeroReveal";
-import { HeroTrustItems } from "@/components/home/HeroTrustItems";
+import { HeroFloatingDock } from "@/components/home/HeroFloatingDock";
+import { HeroAyatSlider } from "@/components/home/HeroAyatSlider";
+
 export function Hero({ content }: { content?: any }) {
   return (
-    <>
-      <section
-        aria-labelledby="hero-heading"
-        className="relative overflow-hidden border-b border-border bg-ivory"
-      >
-        <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden>
-          <HeroMedia variant="background" content={content} />
-          <div className="absolute inset-0 hero-gradient-desktop" />
-        </div>
+    <section
+      aria-labelledby="hero-heading"
+      className="relative w-full overflow-hidden bg-ivory h-[calc(100dvh-80px)] min-h-[580px]"
+    >
+      {/* Background Sacred Photography Slider */}
+      <div className="absolute inset-0">
+        <HeroMedia content={content} />
 
+        {/* Soft elegant ivory blend on the left matching the reference editorial layout */}
         <div
-          className="pointer-events-none absolute inset-y-0 left-0 z-[1] hidden w-[42%] pattern-geometric-cream opacity-25 lg:block"
+          className="pointer-events-none absolute inset-0 hidden lg:block"
           aria-hidden
-        />
+        >
+          {/* Seamless gradient blend: solid ivory behind text, smoothly feathering into photo without any sharp line */}
+          <div className="absolute inset-y-0 left-0 w-[54%] bg-gradient-to-r from-ivory from-60% via-ivory/80 via-78% to-transparent" />
+          <div className="absolute inset-y-0 left-0 w-[44%] pattern-geometric-cream opacity-25 [mask-image:linear-gradient(to_right,black_70%,transparent)]" />
+        </div>
+      </div>
 
-        <div className="container-editorial relative z-10">
-          <div className="grid lg:grid-cols-12 lg:items-center lg:gap-10 lg:py-14 xl:py-16">
-            <div className="py-10 sm:py-12 lg:col-span-5 lg:py-0">
-              <HeroContent content={content} />
+      {/* Hero Layout: Occupies 100% of the first viewport with compact, balanced vertical rhythm */}
+      {/* pb-7 sm:pb-8 lg:pb-9 lifts the bottom category bar up with elegant floating breathing room */}
+      <div className="relative z-20 flex h-full flex-col justify-between pt-4 sm:pt-6 lg:pt-8 pb-7 sm:pb-8 lg:pb-9 pointer-events-none">
+        {/* Main Content Area: Left Editorial copy + Center-Right Floating Frosted Glass Ayat Slider */}
+        <div className="container-editorial flex flex-1 items-center justify-between gap-6 lg:gap-10">
+          {/* Left Column: Exactly 3-Line Headline with gold underline + CTAs */}
+          <div className="pointer-events-auto w-full max-w-[40rem] lg:w-[52%] xl:w-[50%]">
+            <HeroContent content={content} />
+          </div>
 
-              <div className="mt-10 hidden items-center gap-2.5 text-muted/70 lg:flex">
-                <span className="inline-flex h-7 w-[18px] items-center justify-center rounded-full border border-border bg-card">
-                  <span className="h-1.5 w-1 rounded-full bg-muted/50" />
-                </span>
-                <span className="h-px w-6 bg-border" />
-                <span className="text-[11px] font-medium tracking-[0.05em]">
-                  Scroll to explore
-                </span>
-              </div>
-            </div>
-
-            <div className="relative hidden lg:col-span-7 lg:block lg:min-h-[480px]">
-              <div className="absolute right-0 top-6 z-20 xl:right-2 xl:top-8">
-                <HeroQuote content={content} />
-              </div>
-            </div>
+          {/* Center-Right Floating Frosted Glass Ayat Slider (Centered in the open landmark space) */}
+          <div className="pointer-events-auto hidden lg:flex lg:flex-1 lg:max-w-[490px] xl:max-w-[520px] lg:justify-center">
+            <HeroAyatSlider verses={content?.verses} />
           </div>
         </div>
 
-        <div className="lg:hidden">
-          <div className="relative h-[280px] w-full sm:h-[320px]">
-            <HeroMedia variant="panel" content={content} />
-          </div>
-
-          <div className="container-editorial py-6 sm:py-8">
-            <HeroQuote className="mx-auto" content={content} />
-          </div>
+        {/* Floating Category Dock at the bottom of the first view (Lifted higher up) */}
+        <div className="container-editorial pointer-events-auto">
+          <HeroFloatingDock content={content} />
         </div>
-      </section>
-
-      <section
-        aria-label="Why UmrahZone"
-        className="border-b border-border bg-cream/50"
-      >
-        <div className="container-editorial py-8 lg:py-10">
-          <HeroReveal delay={0.15}>
-            <HeroTrustItems content={content} />
-          </HeroReveal>
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

@@ -1,17 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Logo } from "@/components/layout/Logo";
 import { Button } from "@/components/ui/button";
 import { mainNav } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 
-export function MobileMenu({ onClose }: { onClose: () => void }) {
+export function MobileMenu({
+  onClose,
+  subscribeLabel = "Subscribe",
+}: {
+  onClose: () => void;
+  subscribeLabel?: string;
+}) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
+  const [openKey, setOpenKey] = useState<string | null>(null);
 
   return (
     <motion.div
@@ -53,24 +61,87 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
         <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Mobile">
           <ul className="space-y-1">
             {mainNav.map((item) => {
+              const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+              const itemKey = item.href + item.label;
+              const expanded = openKey === itemKey;
               const active =
                 item.href === "/"
                   ? pathname === "/"
-                  : pathname.startsWith(item.href);
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
+
               return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={onClose}
-                    className={cn(
-                      "flex min-h-12 items-center rounded-xl px-4 text-base font-medium transition-colors",
-                      active
-                        ? "bg-cream text-green"
-                        : "text-foreground hover:bg-cream"
-                    )}
-                  >
-                    {item.label}
-                  </Link>
+                <li key={itemKey}>
+                  {hasChildren ? (
+                    <div>
+                      <div className="flex items-center gap-1">
+                        <Link
+                          href={item.href}
+                          onClick={onClose}
+                          className={cn(
+                            "flex min-h-12 flex-1 items-center rounded-xl px-4 text-base font-medium transition-colors",
+                            active ? "bg-cream text-green" : "text-foreground hover:bg-cream"
+                          )}
+                        >
+                          {item.label}
+                        </Link>
+                        <button
+                          type="button"
+                          aria-expanded={expanded}
+                          aria-label={`${expanded ? "Collapse" : "Expand"} ${item.label} menu`}
+                          onClick={() => setOpenKey(expanded ? null : itemKey)}
+                          className="inline-flex h-12 w-12 items-center justify-center rounded-xl text-foreground/60 transition-colors hover:bg-cream hover:text-green"
+                        >
+                          <ChevronDown
+                            className={cn(
+                              "h-4 w-4 transition-transform duration-200",
+                              expanded && "rotate-180"
+                            )}
+                          />
+                        </button>
+                      </div>
+                      {expanded ? (
+                        <ul className="mb-1 ml-3 space-y-1 border-l border-border pl-3">
+                          {item.children!.map((child) => {
+                            const childActive =
+                              pathname === child.href ||
+                              pathname.startsWith(`${child.href}/`);
+                            return (
+                              <li key={`${child.href}-${child.label}`}>
+                                <Link
+                                  href={child.href}
+                                  onClick={onClose}
+                                  className={cn(
+                                    "flex min-h-11 flex-col justify-center rounded-xl px-3 py-2 text-sm transition-colors",
+                                    childActive
+                                      ? "bg-cream text-green"
+                                      : "text-foreground/80 hover:bg-cream"
+                                  )}
+                                >
+                                  <span className="font-semibold">{child.label}</span>
+                                  {child.description ? (
+                                    <span className="text-[11px] text-muted">
+                                      {child.description}
+                                    </span>
+                                  ) : null}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={onClose}
+                      className={cn(
+                        "flex min-h-12 items-center rounded-xl px-4 text-base font-medium transition-colors",
+                        active ? "bg-cream text-green" : "text-foreground hover:bg-cream"
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               );
             })}
@@ -80,7 +151,7 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
         <div className="border-t border-border p-5">
           <Button asChild className="w-full" size="lg">
             <Link href="/#newsletter" onClick={onClose}>
-              Subscribe
+              {subscribeLabel}
             </Link>
           </Button>
         </div>

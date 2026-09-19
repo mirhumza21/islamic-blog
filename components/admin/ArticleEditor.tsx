@@ -412,20 +412,20 @@ export function ArticleEditor({
 
       {/* ── Sticky Top Action Bar (Clean white admin theme) ── */}
       <div className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2">
           {/* Left: breadcrumb + title */}
           <div className="flex items-center gap-3 min-w-0">
             <Link
               href="/admin/articles"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-all shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-all shrink-0 whitespace-nowrap"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Articles</span>
             </Link>
 
-            <div className="h-4 w-px bg-gray-200 hidden sm:block shrink-0" />
+            <div className="h-4 w-px bg-gray-200 hidden xl:block shrink-0" />
 
-            <div className="min-w-0">
+            <div className="min-w-0 hidden xl:block">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">
                   {isCreation ? "✦ New Post" : "✦ Editing"}
@@ -440,7 +440,7 @@ export function ArticleEditor({
                   {status === "published" ? "● Published" : "○ Draft"}
                 </span>
               </div>
-              <h1 className="text-sm font-bold text-gray-900 truncate max-w-[240px] sm:max-w-sm leading-tight mt-0.5">
+              <h1 className="text-sm font-bold text-gray-900 truncate max-w-[280px] leading-tight mt-0.5">
                 {title || <span className="text-gray-400 italic font-normal">Untitled Article</span>}
               </h1>
             </div>
@@ -452,11 +452,11 @@ export function ArticleEditor({
               <Link
                 href={`/blog/${currentArticle.slug}`}
                 target="_blank"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all whitespace-nowrap"
               >
                 <Eye className="w-3.5 h-3.5" />
-                <span>View Live</span>
-                <ExternalLink className="w-3 h-3" />
+                <span className="hidden sm:inline">View Live</span>
+                <ExternalLink className="w-3 h-3 hidden sm:block" />
               </Link>
             )}
 
@@ -464,7 +464,7 @@ export function ArticleEditor({
               type="button"
               onClick={() => handleSave("draft")}
               disabled={saving}
-              className="px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition-all cursor-pointer disabled:opacity-50"
+              className="px-3 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition-all cursor-pointer disabled:opacity-50 whitespace-nowrap"
             >
               Save Draft
             </button>
@@ -473,7 +473,7 @@ export function ArticleEditor({
               type="button"
               onClick={() => handleSave("published")}
               disabled={saving}
-              className="inline-flex items-center gap-2 px-5 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-xs transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-3.5 sm:px-5 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-xs transition-all cursor-pointer disabled:opacity-50 whitespace-nowrap"
             >
               {saving ? (
                 <RefreshCw className="w-3.5 h-3.5 animate-spin" />

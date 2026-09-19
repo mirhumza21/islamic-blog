@@ -18,6 +18,7 @@ export interface LiveDailyDua {
   translation: string;
   reference: string;
   isLive: boolean;
+  audioUrl?: string;
 }
 
 export interface SpiritualDailyPayload {
@@ -127,8 +128,10 @@ async function fetchQuranicDua(entry: (typeof QURANIC_DUAS)[number]): Promise<Li
     const json = await fetchJson<{
       code: number;
       data?: Array<{
+        number?: number;
+        numberInSurah?: number;
         text?: string;
-        surah?: { englishName?: string };
+        surah?: { number?: number; englishName?: string };
       }>;
     }>(
       `https://api.alquran.cloud/v1/ayah/${entry.key}/editions/quran-uthmani,en.transliteration,en.sahih`
@@ -140,10 +143,20 @@ async function fetchQuranicDua(entry: (typeof QURANIC_DUAS)[number]): Promise<Li
 
     const [arabicAyah, transliterationAyah, translationAyah] = json.data;
     const arabic = arabicAyah.text?.trim();
-    const translation = translationAyah.text?.trim();
+    const translation = translationAyah.text
+      ?.trim()
+      .replace(/^\[[^\]]+\][,\s]*/g, "")
+      .replace(/^"+|"+$/g, "")
+      .trim();
     if (!arabic || !translation) return null;
 
     const surahName = arabicAyah.surah?.englishName || "Qur'an";
+
+    const ayahNumber = arabicAyah.number;
+    const audioUrl =
+      typeof ayahNumber === "number"
+        ? `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNumber}.mp3`
+        : undefined;
 
     return {
       id: `quran-${entry.key}`,
@@ -154,6 +167,7 @@ async function fetchQuranicDua(entry: (typeof QURANIC_DUAS)[number]): Promise<Li
       translation,
       reference: `Surah ${surahName} ${entry.key}`,
       isLive: true,
+      audioUrl,
     };
   } catch {
     return null;

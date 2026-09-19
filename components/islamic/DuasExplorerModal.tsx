@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { curatedDuas } from "@/data/islamic-data";
 import type { LiveDailyDua } from "@/lib/spiritual-api";
-import { BookOpen, Check, Copy, Search, Volume2 } from "lucide-react";
+import { playSpiritualAudio, stopSpiritualAudio } from "@/lib/spiritual-audio";
+import { BookOpen, Check, Copy, Pause, Search, Volume2 } from "lucide-react";
 
 interface DuasExplorerModalProps {
   open: boolean;
@@ -46,16 +47,14 @@ export function DuasExplorerModal({
   });
 
   const handlePlay = (dua: LiveDailyDua) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    setPlayingId(dua.id);
-
-    const utterance = new SpeechSynthesisUtterance(dua.arabic);
-    utterance.lang = "ar-SA";
-    utterance.rate = 0.85;
-    utterance.onend = () => setPlayingId(null);
-    utterance.onerror = () => setPlayingId(null);
-    window.speechSynthesis.speak(utterance);
+    void playSpiritualAudio({
+      id: dua.id,
+      arabic: dua.arabic,
+      transliteration: dua.transliteration,
+      audioUrl: dua.audioUrl,
+      onStart: () => setPlayingId(dua.id),
+      onEnd: () => setPlayingId(null),
+    });
   };
 
   const handleCopy = (dua: LiveDailyDua) => {
@@ -69,7 +68,13 @@ export function DuasExplorerModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) stopSpiritualAudio();
+        onOpenChange(next);
+      }}
+    >
       <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col overflow-hidden bg-card p-6 sm:rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2.5 font-serif text-2xl font-semibold text-foreground">
@@ -129,13 +134,17 @@ export function DuasExplorerModal({
                     onClick={() => handlePlay(dua)}
                     className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
                       playingId === dua.id
-                        ? "animate-pulse bg-green text-white"
+                        ? "bg-green text-white"
                         : "bg-cream text-foreground/70 hover:bg-green hover:text-white"
                     }`}
-                    title="Play Arabic audio"
-                    aria-label="Listen to Dua"
+                    title={playingId === dua.id ? "Stop recitation" : "Play Arabic audio"}
+                    aria-label={playingId === dua.id ? "Stop recitation" : "Listen to Dua"}
                   >
-                    <Volume2 className="h-4 w-4" />
+                    {playingId === dua.id ? (
+                      <Pause className="h-4 w-4" fill="currentColor" />
+                    ) : (
+                      <Volume2 className="h-4 w-4" />
+                    )}
                   </button>
                   <button
                     type="button"
@@ -160,18 +169,18 @@ export function DuasExplorerModal({
               <p
                 dir="rtl"
                 lang="ar"
-                className="arabic-verse mt-3 text-right font-arabic text-2xl font-bold text-green"
+                className="arabic-verse mt-3 text-right font-arabic text-2xl font-bold leading-[2.1] text-[#063b2f]"
               >
                 {dua.arabic}
               </p>
 
               {dua.transliteration ? (
-                <p className="mt-3 text-xs italic leading-relaxed text-foreground/75">
+                <p className="mt-3 font-serif text-sm italic leading-relaxed text-foreground/75">
                   {dua.transliteration}
                 </p>
               ) : null}
 
-              <p className="mt-2 text-sm leading-relaxed text-foreground/90">
+              <p className="mt-2 font-serif text-sm leading-relaxed text-foreground/90">
                 &ldquo;{dua.translation}&rdquo;
               </p>
 

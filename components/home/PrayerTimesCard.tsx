@@ -11,9 +11,18 @@ import {
 } from "@/lib/prayer-times";
 import { LocationPickerModal } from "@/components/islamic/LocationPickerModal";
 import { PrayerTimetableModal } from "@/components/islamic/PrayerTimetableModal";
-import { Clock, MapPin, Radio } from "lucide-react";
+import { defaultDailySpiritual } from "@/data/daily-spiritual";
+import { MapPin } from "lucide-react";
 
-export function PrayerTimesCard() {
+export function PrayerTimesCard({
+  label = defaultDailySpiritual.prayerLabel,
+  timetableLabel = defaultDailySpiritual.timetableLabel,
+  locationLabel = defaultDailySpiritual.locationLabel,
+}: {
+  label?: string;
+  timetableLabel?: string;
+  locationLabel?: string;
+}) {
   const [selectedCity, setSelectedCity] = useState<PrayerCity>(prayerCities[0]); // Default Lahore
   const [schedule, setSchedule] = useState<PrayerTimeSchedule>(() =>
     calculatePrayerTimes(prayerCities[0])
@@ -24,7 +33,6 @@ export function PrayerTimesCard() {
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [timetableModalOpen, setTimetableModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isLiveApi, setIsLiveApi] = useState(false);
 
   // Load saved city and fetch real API data
   useEffect(() => {
@@ -46,7 +54,6 @@ export function PrayerTimesCard() {
     fetchLivePrayerData(activeCity).then(({ schedule: liveSched }) => {
       setSchedule(liveSched);
       setStatus(getCurrentPrayerStatus(liveSched));
-      setIsLiveApi(true);
     });
   }, []);
 
@@ -56,7 +63,6 @@ export function PrayerTimesCard() {
     fetchLivePrayerData(selectedCity).then(({ schedule: liveSched }) => {
       setSchedule(liveSched);
       setStatus(getCurrentPrayerStatus(liveSched));
-      setIsLiveApi(true);
     });
   }, [selectedCity, mounted]);
 
@@ -99,19 +105,19 @@ export function PrayerTimesCard() {
 
   return (
     <>
-      <div className="relative flex h-full min-h-[28rem] flex-col justify-between overflow-hidden rounded-[26px] bg-[#073f32] p-6 text-white shadow-emerald-glow lg:p-7">
+      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[26px] bg-[#073f32] p-5 text-white shadow-emerald-glow sm:p-6 lg:p-7">
         {/* Subtle geometric pattern overlay */}
         <div
           className="pointer-events-none absolute inset-0 opacity-10 pattern-subtle"
           aria-hidden
         />
 
-        <div>
+        <div className="flex-1">
           {/* Header row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#d4af72]">
               <MapPin className="h-3.5 w-3.5 text-[#d4af72]" />
-              <span>PRAYER TIMES</span>
+              <span>{label}</span>
             </div>
             <span className="flex items-center gap-1.5 rounded-full bg-black/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-300 backdrop-blur-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
@@ -119,18 +125,17 @@ export function PrayerTimesCard() {
             </span>
           </div>
 
-          <p className="mt-1.5 text-xs text-emerald-100/70">
+          <p className="mt-2 text-xs text-emerald-100/70">
             {selectedCity.name}, {selectedCity.country}
-            {selectedCity.id === "lahore" ? " (Default)" : ""}
           </p>
 
           {/* Current / Next Prayer Highlight */}
-          <div className="mt-7">
-            <h3 className="font-serif text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          <div className="mt-5">
+            <h3 className="font-serif text-3xl font-bold tracking-tight text-white sm:text-[2.2rem]">
               {status.currentPrayerName}
             </h3>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-xl font-bold text-[#e5c07b] sm:text-2xl">
+            <div className="mt-1.5 flex items-baseline gap-2">
+              <span className="text-lg font-bold text-[#e5c07b] sm:text-xl">
                 {schedule[status.currentPrayer]}
               </span>
               <span className="text-xs text-emerald-200/70">
@@ -140,13 +145,13 @@ export function PrayerTimesCard() {
           </div>
 
           {/* 5 Prayer slots row */}
-          <div className="mt-8 grid grid-cols-5 gap-1.5 sm:gap-2">
+          <div className="mt-5 grid grid-cols-5 gap-2 sm:gap-2.5">
             {prayerItems.map((item) => {
               const isActive = status.currentPrayer === item.key;
               return (
                 <div
                   key={item.key}
-                  className={`flex flex-col items-center justify-center rounded-xl py-3 px-1 transition-all ${
+                  className={`flex flex-col items-center justify-center rounded-xl px-1 py-3 transition-all ${
                     isActive
                       ? "border border-[#e5c07b]/70 bg-[#0d4f40] shadow-[0_0_15px_rgba(229,192,123,0.18)]"
                       : "border border-white/10 bg-white/5 hover:bg-white/10"
@@ -159,10 +164,10 @@ export function PrayerTimesCard() {
                   >
                     {item.label}
                   </span>
-                  <span className="mt-1 font-serif text-sm font-bold text-white sm:text-base">
+                  <span className="mt-1.5 font-serif text-sm font-bold text-white sm:text-base">
                     {item.time}
                   </span>
-                  <span className="text-[9px] uppercase text-emerald-200/50">
+                  <span className="mt-0.5 text-[9px] uppercase text-emerald-200/50">
                     {ampmMap[item.key]}
                   </span>
                 </div>
@@ -172,13 +177,13 @@ export function PrayerTimesCard() {
         </div>
 
         {/* Footer actions */}
-        <div className="mt-8 space-y-3">
+        <div className="mt-5 space-y-2.5">
           <button
             type="button"
             onClick={() => setTimetableModalOpen(true)}
-            className="w-full rounded-full border border-white/20 bg-white/10 py-3 text-center text-xs font-semibold text-white backdrop-blur-xs transition-all duration-200 hover:bg-white hover:text-[#073f32] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e5c07b]"
+            className="w-full rounded-full border border-white/20 bg-white/10 py-2.5 text-center text-xs font-semibold text-white backdrop-blur-xs transition-all duration-200 hover:bg-white hover:text-[#073f32] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e5c07b]"
           >
-            View Full Timetable
+            {timetableLabel}
           </button>
 
           <div className="text-center">
@@ -188,7 +193,7 @@ export function PrayerTimesCard() {
               className="inline-flex items-center gap-1.5 text-xs text-emerald-200/80 transition-colors hover:text-white"
             >
               <MapPin className="h-3 w-3 text-[#d4af72]" />
-              <span>Change Location</span>
+              <span>{locationLabel}</span>
             </button>
           </div>
         </div>

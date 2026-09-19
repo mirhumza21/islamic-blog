@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArticleGrid } from "@/components/blog/ArticleGrid";
 import { CategoryFilters } from "@/components/blog/CategoryFilters";
-import { Newsletter } from "@/components/home/Newsletter";
+import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
 import {
   fetchAllArticles,
   fetchAllCategories,
@@ -13,17 +13,20 @@ import {
   fetchPopularArticles,
   paginateArticles,
 } from "@/lib/articles";
+import { getBlogPageContent } from "@/lib/pages";
 import { formatDate } from "@/lib/utils";
 import { BookOpen, Clock, Sparkles, TrendingUp, ArrowRight } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Blog & Islamic Guides",
-  description:
-    "Explore authentic Umrah guides, Islamic lifestyle articles, Quran reflections, Hadith, and travel tips on UmrahZone.",
-  alternates: {
-    canonical: "/blog",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = await getBlogPageContent();
+  return {
+    title: "Blog & Islamic Guides",
+    description: copy.description,
+    alternates: {
+      canonical: "/blog",
+    },
+  };
+}
 
 type BlogPageProps = {
   searchParams: Promise<{ category?: string; page?: string }>;
@@ -33,9 +36,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const params = await searchParams;
   const categorySlug = params.category;
   const page = Number(params.page ?? "1") || 1;
-  const [categories, articles] = await Promise.all([
+  const [categories, articles, copy] = await Promise.all([
     fetchAllCategories(),
     fetchAllArticles(),
+    getBlogPageContent(),
   ]);
   const all = categorySlug
     ? await fetchArticlesByCategory(categorySlug, articles)
@@ -64,17 +68,15 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         <div className="container-editorial relative z-10 max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-sand/30 bg-cream/80 px-4 py-1 text-xs font-bold uppercase tracking-[0.16em] text-sand shadow-xs">
             <Sparkles className="h-3.5 w-3.5" />
-            Sacred Knowledge & Editorial Library
+            {copy.eyebrow}
           </div>
 
           <h1 className="mt-4 font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            {activeCategory ? activeCategory.name : "Faith, Guides & Reflections"}
+            {activeCategory ? activeCategory.name : copy.title}
           </h1>
 
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
-            {activeCategory
-              ? activeCategory.description
-              : "Authentic spiritual insights, practical Umrah preparations, and inspiring articles grounded in the Qur'an and Sunnah."}
+            {activeCategory ? activeCategory.description : copy.description}
           </p>
         </div>
       </section>
@@ -95,10 +97,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           <div className="mb-16">
             <div className="mb-6 flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-[0.18em] text-green">
-                EDITOR'S FEATURED PICK
+                {copy.featuredLabel}
               </span>
               <span className="rounded-full bg-sand/15 px-3 py-0.5 text-xs font-semibold text-sand">
-                Must Read
+                {copy.featuredBadge}
               </span>
             </div>
 
@@ -166,7 +168,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     href={`/blog/${featured.slug}`}
                     className="inline-flex items-center gap-1.5 rounded-full bg-green px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-green-dark"
                   >
-                    Read Guide
+                    {copy.featuredButton}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
@@ -181,7 +183,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           <div className="lg:col-span-8">
             <div className="mb-6 flex items-baseline justify-between border-b border-border/60 pb-4">
               <h3 className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                {activeCategory ? `${activeCategory.name} Articles` : "Recent Publications"}
+                {activeCategory ? `${activeCategory.name} Articles` : copy.recentTitle}
               </h3>
               <span className="text-xs font-medium text-muted">
                 Showing {pagination.items.length} of {pagination.total} articles
@@ -194,10 +196,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               <div className="rounded-2xl border border-dashed border-border bg-cream/40 p-12 text-center text-muted">
                 <BookOpen className="mx-auto h-8 w-8 text-sand/60" />
                 <h4 className="mt-3 font-serif text-lg font-bold text-foreground">
-                  No articles found
+                  {copy.emptyTitle}
                 </h4>
                 <p className="mt-1 text-xs">
-                  We are continually writing new guides. Check back soon!
+                  {copy.emptyText}
                 </p>
               </div>
             )}
@@ -242,13 +244,13 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             <div className="rounded-2xl border border-[#ecdcc3] bg-[#faf6ee] p-6 shadow-xs">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#b87c32]">
                 <Sparkles className="h-4 w-4" />
-                Spiritual Reflection
+                {copy.reflectionEyebrow}
               </div>
               <blockquote className="mt-3 font-serif text-base italic leading-relaxed text-foreground">
-                &ldquo;Whoever takes a path upon which he seeks knowledge, Allah makes the path to Paradise easy for him.&rdquo;
+                &ldquo;{copy.reflectionQuote}&rdquo;
               </blockquote>
               <div className="mt-3 text-right text-xs font-semibold text-muted">
-                — Sahih Muslim: 2699
+                — {copy.reflectionSource}
               </div>
             </div>
 
@@ -256,7 +258,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
               <div className="flex items-center gap-2 border-b border-border/60 pb-3 text-xs font-bold uppercase tracking-wider text-green">
                 <TrendingUp className="h-4 w-4" />
-                Trending Reads
+                {copy.trendingLabel}
               </div>
 
               <div className="mt-4 space-y-4">
@@ -281,7 +283,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             {/* Categories Quick Links */}
             <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
               <div className="border-b border-border/60 pb-3 text-xs font-bold uppercase tracking-wider text-foreground">
-                Browse Topics
+                {copy.topicsLabel}
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {categories.map((cat) => (
@@ -299,7 +301,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         </div>
       </div>
 
-      <Newsletter />
+      <GlobalNewsletter />
     </>
   );
 }

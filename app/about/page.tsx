@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Newsletter } from "@/components/home/Newsletter";
+import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/data/categories";
 import { getAboutPageContent } from "@/lib/pages";
@@ -105,7 +105,7 @@ export default async function AboutPage() {
         </aside>
       </section>
 
-      <Newsletter />
+      <GlobalNewsletter />
     </>
   );
 }

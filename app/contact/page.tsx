@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail, MessageSquare, PenLine, Users } from "lucide-react";
 import { ContactForm } from "@/components/contact/ContactForm";
-import { Newsletter } from "@/components/home/Newsletter";
+import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
 import { siteConfig } from "@/data/categories";
 import { getContactPageContent } from "@/lib/pages";
 
@@ -117,7 +117,7 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <Newsletter />
+      <GlobalNewsletter />
     </>
   );
 }

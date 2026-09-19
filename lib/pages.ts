@@ -1,5 +1,10 @@
 import { getAdminSupabase } from "@/lib/supabase";
 import { heroContent as defaultHeroContent } from "@/data/navigation";
+import { defaultNewsletterSection, mergeHomeCopy } from "@/data/home-sections";
+import { defaultBlogPage } from "@/data/blog-page";
+
+export { defaultDailySpiritual } from "@/data/daily-spiritual";
+export type { DailySpiritualContent } from "@/data/daily-spiritual";
 
 export const defaultAboutContent = {
   eyebrow: "About UmrahZone",
@@ -54,13 +59,44 @@ export async function getHomePageContent() {
       .maybeSingle();
 
     if (data?.value) {
-      return { ...defaultHeroContent, ...data.value };
+      const value = data.value as Record<string, any>;
+      return {
+        ...defaultHeroContent,
+        ...value,
+        quote: { ...defaultHeroContent.quote, ...(value.quote || {}) },
+        image: { ...defaultHeroContent.image, ...(value.image || {}) },
+        slides:
+          Array.isArray(value.slides) && value.slides.length > 0
+            ? value.slides
+            : [
+                { ...defaultHeroContent.image, ...(value.image || {}) },
+                ...defaultHeroContent.slides.slice(1),
+              ],
+        primaryCta: { ...defaultHeroContent.primaryCta, ...(value.primaryCta || {}) },
+        secondaryCta: {
+          ...defaultHeroContent.secondaryCta,
+          ...(value.secondaryCta || {}),
+        },
+        trustItems: value.trustItems || defaultHeroContent.trustItems,
+        verses:
+          Array.isArray(value.verses) && value.verses.length > 0
+            ? value.verses
+            : defaultHeroContent.verses,
+        dockItems:
+          Array.isArray(value.dockItems) && value.dockItems.length > 0
+            ? value.dockItems
+            : defaultHeroContent.dockItems,
+        ...mergeHomeCopy(value),
+      };
     }
   } catch (err) {
     console.error("Could not fetch page_home from Supabase, using default:", err);
   }
 
-  return defaultHeroContent;
+  return {
+    ...defaultHeroContent,
+    ...mergeHomeCopy(),
+  };
 }
 
 export async function getAboutPageContent() {
@@ -150,4 +186,37 @@ export async function getPrivacyPageContent() {
 
 export async function getTermsPageContent() {
   return getPageSetting("page_terms", defaultTermsContent);
+}
+
+export async function getBlogPageContent() {
+  return getPageSetting("page_blog", defaultBlogPage);
+}
+
+export async function getGlobalSubscribe() {
+  try {
+    const supabase = getAdminSupabase();
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "global_subscribe")
+      .maybeSingle();
+
+    if (data?.value && typeof data.value === "object") {
+      return { ...defaultNewsletterSection, ...(data.value as object) };
+    }
+
+    const { data: home } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "page_home")
+      .maybeSingle();
+    const homeValue = home?.value as Record<string, any> | undefined;
+    if (homeValue?.newsletter && typeof homeValue.newsletter === "object") {
+      return { ...defaultNewsletterSection, ...homeValue.newsletter };
+    }
+  } catch (err) {
+    console.error("Could not fetch global_subscribe from Supabase, using default:", err);
+  }
+
+  return defaultNewsletterSection;
 }

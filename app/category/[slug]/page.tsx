@@ -4,7 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArticleGrid } from "@/components/blog/ArticleGrid";
 import { FeaturedArticle } from "@/components/home/FeaturedArticle";
-import { Newsletter } from "@/components/home/Newsletter";
+import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
 import {
   fetchAllCategories,
   fetchArticlesByCategory,
@@ -119,7 +119,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </div>
       </section>
 
-      <Newsletter />
+      <GlobalNewsletter />
     </>
   );
 }

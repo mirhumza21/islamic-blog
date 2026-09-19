@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { namesOfAllah } from "@/data/islamic-data";
 import type { LiveDailyWord } from "@/lib/spiritual-api";
-import { Search, Sparkles, Volume2 } from "lucide-react";
+import { playSpiritualAudio, stopSpiritualAudio } from "@/lib/spiritual-audio";
+import { Pause, Search, Sparkles, Volume2 } from "lucide-react";
 
 interface NamesExplorerModalProps {
   open: boolean;
@@ -38,20 +39,23 @@ export function NamesExplorerModal({
   }, [search, source]);
 
   const handlePlay = (name: LiveDailyWord) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    setPlayingNum(name.number);
-
-    const utterance = new SpeechSynthesisUtterance(name.arabic);
-    utterance.lang = "ar-SA";
-    utterance.rate = 0.8;
-    utterance.onend = () => setPlayingNum(null);
-    utterance.onerror = () => setPlayingNum(null);
-    window.speechSynthesis.speak(utterance);
+    void playSpiritualAudio({
+      id: `name-${name.number}`,
+      arabic: name.arabic,
+      transliteration: name.transliteration,
+      onStart: () => setPlayingNum(name.number),
+      onEnd: () => setPlayingNum(null),
+    });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) stopSpiritualAudio();
+        onOpenChange(next);
+      }}
+    >
       <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col overflow-hidden bg-card p-6 sm:rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2.5 font-serif text-2xl font-semibold text-foreground">
@@ -92,18 +96,22 @@ export function NamesExplorerModal({
                     onClick={() => handlePlay(item)}
                     className={`flex h-7 w-7 items-center justify-center rounded-full transition-colors ${
                       playingNum === item.number
-                        ? "animate-pulse bg-green text-white"
+                        ? "bg-green text-white"
                         : "bg-cream text-foreground/70 hover:bg-green hover:text-white"
                     }`}
-                    title="Pronounce name"
+                    title={playingNum === item.number ? "Stop" : "Pronounce name"}
                     aria-label={`Listen to ${item.transliteration}`}
                   >
-                    <Volume2 className="h-3.5 w-3.5" />
+                    {playingNum === item.number ? (
+                      <Pause className="h-3.5 w-3.5" fill="currentColor" />
+                    ) : (
+                      <Volume2 className="h-3.5 w-3.5" />
+                    )}
                   </button>
                 </div>
 
                 <div className="my-2 text-center">
-                  <span lang="ar" dir="rtl" className="inline-block font-arabic text-3xl font-bold leading-[2] whitespace-nowrap text-green">
+                  <span lang="ar" dir="rtl" className="inline-block font-arabic text-3xl font-bold leading-[2] whitespace-nowrap text-[#063b2f]">
                     {item.arabic}
                   </span>
                   <div className="mt-1 font-serif text-sm font-semibold tracking-wide text-foreground">

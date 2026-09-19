@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Sparkles, Globe, Mail, Share2, CheckCircle2 } from "lucide-react";
+import { Save, Globe, Share2, CheckCircle2 } from "lucide-react";
 import { siteConfig as defaultSiteConfig } from "@/data/categories";
 import { FormPageSkeleton } from "@/components/admin/AdminSkeletons";
 

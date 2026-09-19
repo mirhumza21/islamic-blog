@@ -14,6 +14,7 @@ import {
   Info,
   CheckCircle2,
   Lock,
+  Globe,
 } from "lucide-react";
 
 interface SitePage {
@@ -93,10 +94,11 @@ const sitePages: SitePage[] = [
     id: "blog",
     title: "Blog Archive",
     slug: "/blog",
-    type: "Dynamic Feed",
+    type: "Editorial Feed",
     description:
-      "Comprehensive article library with search, category filtering, and pagination.",
-    isEditable: false,
+      "Blog hero, featured labels, empty state, sidebar reflection, and topic headings. Articles stay live from the CMS.",
+    isEditable: true,
+    editUrl: "/admin/pages/blog",
     viewUrl: "/blog",
     icon: BookOpen,
   },
@@ -117,6 +119,13 @@ export default function AdminPagesPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link
+            href="/admin/global"
+            className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-semibold shadow-2xs transition-all"
+          >
+            <Globe className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Edit Subscribe</span>
+          </Link>
           <Link
             href="/admin/pages/home"
             className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-semibold shadow-2xs transition-all"
@@ -217,7 +226,7 @@ export default function AdminPagesPage() {
             </span>
           </div>
           <span className="text-[11px] text-gray-500 font-medium">
-            5 Editable via Customizer • 1 Dynamic Feed
+            6 Editable via Customizer
           </span>
         </div>
 
