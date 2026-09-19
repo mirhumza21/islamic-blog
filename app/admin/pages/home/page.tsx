@@ -98,10 +98,6 @@ export default function EditHomePage() {
                 Array.isArray(data.content.dockItems) && data.content.dockItems.length > 0
                   ? data.content.dockItems
                   : defaultHeroContent.dockItems,
-              dailySpiritual: {
-                ...defaultDailySpiritual,
-                ...(data.content.dailySpiritual || {}),
-              },
               ...mergeHomeCopy(data.content),
             });
           }
