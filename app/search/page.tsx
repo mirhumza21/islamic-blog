@@ -4,6 +4,8 @@ import { popularSearches } from "@/data/categories";
 import { searchPublishedArticles } from "@/lib/articles";
 import Link from "next/link";
 import { SearchPageForm } from "@/components/search/SearchPageForm";
+import { PageHero } from "@/components/layout/PageHero";
+import { Search } from "lucide-react";
 
 type SearchPageProps = {
   searchParams: Promise<{ q?: string }>;
@@ -33,47 +35,52 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const results = query ? await searchPublishedArticles(query) : [];
 
   return (
-    <section className="container-editorial py-14 lg:py-16">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-green">
-        Search
-      </p>
-      <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-        Find guidance
-      </h1>
-      <p className="mt-3 max-w-2xl text-lg text-muted">
-        Search articles, Umrah guides, duas, and practical tips.
-      </p>
+    <>
+      <PageHero
+        eyebrow="Search"
+        title="Find guidance"
+        subtitle="Search articles, Umrah guides, duas, and practical tips."
+        icon={<Search className="h-3 w-3" />}
+      />
 
-      <div className="mt-8 max-w-2xl">
-        <SearchPageForm initialQuery={query} />
-      </div>
+      <section className="relative overflow-hidden bg-ivory">
+        <div
+          className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-40"
+          aria-hidden
+        />
+        <div className="container-editorial relative py-10 lg:py-14">
+          <div className="max-w-2xl">
+            <SearchPageForm initialQuery={query} />
+          </div>
 
-      {!query ? (
-        <div className="mt-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
-            Popular searches
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {popularSearches.map((term) => (
-              <Link
-                key={term}
-                href={`/search?q=${encodeURIComponent(term)}`}
-                className="rounded-full border border-border bg-card px-3 py-2 text-sm transition-colors hover:border-green/30 hover:text-green"
-              >
-                {term}
-              </Link>
-            ))}
+          {!query ? (
+            <div className="mt-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+                Popular searches
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {popularSearches.map((term) => (
+                  <Link
+                    key={term}
+                    href={`/search?q=${encodeURIComponent(term)}`}
+                    className="rounded-full border border-[#e6dfd3] bg-white/80 px-3.5 py-2 text-sm text-[#141d1a] transition-colors hover:border-[#c59a53]/50 hover:text-[#063b2f]"
+                  >
+                    {term}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="mt-6 text-sm text-muted">
+              {results.length} result{results.length === 1 ? "" : "s"} for “{query}”
+            </p>
+          )}
+
+          <div className="mt-8">
+            <SearchResults query={query} results={results} />
           </div>
         </div>
-      ) : (
-        <p className="mt-6 text-sm text-muted">
-          {results.length} result{results.length === 1 ? "" : "s"} for “{query}”
-        </p>
-      )}
-
-      <div className="mt-8">
-        <SearchResults query={query} results={results} />
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

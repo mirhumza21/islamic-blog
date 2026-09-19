@@ -5,6 +5,7 @@ import { Hero } from "@/components/home/Hero";
 import { IslamicCalendarHub } from "@/components/home/IslamicCalendarHub";
 import { LatestArticles } from "@/components/home/LatestArticles";
 import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
+import { SectionHeader } from "@/components/home/SectionHeader";
 import {
   fetchAllArticles,
   fetchAllCategories,
@@ -42,19 +43,19 @@ export default async function HomePage() {
       {/* Islamic Calendar & Event Countdown */}
       <IslamicCalendarHub content={homeContent.calendar} />
 
-      {/* Browse by Category */}
-      <section className="container-editorial py-12 lg:py-16">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-green">
-              {homeContent.categories?.eyebrow}
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              {homeContent.categories?.title}
-            </h2>
-          </div>
+      <section className="relative overflow-hidden bg-ivory">
+        <div
+          className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-45"
+          aria-hidden
+        />
+        <div className="container-editorial relative py-12 lg:py-16">
+          <SectionHeader
+            eyebrow={homeContent.categories?.eyebrow || "Explore Knowledge"}
+            title={homeContent.categories?.title || "Browse by Category"}
+            tone="sand"
+          />
+          <CategoryGrid categories={categories} />
         </div>
-        <CategoryGrid categories={categories} />
       </section>
 
       {/* Featured Article Guide */}

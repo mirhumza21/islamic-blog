@@ -60,7 +60,7 @@ export function Header({ subscribeLabel = "Subscribe" }: { subscribeLabel?: stri
             className="hidden min-w-0 flex-1 items-center justify-center lg:flex"
             aria-label="Primary"
           >
-            <div className="flex items-center">
+            <div className="flex items-center gap-x-4 lg:gap-x-5 xl:gap-x-7">
               {mainNav.map((item) => (
                 <NavItem key={item.href + item.label} item={item} pathname={pathname} />
               ))}

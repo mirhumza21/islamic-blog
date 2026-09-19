@@ -11,7 +11,7 @@ export function SearchResults({
 }) {
   if (!query) {
     return (
-      <p className="rounded-2xl border border-dashed border-border bg-cream/50 px-5 py-10 text-center text-muted">
+      <p className="rounded-[26px] border border-[#e6dfd3] bg-white/80 px-5 py-10 text-center text-muted">
         Start typing to search articles, guides, and duas.
       </p>
     );
@@ -19,9 +19,9 @@ export function SearchResults({
 
   if (results.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-border bg-cream/50 px-5 py-10 text-center">
+      <div className="rounded-[26px] border border-[#e6dfd3] bg-white/80 px-5 py-10 text-center">
         <p className="text-muted">No results for “{query}”.</p>
-        <Link href="/blog" className="mt-3 inline-block text-sm font-medium text-green hover:underline">
+        <Link href="/blog" className="mt-3 inline-block text-sm font-medium text-[#063b2f] hover:underline">
           Browse all articles
         </Link>
       </div>

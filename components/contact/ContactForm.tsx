@@ -53,6 +53,7 @@ export function ContactForm() {
             placeholder="Your name"
             value={name}
             onChange={(event) => setName(event.target.value)}
+            className="h-11 rounded-full border-[#e6dfd3] bg-white"
           />
         </div>
         <div>
@@ -68,6 +69,7 @@ export function ContactForm() {
             placeholder="you@example.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            className="h-11 rounded-full border-[#e6dfd3] bg-white"
           />
         </div>
       </div>
@@ -83,7 +85,7 @@ export function ContactForm() {
           value={subject}
           onChange={(event) => setSubject(event.target.value)}
           className={cn(
-            "flex h-11 w-full rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
+            "flex h-11 w-full rounded-full border border-[#e6dfd3] bg-white px-4 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#063b2f] focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
           )}
         >
           {subjects.map((item) => (
@@ -107,12 +109,16 @@ export function ContactForm() {
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           className={cn(
-            "flex w-full resize-y rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground transition-colors placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
+            "flex w-full resize-y rounded-2xl border border-[#e6dfd3] bg-white px-4 py-3 text-sm text-foreground transition-colors placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#063b2f] focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
           )}
         />
       </div>
 
-      <Button type="submit" size="lg" className="w-full sm:w-auto">
+      <Button
+        type="submit"
+        size="lg"
+        className="h-12 w-full rounded-full bg-[#063b2f] px-7 hover:bg-[#042d24] sm:w-auto"
+      >
         <Send className="h-4 w-4" />
         Send message
       </Button>

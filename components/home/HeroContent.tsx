@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Compass } from "lucide-react";
 import { HeroReveal } from "@/components/home/HeroReveal";
 import { heroContent } from "@/data/navigation";
 import { HeroAyatSlider } from "@/components/home/HeroAyatSlider";
+import { GoldUnderline } from "@/components/home/GoldUnderline";
 
 export function HeroContent({ content }: { content?: typeof heroContent }) {
   const data = content || heroContent;
@@ -34,29 +35,7 @@ export function HeroContent({ content }: { content?: typeof heroContent }) {
             {accentLead ? `${accentLead} ` : null}
             <span className="relative inline-block">
               {journeyWord}
-              {/* Gold brush underline sits just under Journey */}
-              <svg
-                viewBox="0 0 180 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="pointer-events-none absolute top-[1.1em] left-0 w-full overflow-visible text-[#c59a53]"
-                preserveAspectRatio="none"
-                aria-hidden
-              >
-                <path
-                  d="M2 8C38 3 92 2 178 9"
-                  stroke="currentColor"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M14 12C55 6 110 6 168 12"
-                  stroke="#b8894a"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                  opacity="0.65"
-                />
-              </svg>
+              <GoldUnderline className="top-[1.1em]" />
             </span>
           </span>
         </h1>

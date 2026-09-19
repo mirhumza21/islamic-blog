@@ -31,9 +31,8 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
           <Link
             key={category.id}
             href={`/category/${category.slug}`}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-200 hover:border-green/40"
+            className="group flex flex-col overflow-hidden rounded-[26px] border border-[#e6dfd3] bg-white/80 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)] transition-colors duration-200 hover:border-[#c59a53]/50"
           >
-            {/* Image container with subtle inner zoom on hover */}
             <div className="relative aspect-[16/10] w-full overflow-hidden bg-cream [clip-path:inset(0)] [transform:translateZ(0)]">
               <Image
                 src={category.image}
@@ -44,12 +43,12 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
               />
             </div>
 
-            <div className="flex flex-1 flex-col p-5">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cream text-green">
+            <div className="flex flex-1 flex-col p-5 sm:p-6">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sand/15 text-[#b8894a]">
                 <Icon className="h-4 w-4" />
               </span>
 
-              <h3 className="mt-3 font-serif text-xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-green">
+              <h3 className="mt-3 font-serif text-xl font-semibold tracking-tight text-[#141d1a] transition-colors group-hover:text-[#063b2f]">
                 {category.name}
               </h3>
 

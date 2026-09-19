@@ -5,7 +5,7 @@ import type { Author } from "@/types/blog";
 
 export function AuthorBioCard({ author }: { author: Author }) {
   return (
-    <div className="relative overflow-hidden rounded-[24px] border border-border/80 bg-gradient-to-br from-card via-card to-cream/40 p-6 sm:p-7 shadow-xs">
+    <div className="relative overflow-hidden rounded-[26px] border border-[#e6dfd3] bg-white/80 p-6 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)] sm:p-7">
       <div className="pointer-events-none absolute right-0 top-0 h-28 w-28 -translate-y-6 translate-x-6 rounded-full bg-sand/10 blur-xl" />
 
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">

@@ -59,7 +59,7 @@ export function ArticleCard({
   return (
     <article
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-xs transition-colors duration-200 hover:border-green/40",
+        "group flex h-full flex-col overflow-hidden rounded-[26px] border border-[#e6dfd3] bg-white/80 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)] transition-colors duration-200 hover:border-[#c59a53]/50",
         variant === "compact" && "rounded-xl"
       )}
     >

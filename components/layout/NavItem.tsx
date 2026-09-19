@@ -79,7 +79,7 @@ export function NavItem({
   }, []);
 
   const linkClass = cn(
-    "inline-flex items-center whitespace-nowrap rounded-md py-2 text-[13px] font-medium transition-colors xl:text-[13.5px]",
+    "inline-flex items-center whitespace-nowrap py-2 text-[13px] font-medium tracking-[0.02em] transition-colors",
     isActive ? "text-green" : "text-foreground/75 hover:text-green"
   );
 
@@ -98,7 +98,7 @@ export function NavItem({
 
   if (!hasChildren) {
     return (
-      <Link href={item.href} className={cn(linkClass, "px-1.5 xl:px-2")}>
+      <Link href={item.href} className={linkClass}>
         {underline}
       </Link>
     );
@@ -111,7 +111,7 @@ export function NavItem({
       onMouseEnter={openMenu}
       onMouseLeave={() => closeMenu()}
     >
-      <div className={cn("inline-flex items-center rounded-md px-1.5 xl:px-2", isActive ? "text-green" : "text-foreground/75")}>
+      <div className={cn("inline-flex items-center gap-0.5", isActive ? "text-green" : "text-foreground/75")}>
         <Link
           href={item.href}
           className={linkClass}
@@ -121,7 +121,7 @@ export function NavItem({
         </Link>
         <button
           type="button"
-          className="ml-0.5 inline-flex h-7 w-6 items-center justify-center rounded-md text-current/50 transition-colors hover:text-green"
+          className="inline-flex h-7 w-5 items-center justify-center rounded-md text-current/45 transition-colors hover:text-green"
           aria-expanded={open}
           aria-haspopup="menu"
           aria-controls={menuId}

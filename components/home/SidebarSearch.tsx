@@ -19,10 +19,10 @@ export function SidebarSearch() {
   return (
     <form
       onSubmit={onSubmit}
-      className="rounded-2xl border border-border bg-card p-4"
+      className="rounded-[26px] border border-[#e6dfd3] bg-white/80 p-5 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)]"
       role="search"
     >
-      <label htmlFor="sidebar-search" className="text-sm font-semibold text-foreground">
+      <label htmlFor="sidebar-search" className="text-sm font-semibold text-[#141d1a]">
         Search articles
       </label>
       <div className="mt-3 flex gap-2">
@@ -33,10 +33,14 @@ export function SidebarSearch() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Find guidance…"
-            className="pl-10"
+            className="h-11 rounded-full border-[#e6dfd3] bg-white pl-10"
           />
         </div>
-        <Button type="submit" aria-label="Search">
+        <Button
+          type="submit"
+          aria-label="Search"
+          className="h-11 rounded-full bg-[#063b2f] px-5 hover:bg-[#042d24]"
+        >
           Search
         </Button>
       </div>

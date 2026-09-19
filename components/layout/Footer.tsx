@@ -65,7 +65,11 @@ const social = [
 
 export function Footer() {
   return (
-    <footer className="relative mt-auto overflow-hidden border-t border-border bg-cream">
+    <footer className="relative mt-auto overflow-hidden border-t border-[#e6dfd3] bg-cream/80">
+      <div
+        className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-40"
+        aria-hidden
+      />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 silhouette-mosque opacity-40" />
       <div className="container-editorial relative py-14 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
@@ -82,7 +86,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={item.label}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-muted transition-colors hover:border-green/25 hover:text-green"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#e6dfd3] bg-white/80 text-muted transition-colors hover:border-[#c59a53]/50 hover:text-[#063b2f]"
                 >
                   <item.icon className="h-4 w-4" />
                 </a>
@@ -143,7 +147,7 @@ export function Footer() {
             <p className="mt-4 text-sm leading-relaxed text-muted">
               Read thoughtfully. Prepare calmly. Grow closer to Allah — one article at a time.
             </p>
-            <blockquote className="mt-6 rounded-2xl border border-border bg-card/70 p-4 font-serif text-lg leading-snug text-green">
+            <blockquote className="mt-6 rounded-[22px] border border-[#e6dfd3] bg-white/70 p-4 font-serif text-lg leading-snug text-[#063b2f]">
               “The best journey is the one that brings you closer to Allah.”
             </blockquote>
           </div>

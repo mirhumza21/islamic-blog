@@ -91,12 +91,12 @@ export function ArticleHeader({
       <div className="mt-6 max-w-3xl lg:mt-8">
         <Link
           href={`/category/${category.slug}`}
-          className="text-xs font-bold uppercase tracking-[0.16em] text-green transition-colors hover:text-green-dark"
+          className="inline-flex items-center rounded-full bg-sand/15 px-3 py-0.5 text-[11px] font-bold uppercase tracking-[0.16em] text-sand transition-colors hover:bg-sand/25"
         >
           {category.name}
         </Link>
 
-        <h1 className="mt-3 font-serif text-3xl font-bold leading-[1.15] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] xl:text-[3.15rem]">
+        <h1 className="mt-3 font-serif text-3xl font-bold leading-[1.15] tracking-tight text-[#141d1a] sm:text-4xl lg:text-[2.75rem] xl:text-[3.15rem]">
           {article.title}
         </h1>
 
@@ -144,7 +144,7 @@ export function ArticleHeader({
           <button
             type="button"
             onClick={handleCopy}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 text-xs font-semibold text-foreground/80 transition-colors hover:border-green hover:text-green"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-[#c59a53]/60 bg-white/70 px-3.5 text-xs font-semibold text-[#141d1a] transition-colors hover:border-[#063b2f] hover:text-[#063b2f]"
           >
             {copied ? (
               <>
@@ -161,7 +161,7 @@ export function ArticleHeader({
           <button
             type="button"
             onClick={handleNativeShare}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 text-xs font-semibold text-foreground/80 transition-colors hover:border-green hover:text-green"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-[#c59a53]/60 bg-white/70 px-3.5 text-xs font-semibold text-[#141d1a] transition-colors hover:border-[#063b2f] hover:text-[#063b2f]"
           >
             <Share2 className="h-3.5 w-3.5" />
             Share
@@ -171,8 +171,8 @@ export function ArticleHeader({
             onClick={() => setBookmarked(!bookmarked)}
             className={`inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors ${
               bookmarked
-                ? "border-green bg-green text-white"
-                : "border-border bg-card text-foreground/80 hover:border-green hover:text-green"
+                ? "border-[#063b2f] bg-[#063b2f] text-white"
+                : "border-[#c59a53]/60 bg-white/70 text-[#141d1a] hover:border-[#063b2f] hover:text-[#063b2f]"
             }`}
             aria-label={bookmarked ? "Bookmarked" : "Bookmark article"}
           >
@@ -181,7 +181,7 @@ export function ArticleHeader({
         </div>
       </div>
 
-      <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-[24px] border border-border/80 bg-cream sm:mt-10 sm:aspect-[2/1] lg:rounded-[28px]">
+      <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-[24px] border border-[#e6dfd3] bg-cream shadow-[0_12px_40px_-16px_rgba(6,59,47,0.18)] sm:mt-10 sm:aspect-[2/1] lg:rounded-[28px]">
         <Image
           src={article.image}
           alt={article.imageAlt}

@@ -1,5 +1,7 @@
 import { ArticleCard } from "@/components/blog/ArticleCard";
+import { SectionHeader } from "@/components/home/SectionHeader";
 import type { Article, Category } from "@/types/blog";
+import { BookOpen } from "lucide-react";
 
 export function RelatedArticles({
   articles,
@@ -13,12 +15,13 @@ export function RelatedArticles({
   const categoryMap = new Map(categories.map((category) => [category.slug, category]));
 
   return (
-    <section className="mt-16 border-t border-border pt-12 lg:mt-20 lg:pt-14">
-      <div className="mb-8 flex items-baseline justify-between border-b border-border/60 pb-4">
-        <h2 className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          Continue Reading
-        </h2>
-      </div>
+    <section className="mt-16 pt-4 lg:mt-20">
+      <SectionHeader
+        eyebrow="Keep Reading"
+        title="Continue Reading"
+        icon={<BookOpen className="h-3 w-3" />}
+        tone="sand"
+      />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {articles.map((article) => (
           <ArticleCard

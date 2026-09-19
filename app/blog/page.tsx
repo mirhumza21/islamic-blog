@@ -4,6 +4,9 @@ import Image from "next/image";
 import { ArticleGrid } from "@/components/blog/ArticleGrid";
 import { CategoryFilters } from "@/components/blog/CategoryFilters";
 import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
+import { GoldUnderline, underlineLastWord } from "@/components/home/GoldUnderline";
+import { SectionHeader } from "@/components/home/SectionHeader";
+import { SidebarSearch } from "@/components/home/SidebarSearch";
 import {
   fetchAllArticles,
   fetchAllCategories,
@@ -58,245 +61,234 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     : undefined;
 
   const popular = await fetchPopularArticles(4, articles);
+  const heroTitle = activeCategory ? activeCategory.name : copy.title;
+  const { lead, last } = underlineLastWord(heroTitle);
+
+  const pageHref = (nextPage: number) => {
+    const query = new URLSearchParams({
+      ...(categorySlug ? { category: categorySlug } : {}),
+      page: String(nextPage),
+    }).toString();
+    return `/blog?${query}`;
+  };
 
   return (
     <>
-      {/* Blog Hero Header */}
-      <section className="relative overflow-hidden border-b border-border bg-ivory py-14 lg:py-20">
-        <div className="pointer-events-none absolute inset-0 opacity-20 pattern-geometric-cream" aria-hidden />
-
-        <div className="container-editorial relative z-10 max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-sand/30 bg-cream/80 px-4 py-1 text-xs font-bold uppercase tracking-[0.16em] text-sand shadow-xs">
-            <Sparkles className="h-3.5 w-3.5" />
+      <section className="relative overflow-hidden bg-ivory">
+        <div
+          className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-50"
+          aria-hidden
+        />
+        <div className="container-editorial relative py-14 text-center lg:py-20">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-sand/15 px-3 py-0.5 text-[11px] font-bold uppercase tracking-[0.16em] text-sand">
+            <Sparkles className="h-3 w-3" />
             {copy.eyebrow}
           </div>
-
-          <h1 className="mt-4 font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            {activeCategory ? activeCategory.name : copy.title}
+          <h1 className="mt-4 font-serif text-4xl font-bold tracking-tight text-[#141d1a] sm:text-5xl lg:text-[3.4rem] lg:leading-[1.12]">
+            {lead ? `${lead} ` : null}
+            <span className="relative inline-block text-[#063b2f]">
+              {last}
+              <GoldUnderline />
+            </span>
           </h1>
-
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
             {activeCategory ? activeCategory.description : copy.description}
           </p>
         </div>
       </section>
 
-      {/* Category Pills Filter */}
-      <div className="border-b border-border bg-cream/40 py-5">
-        <div className="container-editorial">
-          <CategoryFilters
-            categories={categories}
-            activeSlug={categorySlug}
-          />
+      <div className="relative overflow-hidden bg-cream/80">
+        <div
+          className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-40"
+          aria-hidden
+        />
+        <div className="container-editorial relative py-5">
+          <CategoryFilters categories={categories} activeSlug={categorySlug} />
         </div>
       </div>
 
-      <div className="container-editorial py-12 lg:py-16">
-        {/* Featured Editorial Post on Page 1 */}
-        {featured && author && featuredCategory && page === 1 ? (
-          <div className="mb-16">
-            <div className="mb-6 flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-[0.18em] text-green">
-                {copy.featuredLabel}
-              </span>
-              <span className="rounded-full bg-sand/15 px-3 py-0.5 text-xs font-semibold text-sand">
-                {copy.featuredBadge}
-              </span>
-            </div>
-
-            <div className="overflow-hidden rounded-[28px] border border-border/80 bg-card shadow-md transition-all lg:grid lg:grid-cols-12 lg:items-stretch">
-              <div className="relative aspect-[16/10] overflow-hidden lg:col-span-7 lg:aspect-auto lg:rounded-l-[28px] isolate">
-                <Image
-                  src={featured.image}
-                  alt={featured.imageAlt}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent lg:hidden" />
-              </div>
-
-              <div className="flex flex-col justify-between p-6 sm:p-8 lg:col-span-5 lg:p-10">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-cream px-3 py-1 text-xs font-bold uppercase tracking-wider text-green">
-                      {featuredCategory.name}
-                    </span>
-                    <span className="text-xs text-muted">
-                      {formatDate(featured.publishedAt)}
-                    </span>
-                  </div>
-
-                  <h2 className="mt-4 font-serif text-2xl font-bold leading-snug tracking-tight text-foreground sm:text-3xl lg:text-[2rem]">
-                    <Link
-                      href={`/blog/${featured.slug}`}
-                      className="transition-colors hover:text-green"
-                    >
-                      {featured.title}
-                    </Link>
-                  </h2>
-
-                  <p className="mt-3 text-sm leading-relaxed text-muted line-clamp-3">
-                    {featured.excerpt}
-                  </p>
+      <div className="relative overflow-hidden bg-ivory">
+        <div
+          className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-40"
+          aria-hidden
+        />
+        <div className="container-editorial relative py-12 lg:py-16">
+          {featured && author && featuredCategory && page === 1 ? (
+            <article className="mb-16 grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
+              <div className="lg:col-span-5">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-sand/15 px-3 py-0.5 text-[11px] font-bold uppercase tracking-[0.16em] text-sand">
+                  {copy.featuredBadge}
                 </div>
-
-                <div className="mt-8 border-t border-border/60 pt-5 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {author.avatar ? (
-                      <Image
-                        src={author.avatar}
-                        alt={author.name}
-                        width={36}
-                        height={36}
-                        className="rounded-full object-cover"
-                      />
-                    ) : null}
-                    <div>
-                      <div className="text-xs font-semibold text-foreground">
-                        {author.name}
-                      </div>
-                      <div className="text-[11px] text-muted flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {featured.readingTime} min read
-                      </div>
-                    </div>
-                  </div>
-
+                <p className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#063b2f]">
+                  {featuredCategory.name}
+                </p>
+                <h2 className="mt-3 font-serif text-3xl font-bold leading-[1.15] tracking-tight text-[#141d1a] sm:text-4xl">
                   <Link
                     href={`/blog/${featured.slug}`}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-green px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-green-dark"
+                    className="transition-colors hover:text-[#063b2f]"
+                  >
+                    {featured.title}
+                  </Link>
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-muted">
+                  {featured.excerpt}
+                </p>
+                <div className="mt-8">
+                  <Link
+                    href={`/blog/${featured.slug}`}
+                    className="group inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-[#063b2f] px-7 text-[14px] font-semibold text-white shadow-[0_2px_12px_rgba(6,59,47,0.25)] transition-[background-color,box-shadow] duration-200 hover:bg-[#042d24] hover:shadow-[0_4px_16px_rgba(6,59,47,0.38)]"
                   >
                     {copy.featuredButton}
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <ArrowRight className="h-4 w-4 text-white/90" strokeWidth={1.8} />
                   </Link>
                 </div>
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        {/* Main 2-Column Layout: Articles + Sidebar */}
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
-          {/* Main Articles Stream */}
-          <div className="lg:col-span-8">
-            <div className="mb-6 flex items-baseline justify-between border-b border-border/60 pb-4">
-              <h3 className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                {activeCategory ? `${activeCategory.name} Articles` : copy.recentTitle}
-              </h3>
-              <span className="text-xs font-medium text-muted">
-                Showing {pagination.items.length} of {pagination.total} articles
-              </span>
-            </div>
-
-            {pagination.items.length > 0 ? (
-              <ArticleGrid articles={pagination.items} categories={categories} />
-            ) : (
-              <div className="rounded-2xl border border-dashed border-border bg-cream/40 p-12 text-center text-muted">
-                <BookOpen className="mx-auto h-8 w-8 text-sand/60" />
-                <h4 className="mt-3 font-serif text-lg font-bold text-foreground">
-                  {copy.emptyTitle}
-                </h4>
-                <p className="mt-1 text-xs">
-                  {copy.emptyText}
-                </p>
-              </div>
-            )}
-
-            {/* Pagination */}
-            {pagination.totalPages > 1 ? (
-              <div className="mt-12 flex items-center justify-center gap-3 border-t border-border/60 pt-8">
-                {pagination.page > 1 ? (
-                  <Link
-                    href={`/blog?${new URLSearchParams({
-                      ...(categorySlug ? { category: categorySlug } : {}),
-                      page: String(pagination.page - 1),
-                    }).toString()}`}
-                    className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-xs font-semibold text-foreground transition-colors hover:border-green hover:text-green shadow-xs"
-                  >
-                    &larr; Previous Page
-                  </Link>
-                ) : null}
-
-                <span className="rounded-lg bg-cream px-3 py-1.5 text-xs font-bold text-green">
-                  Page {pagination.page} of {pagination.totalPages}
-                </span>
-
-                {pagination.hasMore ? (
-                  <Link
-                    href={`/blog?${new URLSearchParams({
-                      ...(categorySlug ? { category: categorySlug } : {}),
-                      page: String(pagination.page + 1),
-                    }).toString()}`}
-                    className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-xs font-semibold text-foreground transition-colors hover:border-green hover:text-green shadow-xs"
-                  >
-                    Next Page &rarr;
-                  </Link>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="space-y-8 lg:col-span-4">
-            {/* Spiritual Reflection Card */}
-            <div className="rounded-2xl border border-[#ecdcc3] bg-[#faf6ee] p-6 shadow-xs">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#b87c32]">
-                <Sparkles className="h-4 w-4" />
-                {copy.reflectionEyebrow}
-              </div>
-              <blockquote className="mt-3 font-serif text-base italic leading-relaxed text-foreground">
-                &ldquo;{copy.reflectionQuote}&rdquo;
-              </blockquote>
-              <div className="mt-3 text-right text-xs font-semibold text-muted">
-                — {copy.reflectionSource}
-              </div>
-            </div>
-
-            {/* Popular Articles List */}
-            <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
-              <div className="flex items-center gap-2 border-b border-border/60 pb-3 text-xs font-bold uppercase tracking-wider text-green">
-                <TrendingUp className="h-4 w-4" />
-                {copy.trendingLabel}
-              </div>
-
-              <div className="mt-4 space-y-4">
-                {popular.map((item, index) => (
-                  <div key={item.id} className="group flex items-start gap-3">
-                    <span className="font-serif text-2xl font-bold text-sand/60 transition-colors group-hover:text-green">
-                      0{index + 1}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="font-serif text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-green">
-                        <Link href={`/blog/${item.slug}`}>{item.title}</Link>
-                      </h4>
-                      <p className="mt-0.5 text-[11px] text-muted">
-                        {item.readingTime} min read
-                      </p>
-                    </div>
+                <div className="mt-8 flex items-center gap-3">
+                  {author.avatar ? (
+                    <Image
+                      src={author.avatar}
+                      alt={author.name}
+                      width={44}
+                      height={44}
+                      className="h-11 w-11 rounded-full object-cover"
+                    />
+                  ) : null}
+                  <div>
+                    <p className="text-sm font-medium text-[#141d1a]">{author.name}</p>
+                    <p className="flex items-center gap-1 text-xs text-muted">
+                      <Clock className="h-3 w-3 text-sand" />
+                      {formatDate(featured.publishedAt)} · {featured.readingTime} min read
+                    </p>
                   </div>
-                ))}
+                </div>
               </div>
+
+              <Link
+                href={`/blog/${featured.slug}`}
+                className="group relative block overflow-hidden rounded-[28px] border border-[#e6dfd3] shadow-[0_12px_40px_-16px_rgba(6,59,47,0.18)] transition-colors duration-200 hover:border-[#c59a53]/50 lg:col-span-7"
+              >
+                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[28px] [clip-path:inset(0)] [transform:translateZ(0)]">
+                  <Image
+                    src={featured.image}
+                    alt={featured.imageAlt}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 58vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
+                </div>
+              </Link>
+            </article>
+          ) : null}
+
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-8">
+              <SectionHeader
+                eyebrow={activeCategory ? "Topic" : "Publications"}
+                title={
+                  activeCategory
+                    ? `${activeCategory.name} Articles`
+                    : copy.recentTitle
+                }
+                subtitle={`Showing ${pagination.items.length} of ${pagination.total} articles`}
+                tone="green"
+              />
+
+              {pagination.items.length > 0 ? (
+                <ArticleGrid articles={pagination.items} categories={categories} />
+              ) : (
+                <div className="rounded-[26px] border border-[#e6dfd3] bg-white/80 p-12 text-center shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)]">
+                  <BookOpen className="mx-auto h-8 w-8 text-sand/70" />
+                  <h4 className="mt-3 font-serif text-lg font-bold text-[#141d1a]">
+                    {copy.emptyTitle}
+                  </h4>
+                  <p className="mt-1 text-sm text-muted">{copy.emptyText}</p>
+                </div>
+              )}
+
+              {pagination.totalPages > 1 ? (
+                <div className="mt-12 flex items-center justify-center gap-3">
+                  {pagination.page > 1 ? (
+                    <Link
+                      href={pageHref(pagination.page - 1)}
+                      className="inline-flex h-11 items-center rounded-full border border-[#c59a53]/60 bg-white/70 px-5 text-[13px] font-semibold text-[#141d1a] transition-colors hover:border-[#063b2f] hover:text-[#063b2f]"
+                    >
+                      Previous
+                    </Link>
+                  ) : null}
+
+                  <span className="rounded-full bg-[#063b2f] px-4 py-2 text-xs font-bold text-white">
+                    {pagination.page} / {pagination.totalPages}
+                  </span>
+
+                  {pagination.hasMore ? (
+                    <Link
+                      href={pageHref(pagination.page + 1)}
+                      className="inline-flex h-11 items-center rounded-full border border-[#c59a53]/60 bg-white/70 px-5 text-[13px] font-semibold text-[#141d1a] transition-colors hover:border-[#063b2f] hover:text-[#063b2f]"
+                    >
+                      Next
+                    </Link>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
 
-            {/* Categories Quick Links */}
-            <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
-              <div className="border-b border-border/60 pb-3 text-xs font-bold uppercase tracking-wider text-foreground">
-                {copy.topicsLabel}
+            <aside className="space-y-6 lg:col-span-4">
+              <SidebarSearch />
+
+              <div className="overflow-hidden rounded-[26px] border border-[#ecdcc3] bg-gradient-to-br from-[#faf6ef] to-[#f5ede0] p-6 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.1)]">
+                <div className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wider text-[#b87c32]">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  {copy.reflectionEyebrow}
+                </div>
+                <blockquote className="mt-3 font-serif text-base italic leading-relaxed text-[#141d1a]">
+                  &ldquo;{copy.reflectionQuote}&rdquo;
+                </blockquote>
+                <div className="mt-3 text-right text-xs font-semibold text-[#8a6b32]">
+                  — {copy.reflectionSource}
+                </div>
               </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/category/${cat.slug}`}
-                    className="rounded-xl border border-border/70 bg-ivory px-3 py-1.5 text-xs font-medium text-foreground/80 transition-all hover:border-green hover:bg-cream hover:text-green"
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
+
+              <div className="rounded-[26px] border border-[#e6dfd3] bg-white/80 p-6 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)]">
+                <div className="flex items-center gap-2 border-b border-[#e6dfd3] pb-3.5 text-xs font-bold uppercase tracking-wider text-[#063b2f]">
+                  <TrendingUp className="h-4 w-4 text-[#c59a53]" />
+                  <span>{copy.trendingLabel}</span>
+                </div>
+                <ol className="mt-5 space-y-4">
+                  {popular.map((item, index) => (
+                    <li key={item.id} className="group flex items-start gap-3.5">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sand/15 font-serif text-sm font-bold text-sand transition-colors group-hover:bg-[#063b2f] group-hover:text-white">
+                        0{index + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-serif text-[15px] font-bold leading-snug text-[#141d1a] transition-colors group-hover:text-[#063b2f] line-clamp-2">
+                          <Link href={`/blog/${item.slug}`}>{item.title}</Link>
+                        </h4>
+                        <p className="mt-1 text-[11px] text-muted">
+                          {item.readingTime} min read
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
               </div>
-            </div>
+
+              <div className="rounded-[26px] border border-[#e6dfd3] bg-white/80 p-6 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)]">
+                <div className="border-b border-[#e6dfd3] pb-3 text-xs font-bold uppercase tracking-wider text-[#063b2f]">
+                  {copy.topicsLabel}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {categories.map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={`/category/${cat.slug}`}
+                      className="rounded-full border border-[#e6dfd3] bg-ivory px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:border-[#c59a53]/50 hover:text-[#063b2f]"
+                    >
+                      {cat.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       </div>

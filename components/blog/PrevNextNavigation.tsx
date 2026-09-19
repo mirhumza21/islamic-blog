@@ -16,7 +16,7 @@ export function PrevNextNavigation({
       {prev ? (
         <Link
           href={`/blog/${prev.slug}`}
-          className="group flex flex-col justify-between rounded-[22px] border border-border/80 bg-card p-5 shadow-xs transition-colors hover:border-green/40 hover:bg-cream/20"
+          className="group flex flex-col justify-between rounded-[26px] border border-[#e6dfd3] bg-white/80 p-5 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)] transition-colors hover:border-[#c59a53]/50"
         >
           <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted group-hover:text-green">
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
@@ -33,7 +33,7 @@ export function PrevNextNavigation({
       {next ? (
         <Link
           href={`/blog/${next.slug}`}
-          className="group flex flex-col justify-between items-end text-right rounded-[22px] border border-border/80 bg-card p-5 shadow-xs transition-colors hover:border-green/40 hover:bg-cream/20"
+          className="group flex flex-col justify-between items-end text-right rounded-[26px] border border-[#e6dfd3] bg-white/80 p-5 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)] transition-colors hover:border-[#c59a53]/50"
         >
           <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted group-hover:text-green">
             <span>Next Guide</span>

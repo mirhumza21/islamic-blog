@@ -127,7 +127,7 @@ export function TableOfContents({
   return (
     <>
       {/* Mobile Drawer Accordion */}
-      <div className="mb-8 rounded-2xl border border-border/80 bg-card p-4 shadow-xs lg:hidden">
+      <div className="mb-8 rounded-[26px] border border-[#e6dfd3] bg-white/80 p-4 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)] lg:hidden">
         <button
           type="button"
           className="flex w-full items-center justify-between text-left text-xs font-bold uppercase tracking-wider text-foreground"
@@ -155,7 +155,7 @@ export function TableOfContents({
       {/* Desktop Sticky Rail */}
       <div className="sticky top-24 hidden space-y-5 lg:block">
         {/* Table of Contents Card */}
-        <div className="rounded-[24px] border border-border/80 bg-card p-5 shadow-xs">
+        <div className="rounded-[26px] border border-[#e6dfd3] bg-white/80 p-5 shadow-[0_8px_28px_-16px_rgba(6,59,47,0.14)]">
           <div className="flex items-center justify-between border-b border-border/60 pb-3 text-xs font-bold uppercase tracking-wider text-green">
             <span className="flex items-center gap-1.5">
               <BookOpen className="h-3.5 w-3.5" />

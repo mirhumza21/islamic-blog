@@ -1,26 +1,37 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { PageHero } from "@/components/layout/PageHero";
+import { Compass } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <section className="container-editorial flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-green">
-        404
-      </p>
-      <h1 className="mt-3 font-serif text-4xl font-semibold text-foreground">
-        Page not found
-      </h1>
-      <p className="mt-3 max-w-md text-muted">
-        The page you are looking for may have moved. Try searching or return home.
-      </p>
-      <div className="mt-8 flex gap-3">
-        <Button asChild>
-          <Link href="/">Go home</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/search">Search</Link>
-        </Button>
-      </div>
-    </section>
+    <>
+      <PageHero
+        eyebrow="404"
+        title="Page not found"
+        subtitle="The page you are looking for may have moved. Try searching or return home."
+        align="center"
+        icon={<Compass className="h-3 w-3" />}
+      />
+      <section className="relative overflow-hidden bg-ivory">
+        <div
+          className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-40"
+          aria-hidden
+        />
+        <div className="container-editorial relative flex justify-center gap-3 py-10 pb-20">
+          <Link
+            href="/"
+            className="inline-flex h-12 items-center justify-center rounded-full bg-[#063b2f] px-7 text-[14px] font-semibold text-white shadow-[0_2px_12px_rgba(6,59,47,0.25)] transition-colors hover:bg-[#042d24]"
+          >
+            Go home
+          </Link>
+          <Link
+            href="/search"
+            className="inline-flex h-12 items-center justify-center rounded-full border border-[#c59a53]/60 bg-white/70 px-7 text-[14px] font-semibold text-[#141d1a] transition-colors hover:border-[#063b2f] hover:text-[#063b2f]"
+          >
+            Search
+          </Link>
+        </div>
+      </section>
+    </>
   );
 }

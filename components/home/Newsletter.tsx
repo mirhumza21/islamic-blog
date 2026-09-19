@@ -2,10 +2,10 @@
 
 import { FormEvent, useState } from "react";
 import { Loader2, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { defaultNewsletterSection } from "@/data/home-sections";
+import { GoldUnderline, underlineLastWord } from "@/components/home/GoldUnderline";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -24,6 +24,7 @@ export function Newsletter({
   content?: Partial<typeof defaultNewsletterSection>;
 }) {
   const copy = { ...defaultNewsletterSection, ...content };
+  const { lead, last } = underlineLastWord(copy.title);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
@@ -48,26 +49,32 @@ export function Newsletter({
   return (
     <section
       id="newsletter"
-      className={cn(
-        "relative overflow-hidden bg-green text-white pattern-subtle silhouette-mosque",
-        className
-      )}
+      className={cn("relative overflow-hidden bg-cream/80", className)}
     >
-      <div className="container-editorial relative py-14 lg:py-16">
+      <div
+        className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-50"
+        aria-hidden
+      />
+      <div className="container-editorial relative py-16 lg:py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-sand">
-            <Mail className="h-5 w-5" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-sand/15 px-3 py-0.5 text-[11px] font-bold uppercase tracking-[0.16em] text-sand">
+            <Mail className="h-3 w-3" />
+            Stay Connected
           </span>
-          <h2 className="mt-4 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
-            {copy.title}
+          <h2 className="mt-4 font-serif text-3xl font-bold tracking-tight text-[#141d1a] sm:text-4xl lg:text-[2.65rem]">
+            {lead ? `${lead} ` : null}
+            <span className="relative inline-block text-[#063b2f]">
+              {last}
+              <GoldUnderline />
+            </span>
           </h2>
-          <p className="mt-3 text-base text-white/80 sm:text-lg">
+          <p className="mt-4 text-base leading-relaxed text-muted sm:text-lg">
             {copy.description}
           </p>
 
           <form
             onSubmit={onSubmit}
-            className="mx-auto mt-8 flex w-full max-w-xl flex-col gap-3 sm:flex-row"
+            className="mx-auto mt-8 flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:items-center"
             noValidate
           >
             <Input
@@ -79,14 +86,12 @@ export function Newsletter({
               placeholder={copy.placeholder}
               aria-label="Email address"
               aria-invalid={status === "error"}
-              className="h-12 border-white/20 bg-white/95 text-foreground placeholder:text-muted focus-visible:ring-sand focus-visible:ring-offset-green"
+              className="h-12 rounded-full border-[#e6dfd3] bg-white px-5 text-foreground shadow-2xs placeholder:text-muted focus-visible:ring-[#063b2f]"
             />
-            <Button
+            <button
               type="submit"
-              size="lg"
-              variant="secondary"
               disabled={status === "loading"}
-              className="h-12 min-w-[140px]"
+              className="inline-flex h-12 min-w-[150px] items-center justify-center gap-2 rounded-full bg-[#063b2f] px-7 text-[14px] font-semibold text-white shadow-[0_2px_12px_rgba(6,59,47,0.25)] transition-[background-color,box-shadow] duration-200 hover:bg-[#042d24] disabled:opacity-50"
             >
               {status === "loading" ? (
                 <>
@@ -96,14 +101,14 @@ export function Newsletter({
               ) : (
                 copy.buttonLabel
               )}
-            </Button>
+            </button>
           </form>
 
           {message ? (
             <p
               className={cn(
                 "mt-4 text-sm",
-                status === "success" ? "text-sand-soft" : "text-red-200"
+                status === "success" ? "text-green" : "text-red-600"
               )}
               role="status"
               aria-live="polite"

@@ -154,7 +154,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     <>
       <ReadingProgress />
 
-      <main className="container-editorial py-8 sm:py-10 lg:py-12">
+      <main className="relative overflow-hidden bg-ivory">
+        <div
+          className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-35"
+          aria-hidden
+        />
+        <div className="container-editorial relative py-8 sm:py-10 lg:py-12">
         <ArticleHeader
           article={article}
           author={resolvedAuthor}
@@ -179,7 +184,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   <Link
                     key={tag}
                     href={`/search?q=${encodeURIComponent(tag)}`}
-                    className="rounded-full border border-border/80 bg-card px-3.5 py-1 text-xs font-medium text-foreground/80 shadow-xs transition-colors hover:border-green hover:bg-cream hover:text-green"
+                    className="rounded-full border border-[#e6dfd3] bg-white/80 px-3.5 py-1 text-xs font-medium text-foreground/80 transition-colors hover:border-[#c59a53]/50 hover:text-[#063b2f]"
                   >
                     #{tag}
                   </Link>
@@ -208,6 +213,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
 
         <RelatedArticles articles={related} categories={categories} />
+        </div>
       </main>
 
       <GlobalNewsletter />

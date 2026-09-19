@@ -28,11 +28,15 @@ export function SearchPageForm({ initialQuery }: { initialQuery: string }) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search articles…"
-          className="h-12 pl-10"
+          className="h-12 rounded-full border-[#e6dfd3] bg-white pl-10"
           aria-label="Search query"
         />
       </div>
-      <Button type="submit" size="lg" className="h-12">
+      <Button
+        type="submit"
+        size="lg"
+        className="h-12 rounded-full bg-[#063b2f] px-7 hover:bg-[#042d24]"
+      >
         Search
       </Button>
     </form>
