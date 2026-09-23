@@ -24,6 +24,7 @@ import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { TableKit } from "@tiptap/extension-table";
 import Placeholder from "@tiptap/extension-placeholder";
+import { Underline } from "@tiptap/extension-underline";
 import {
   Bold,
   Italic,
@@ -51,6 +52,7 @@ import {
   Quote,
   Layers,
   ChevronDown,
+  MousePointerClick,
 } from "lucide-react";
 import { uploadClientImage } from "@/lib/uploadClientImage";
 import { toast } from "@/components/admin/Toast";
@@ -67,6 +69,7 @@ interface TiptapEditorProps {
   onChange: (html: string) => void;
   placeholder?: string;
   minHeight?: string;
+  onCreateButton?: () => void;
 }
 
 type ImageAltModalState =
@@ -82,8 +85,12 @@ const FONT_OPTIONS: { value: string; label: string }[] = [
   { value: "'Montserrat', sans-serif", label: "Modern Montserrat" },
   { value: "var(--font-amiri), serif", label: "Arabic Amiri (عربي)" },
   { value: "var(--font-noto-nastaliq), serif", label: "Urdu Nastaliq (اردو)" },
+  { value: "var(--font-reem-kufi), sans-serif", label: "Arabic Reem Kufi" },
+  { value: "var(--font-aref-ruqaa), serif", label: "Arabic Aref Ruqaa" },
+  { value: "var(--font-script), cursive", label: "Luxury Script" },
+  { value: "'Sacramento', cursive", label: "Luxury Sacramento" },
   { value: "var(--font-manrope), sans-serif", label: "Manrope Sans" },
-  { value: "var(--font-inter), sans-serif", label: "Clean Inter" },
+  { value: "var(--font-manrope), sans-serif", label: "Clean Inter" },
 ];
 
 const FONT_SIZE_OPTIONS: { value: string; label: string }[] = [
@@ -228,7 +235,7 @@ const Divider = () => <span className="w-px h-5 bg-gray-200 mx-1 shrink-0" />;
 
 export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
   function TiptapEditor(
-    { value, onChange, placeholder = "Start writing your article content here...", minHeight = "540px" },
+    { value, onChange, placeholder = "Start writing your article content here...", minHeight = "540px", onCreateButton },
     ref
   ) {
     const [showSource, setShowSource] = useState(false);
@@ -270,14 +277,23 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
           heading: { levels: [1, 2, 3, 4, 5, 6] },
           link: false,
         }),
-        Link.configure({
+        Link.extend({
+          addAttributes() {
+            return {
+              ...this.parent?.(),
+              style: { default: null },
+              class: { default: null },
+              contenteditable: { default: null },
+            };
+          },
+        }).configure({
           openOnClick: false,
           autolink: true,
           HTMLAttributes: {
-            class: "text-emerald-700 underline underline-offset-2 hover:text-emerald-900 font-medium",
             rel: "noopener noreferrer",
           },
         }),
+        Underline,
         PreserveCard,
         TiptapImage.configure({ inline: false, allowBase64: false }),
         TextAlign.configure({ types: ["heading", "paragraph"] }),
@@ -722,6 +738,25 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
             <ImageIcon className="w-3.5 h-3.5" />
           </ToolbarButton>
 
+          <ToolbarButton
+            onClick={() => {
+              if (editor.isActive("image")) {
+                const attrs = editor.getAttributes("image");
+                openAltModal({
+                  mode: "edit",
+                  src: (attrs.src as string) || "",
+                  alt: (attrs.alt as string) || "",
+                });
+                return;
+              }
+              toast.error("Click an image in the content, then press ALT.");
+            }}
+            active={editor.isActive("image")}
+            title="Edit image alt text (select an image first)"
+          >
+            <span className="text-[10px] font-extrabold tracking-tight">ALT</span>
+          </ToolbarButton>
+
           {/* Table Insertion */}
           <ToolbarButton
             onClick={() =>
@@ -735,6 +770,21 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
           >
             <TableIcon className="w-3.5 h-3.5" />
           </ToolbarButton>
+
+          {onCreateButton ? (
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => onCreateButton()}
+              title="Insert a download / CTA button"
+              className="h-8 px-2.5 inline-flex items-center gap-1.5 rounded-md text-amber-800 hover:bg-amber-50 transition-colors cursor-pointer"
+            >
+              <MousePointerClick className="w-3.5 h-3.5" />
+              <span className="text-[11px] font-bold uppercase tracking-wider">
+                Button
+              </span>
+            </button>
+          ) : null}
 
           {/* Islamic Snippets Quick Menu */}
           <div className="relative" ref={islamicMenuRef}>

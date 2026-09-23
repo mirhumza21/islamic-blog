@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleBody } from "@/components/blog/ArticleBody";
+import { ArticleFaqSection } from "@/components/blog/ArticleFaqSection";
 import { ArticleFeedback } from "@/components/blog/ArticleFeedback";
 import { ArticleHeader } from "@/components/blog/ArticleHeader";
 import { ArticleTakeaways } from "@/components/blog/ArticleTakeaways";
+import { ArticleVideoEmbed } from "@/components/blog/ArticleVideoEmbed";
 import { AuthorBioCard } from "@/components/blog/AuthorBioCard";
 import { PrevNextNavigation } from "@/components/blog/PrevNextNavigation";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
@@ -24,6 +26,18 @@ import {
 import { absoluteUrl } from "@/lib/utils";
 import { Tag } from "lucide-react";
 
+function extractCustomSchema(script?: string): unknown | null {
+  if (!script?.trim()) return null;
+  const raw = script.trim();
+  const match = raw.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/i);
+  const jsonText = (match?.[1] || raw).trim();
+  try {
+    return JSON.parse(jsonText);
+  } catch {
+    return null;
+  }
+}
+
 type ArticlePageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -37,12 +51,27 @@ export async function generateMetadata({
 
   const title = article.seo?.title ?? article.title;
   const description = article.seo?.description ?? article.excerpt;
-  const url = absoluteUrl(`/blog/${article.slug}`);
+  const canonicalPath = article.seo?.canonicalUrl?.trim() || `/blog/${article.slug}`;
+  const url = canonicalPath.startsWith("http")
+    ? canonicalPath
+    : absoluteUrl(canonicalPath);
+  const heroImage = article.coverImage || article.image;
+  const heroAlt = article.coverImageAlt || article.imageAlt;
 
   return {
     title,
     description,
-    alternates: { canonical: `/blog/${article.slug}` },
+    keywords: article.seo?.keywords
+      ? article.seo.keywords.split(",").map((k) => k.trim()).filter(Boolean)
+      : article.tags,
+    alternates: {
+      canonical: canonicalPath.startsWith("http")
+        ? canonicalPath
+        : canonicalPath,
+    },
+    robots: article.seo?.noIndex
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
     openGraph: {
       type: "article",
       title,
@@ -50,13 +79,13 @@ export async function generateMetadata({
       url,
       publishedTime: article.publishedAt,
       modifiedTime: article.updatedAt,
-      images: [{ url: article.image, alt: article.imageAlt }],
+      images: [{ url: heroImage, alt: heroAlt }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [article.image],
+      images: [heroImage],
     },
   };
 }
@@ -93,12 +122,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { prev, next } = await fetchPrevNextArticles(article.slug, allArticles);
   const url = absoluteUrl(`/blog/${article.slug}`);
 
+  const heroImage = article.coverImage || article.image;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: article.title,
     description: article.excerpt,
-    image: [article.image],
+    image: [heroImage],
     datePublished: article.publishedAt,
     dateModified: article.updatedAt ?? article.publishedAt,
     author: {
@@ -133,13 +163,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     ],
   };
 
-  const faqBlock = article.content.find((block) => block.type === "faq");
+  const faqItems = article.faq?.items?.length
+    ? article.faq.items
+    : (() => {
+        const faqBlock = article.content.find((block) => block.type === "faq");
+        return faqBlock && faqBlock.type === "faq" ? faqBlock.items : [];
+      })();
+
   const faqJsonLd =
-    faqBlock && faqBlock.type === "faq"
+    faqItems.length > 0
       ? {
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: faqBlock.items.map((item) => ({
+          mainEntity: faqItems.map((item) => ({
             "@type": "Question",
             name: item.question,
             acceptedAnswer: {
@@ -149,6 +185,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           })),
         }
       : null;
+
+  const customSchema = extractCustomSchema(article.seo?.schemaScript);
 
   return (
     <>
@@ -173,6 +211,30 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <article id="article-content" className="w-full">
               <ArticleBody content={article.content} />
             </article>
+
+            <ArticleVideoEmbed url={article.videoUrl} title={article.videoTitle} />
+
+            <ArticleFaqSection
+              faq={
+                article.faq ||
+                (() => {
+                  const faqBlock = article.content.find((block) => block.type === "faq");
+                  if (!faqBlock || faqBlock.type !== "faq" || !faqBlock.items?.length) {
+                    return undefined;
+                  }
+                  return {
+                    title: faqBlock.title,
+                    description: faqBlock.description,
+                    image: faqBlock.image,
+                    imageAlt: faqBlock.imageAlt,
+                    imageTitle: faqBlock.imageTitle,
+                    imageCaption: faqBlock.imageCaption,
+                    imageDescription: faqBlock.imageDescription,
+                    items: faqBlock.items,
+                  };
+                })()
+              }
+            />
 
             {article.tags && article.tags.length > 0 ? (
               <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-border/80 pt-6">
@@ -222,7 +284,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
-            [jsonLd, breadcrumbJsonLd, faqJsonLd].filter(Boolean)
+            [jsonLd, breadcrumbJsonLd, faqJsonLd, customSchema].filter(Boolean)
           ),
         }}
       />

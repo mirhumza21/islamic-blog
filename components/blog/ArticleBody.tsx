@@ -256,50 +256,10 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
                 </table>
               </div>
             );
+          case "editorMeta":
           case "faq":
-            return (
-              <div key={index} className="my-12 space-y-3.5 not-prose">
-                <div className="mb-5">
-                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-green">
-                    Common Questions
-                  </span>
-                  <h2 className="mt-1 font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                    Frequently Asked Questions
-                  </h2>
-                </div>
-                {block.items.map((item) => (
-                  <details
-                    key={item.question}
-                    className="group rounded-[20px] border border-border/80 bg-card p-5 shadow-xs transition-colors hover:border-green/40 open:border-green/50 open:bg-cream/20"
-                  >
-                    <summary className="flex cursor-pointer list-none items-center justify-between font-serif text-base font-bold text-foreground sm:text-lg">
-                      <span>{item.question}</span>
-                      <ChevronDown className="h-4 w-4 text-muted transition-transform duration-200 group-open:rotate-180 group-open:text-green" />
-                    </summary>
-                    <p className="mt-3 text-sm leading-relaxed text-muted border-t border-border/60 pt-3">
-                      {item.answer}
-                    </p>
-                  </details>
-                ))}
-              </div>
-            );
           case "video":
-            return (
-              <div
-                key={index}
-                className="my-8 overflow-hidden rounded-[22px] border border-border/80 shadow-xs"
-              >
-                <div className="aspect-video bg-cream">
-                  <iframe
-                    src={block.src}
-                    title={block.title}
-                    className="h-full w-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-            );
+            return null;
           default:
             return null;
         }

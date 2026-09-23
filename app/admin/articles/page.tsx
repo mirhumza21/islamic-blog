@@ -99,6 +99,30 @@ export default function AdminArticlesPage() {
     }
   };
 
+  const handleToggleFeatured = async (article: any) => {
+    const next = !article.featured;
+    setArticles((prev) =>
+      prev.map((a) => (a.id === article.id ? { ...a, featured: next } : a))
+    );
+    try {
+      const res = await fetch(`/api/admin/articles/${article.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ featured: next }),
+      });
+      if (!res.ok) {
+        setArticles((prev) =>
+          prev.map((a) => (a.id === article.id ? { ...a, featured: !next } : a))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      setArticles((prev) =>
+        prev.map((a) => (a.id === article.id ? { ...a, featured: !next } : a))
+      );
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Page Header */}
@@ -243,24 +267,26 @@ export default function AdminArticlesPage() {
 
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
-                        {article.featured && (
-                          <span
-                            title="Featured on Homepage"
-                            className="p-1 rounded bg-amber-50 text-amber-600 border border-amber-200"
-                          >
-                            <Star className="w-3 h-3 fill-amber-500" />
-                          </span>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleFeatured(article)}
+                          title="Toggle Featured"
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold border transition-colors ${
+                            article.featured
+                              ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                              : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
+                          }`}
+                        >
+                          <Star className={`w-3 h-3 ${article.featured ? "fill-amber-500" : ""}`} />
+                          {article.featured ? "Featured" : "Feature"}
+                        </button>
                         {article.popular && (
                           <span
-                            title="Trending / Popular"
+                            title="Latest / Popular"
                             className="p-1 rounded bg-rose-50 text-rose-600 border border-rose-200"
                           >
                             <Flame className="w-3 h-3 fill-rose-500" />
                           </span>
-                        )}
-                        {!article.featured && !article.popular && (
-                          <span className="text-gray-300">—</span>
                         )}
                       </div>
                     </td>

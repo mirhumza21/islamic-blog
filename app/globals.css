@@ -428,3 +428,51 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
+/* CTA / download buttons inserted from the admin editor */
+.blog-cta-row {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.blog-cta-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 54px;
+  padding: 18px 42px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 8px;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.blog-cta-button--gold {
+  background-color: #c59d5f !important;
+  color: #050505 !important;
+  border: none !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.blog-cta-button--emerald {
+  background-color: #15803d !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.blog-cta-button--outline {
+  background-color: transparent !important;
+  color: #c59d5f !important;
+  border: 1px solid #c59d5f !important;
+}
+
+.blog-cta-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.97);
+}
+

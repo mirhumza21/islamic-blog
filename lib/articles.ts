@@ -3,6 +3,7 @@ import { authors as staticAuthors } from "@/data/authors";
 import { categories as staticCategories } from "@/data/categories";
 import type { Article, Author, Category, SearchResult } from "@/types/blog";
 import { supabase } from "@/lib/supabase";
+import { unpackArticleContent } from "@/lib/articleEditor";
 
 function isSupabaseConfigured() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -10,6 +11,10 @@ function isSupabaseConfigured() {
 }
 
 export function mapDbArticle(row: any): Article {
+  const content = Array.isArray(row.content) ? row.content : [];
+  const unpacked = unpackArticleContent(content, row);
+  const faqFromBlock = content.find((block: any) => block?.type === "faq");
+
   return {
     id: row.id,
     slug: row.slug,
@@ -22,15 +27,36 @@ export function mapDbArticle(row: any): Article {
     readingTime: row.reading_time || 5,
     image: row.image,
     imageAlt: row.image_alt || row.title,
+    coverImage: unpacked.meta.coverImage || undefined,
+    coverImageAlt: unpacked.meta.coverImageAlt || undefined,
     featured: Boolean(row.featured),
     popular: Boolean(row.popular),
     popularRank: row.popular_rank || undefined,
     tags: row.tags || [],
-    content: Array.isArray(row.content) ? row.content : [],
+    content,
     seo: {
       title: row.seo_title || undefined,
       description: row.seo_description || undefined,
+      keywords: unpacked.meta.seoKeywords || undefined,
+      canonicalUrl: unpacked.meta.canonicalUrl || undefined,
+      noIndex: unpacked.meta.noIndex === true,
+      schemaScript: unpacked.meta.schemaScript || undefined,
     },
+    videoUrl: unpacked.meta.videoUrl || undefined,
+    videoTitle: unpacked.meta.videoTitle || undefined,
+    faq: unpacked.faqs.length
+      ? {
+          title: unpacked.meta.faqTitle || faqFromBlock?.title,
+          description: unpacked.meta.faqDescription || faqFromBlock?.description,
+          image: unpacked.meta.faqImage || faqFromBlock?.image,
+          imageAlt: unpacked.meta.faqImageAlt || faqFromBlock?.imageAlt,
+          imageTitle: unpacked.meta.faqImageTitle || faqFromBlock?.imageTitle,
+          imageCaption: unpacked.meta.faqImageCaption || faqFromBlock?.imageCaption,
+          imageDescription:
+            unpacked.meta.faqImageDescription || faqFromBlock?.imageDescription,
+          items: unpacked.faqs,
+        }
+      : undefined,
   };
 }
 

@@ -183,8 +183,8 @@ export function ArticleHeader({
 
       <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-[24px] border border-[#e6dfd3] bg-cream shadow-[0_12px_40px_-16px_rgba(6,59,47,0.18)] sm:mt-10 sm:aspect-[2/1] lg:rounded-[28px]">
         <Image
-          src={article.image}
-          alt={article.imageAlt}
+          src={article.coverImage || article.image}
+          alt={article.coverImageAlt || article.imageAlt}
           fill
           priority
           sizes="(max-width: 768px) 100vw, (max-width: 1400px) 90vw, 1360px"

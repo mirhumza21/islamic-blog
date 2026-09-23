@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import {
   Amiri,
+  Aref_Ruqaa,
   Cormorant_Garamond,
   Great_Vibes,
   Manrope,
+  Noto_Nastaliq_Urdu,
+  Reem_Kufi,
 } from "next/font/google";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { siteConfig } from "@/data/categories";
@@ -37,6 +40,27 @@ const greatVibes = Great_Vibes({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-script",
+  display: "swap",
+});
+
+const notoNastaliq = Noto_Nastaliq_Urdu({
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+  variable: "--font-noto-nastaliq",
+  display: "swap",
+});
+
+const reemKufi = Reem_Kufi({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "700"],
+  variable: "--font-reem-kufi",
+  display: "swap",
+});
+
+const arefRuqaa = Aref_Ruqaa({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "700"],
+  variable: "--font-aref-ruqaa",
   display: "swap",
 });
 
@@ -119,7 +143,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${cormorant.variable} ${amiri.variable} ${greatVibes.variable} h-full`}
+      className={`${manrope.variable} ${cormorant.variable} ${amiri.variable} ${greatVibes.variable} ${notoNastaliq.variable} ${reemKufi.variable} ${arefRuqaa.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         <a
