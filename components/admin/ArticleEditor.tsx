@@ -116,7 +116,7 @@ export function ArticleEditor({
       currentArticle?.excerpt ||
       ""
   );
-  const [seoKeywords, setSeoKeywords] = useState(
+  const [seoKeywords, setSeoKeywords] = useState<string>(
     unpacked.meta.seoKeywords ||
       (Array.isArray(currentArticle?.tags) ? currentArticle.tags.join(", ") : "")
   );
@@ -316,7 +316,7 @@ export function ArticleEditor({
 
     const tags = seoKeywords
       .split(",")
-      .map((t) => t.trim())
+      .map((t: string) => t.trim())
       .filter(Boolean);
     const packed = packArticleContent({
       html: content,
@@ -942,9 +942,9 @@ export function ArticleEditor({
                 <div className="flex flex-wrap gap-1.5">
                   {seoKeywords
                     .split(",")
-                    .map((t) => t.trim())
+                    .map((t: string) => t.trim())
                     .filter(Boolean)
-                    .map((tag, i) => (
+                    .map((tag: string, i: number) => (
                       <span
                         key={i}
                         className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200"
