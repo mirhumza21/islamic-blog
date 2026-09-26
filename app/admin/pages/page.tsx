@@ -120,7 +120,7 @@ export default function AdminPagesPage() {
 
         <div className="flex items-center gap-2">
           <Link
-            href="/admin/global"
+            href="/admin/global/subscribe"
             className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-semibold shadow-2xs transition-all"
           >
             <Globe className="w-3.5 h-3.5 text-emerald-600" />

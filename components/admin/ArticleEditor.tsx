@@ -395,12 +395,12 @@ export function ArticleEditor({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-24 -m-6 md:-m-8">
+    <div className="min-h-screen bg-gray-50/50 pb-24">
       <ToastContainer />
 
-      {/* Sticky top bar — previous admin style */}
+      {/* Sticky top bar — flush under AdminTopNav */}
       <div className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0">
             <Link
               href="/admin/articles"
@@ -482,7 +482,7 @@ export function ArticleEditor({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* LEFT — main canvas */}
           <div className="lg:col-span-8 space-y-6">
@@ -533,7 +533,8 @@ export function ArticleEditor({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <ImageCard
                   label="Thumbnail (Cards)"
-                  hint="Shown on blog cards · any size, autofits 4:3"
+                  hint="Shown on blog cards · autofits 4:3"
+                  recommended="Recommended: 1200 × 900 px (4:3)"
                   url={imageUrl}
                   preview={thumbnailPreview}
                   alt={imageAlt}
@@ -548,6 +549,7 @@ export function ArticleEditor({
                 <ImageCard
                   label="Cover (Detail Page)"
                   hint="Top banner on article page · wide frame"
+                  recommended="Recommended: 1680 × 720 px (21:9) · OG 1200 × 630"
                   url={coverImageUrl}
                   preview={coverPreview}
                   alt={coverImageAlt}
@@ -1280,6 +1282,7 @@ const inputClass =
 function ImageCard({
   label,
   hint,
+  recommended,
   url,
   preview,
   alt,
@@ -1293,6 +1296,7 @@ function ImageCard({
 }: {
   label: string;
   hint: string;
+  recommended: string;
   url: string;
   preview: string;
   alt: string;
@@ -1353,6 +1357,7 @@ function ImageCard({
           />
         </div>
       )}
+      <p className="text-[10px] font-semibold text-emerald-700">{recommended}</p>
       <p className="text-[10px] text-gray-400">{hint}</p>
       <input
         type="text"

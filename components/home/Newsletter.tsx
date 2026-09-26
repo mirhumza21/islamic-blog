@@ -9,13 +9,6 @@ import { GoldUnderline, underlineLastWord } from "@/components/home/GoldUnderlin
 
 type Status = "idle" | "loading" | "success" | "error";
 
-async function subscribe(email: string): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 700));
-  if (!email.includes("@") || !email.includes(".")) {
-    throw new Error("Please enter a valid email address.");
-  }
-}
-
 export function Newsletter({
   className,
   content,
@@ -34,9 +27,20 @@ export function Newsletter({
     setStatus("loading");
     setMessage("");
     try {
-      await subscribe(email.trim());
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          source: "newsletter",
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong.");
+      }
       setStatus("success");
-      setMessage(copy.successMessage);
+      setMessage(data.message || copy.successMessage);
       setEmail("");
     } catch (error) {
       setStatus("error");

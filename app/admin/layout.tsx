@@ -8,6 +8,9 @@ import { AdminTopNav } from "@/components/admin/AdminTopNav";
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/admin/login";
+  const isArticleEditor =
+    pathname.startsWith("/admin/articles/new") ||
+    (pathname.startsWith("/admin/articles/") && pathname.includes("/edit"));
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -35,7 +38,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       )}
       <div className="flex-1 flex flex-col min-w-0 min-h-0">
         <AdminTopNav onMenu={() => setSidebarOpen(true)} />
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto bg-gray-50 min-h-0">
+        <main
+          className={`flex-1 overflow-y-auto bg-gray-50 min-h-0 ${
+            isArticleEditor ? "p-0" : "p-6 md:p-8"
+          }`}
+        >
           {children}
         </main>
       </div>

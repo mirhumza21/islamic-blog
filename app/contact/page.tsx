@@ -4,7 +4,6 @@ import { Mail, MessageSquare, PenLine, Users } from "lucide-react";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
 import { PageHero } from "@/components/layout/PageHero";
-import { siteConfig } from "@/data/categories";
 import { getContactPageContent } from "@/lib/pages";
 
 export const metadata: Metadata = {
@@ -19,6 +18,7 @@ const reasonIcons = [MessageSquare, PenLine, Users];
 export default async function ContactPage() {
   const content = await getContactPageContent();
   const reasons = content.reasons || [];
+  const contactEmail = content.contactEmail || "hello@umrahzone.com";
 
   return (
     <>
@@ -59,11 +59,11 @@ export default async function ContactPage() {
                   {content.emailText}
                 </p>
                 <a
-                  href={`mailto:${siteConfig.email}`}
+                  href={`mailto:${contactEmail}`}
                   className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[#063b2f] transition-colors hover:text-[#042d24]"
                 >
                   <Mail className="h-4 w-4 text-[#c59a53]" />
-                  {siteConfig.email}
+                  {contactEmail}
                 </a>
               </div>
 

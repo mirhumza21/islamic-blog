@@ -110,8 +110,46 @@ CREATE INDEX IF NOT EXISTS idx_articles_author ON public.articles(author_id);
 CREATE INDEX IF NOT EXISTS idx_articles_published_at ON public.articles(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_categories_slug ON public.categories(slug);
 
+-- 5. Newsletter Subscribers
+CREATE TABLE IF NOT EXISTS public.subscribers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT NOT NULL,
+  source TEXT DEFAULT 'newsletter',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_subscribers_email_lower
+  ON public.subscribers (lower(email));
+
+-- 6. Contact Form Messages
+CREATE TABLE IF NOT EXISTS public.contact_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  message TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'new',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_contact_messages_created
+  ON public.contact_messages (created_at DESC);
+
+ALTER TABLE public.subscribers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role full access on subscribers"
+  ON public.subscribers FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+CREATE POLICY "Service role full access on contact_messages"
+  ON public.contact_messages FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
 -- ==========================================================
--- 5. Storage Bucket for Blog Images & Media
+-- 7. Storage Bucket for Blog Images & Media
 -- ==========================================================
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (

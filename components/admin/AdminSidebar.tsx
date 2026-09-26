@@ -12,6 +12,8 @@ import {
   ExternalLink,
   Sparkles,
   Globe,
+  Mail,
+  MessageSquare,
   X,
 } from "lucide-react";
 
@@ -20,6 +22,8 @@ const navigation = [
   { name: "All Articles", href: "/admin/articles", icon: FileText },
   { name: "Pages", href: "/admin/pages", icon: Layers },
   { name: "Global", href: "/admin/global", icon: Globe },
+  { name: "Subscribers", href: "/admin/subscribers", icon: Mail },
+  { name: "Contact Messages", href: "/admin/contact-messages", icon: MessageSquare },
   { name: "Categories", href: "/admin/categories", icon: FolderTree },
   { name: "Authors", href: "/admin/authors", icon: Users },
   { name: "Site & SEO Settings", href: "/admin/settings", icon: Settings },

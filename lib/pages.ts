@@ -110,7 +110,8 @@ export const defaultContactContent = {
     "Questions, corrections, or thoughtful feedback — send us a message and we'll get back to you as soon as we can.",
   formTitle: "Send a message",
   formText:
-    "Fill in the form below and your email app will open with everything ready to send.",
+    "Fill in the form below and we’ll store your message so our team can reply.",
+  contactEmail: "hello@umrahzone.com",
   emailTitle: "Direct email",
   emailText: "Prefer email? Write to us directly.",
   helpTitle: "What can we help with?",

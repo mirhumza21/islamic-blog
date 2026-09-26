@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Send } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { siteConfig } from "@/data/categories";
 import { cn } from "@/lib/utils";
 
 const subjects = [
@@ -14,34 +13,59 @@ const subjects = [
   "Feedback",
 ] as const;
 
+type Status = "idle" | "loading" | "success" | "error";
+
 export function ContactForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState<string>(subjects[0]);
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [feedback, setFeedback] = useState("");
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setStatus("loading");
+    setFeedback("");
 
-    const body = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      "",
-      message,
-    ].join("\n");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          subject,
+          message: message.trim(),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send message.");
+      }
 
-    const mailto = `mailto:${siteConfig.email}?subject=${encodeURIComponent(
-      `[UmrahZone] ${subject}`
-    )}&body=${encodeURIComponent(body)}`;
-
-    window.location.href = mailto;
+      setStatus("success");
+      setFeedback(data.message || "Message received. We’ll get back to you soon.");
+      setName("");
+      setEmail("");
+      setSubject(subjects[0]);
+      setMessage("");
+    } catch (error) {
+      setStatus("error");
+      setFeedback(
+        error instanceof Error ? error.message : "Failed to send message."
+      );
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="contact-name" className="mb-2 block text-sm font-medium text-foreground">
+          <label
+            htmlFor="contact-name"
+            className="mb-2 block text-sm font-medium text-foreground"
+          >
             Name
           </label>
           <Input
@@ -57,7 +81,10 @@ export function ContactForm() {
           />
         </div>
         <div>
-          <label htmlFor="contact-email" className="mb-2 block text-sm font-medium text-foreground">
+          <label
+            htmlFor="contact-email"
+            className="mb-2 block text-sm font-medium text-foreground"
+          >
             Email
           </label>
           <Input
@@ -75,7 +102,10 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="contact-subject" className="mb-2 block text-sm font-medium text-foreground">
+        <label
+          htmlFor="contact-subject"
+          className="mb-2 block text-sm font-medium text-foreground"
+        >
           Subject
         </label>
         <select
@@ -97,7 +127,10 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="contact-message" className="mb-2 block text-sm font-medium text-foreground">
+        <label
+          htmlFor="contact-message"
+          className="mb-2 block text-sm font-medium text-foreground"
+        >
           Message
         </label>
         <textarea
@@ -117,16 +150,38 @@ export function ContactForm() {
       <Button
         type="submit"
         size="lg"
-        className="h-12 w-full rounded-full bg-[#063b2f] px-7 hover:bg-[#042d24] sm:w-auto"
+        disabled={status === "loading"}
+        className="h-12 w-full rounded-full bg-[#063b2f] px-7 hover:bg-[#042d24] disabled:opacity-50 sm:w-auto"
       >
-        <Send className="h-4 w-4" />
-        Send message
+        {status === "loading" ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Sending…
+          </>
+        ) : (
+          <>
+            <Send className="h-4 w-4" />
+            Send message
+          </>
+        )}
       </Button>
 
-      <p className="text-xs leading-relaxed text-muted">
-        Submitting opens your email app with your message pre-filled. We typically
-        respond within 2–3 business days.
-      </p>
+      {feedback ? (
+        <p
+          className={cn(
+            "text-sm",
+            status === "success" ? "text-green" : "text-red-600"
+          )}
+          role="status"
+          aria-live="polite"
+        >
+          {feedback}
+        </p>
+      ) : (
+        <p className="text-xs leading-relaxed text-muted">
+          We typically respond within 2–3 business days.
+        </p>
+      )}
     </form>
   );
 }

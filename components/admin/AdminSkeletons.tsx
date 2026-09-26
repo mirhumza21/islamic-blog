@@ -89,7 +89,7 @@ export function ArticleEditorSkeleton() {
   return (
     <div className="pb-24">
       <div className="sticky top-0 z-30 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Pulse className="h-8 w-24 rounded-lg" />
             <div className="space-y-1.5">
@@ -104,7 +104,7 @@ export function ArticleEditorSkeleton() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
