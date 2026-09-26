@@ -60,17 +60,58 @@ export type ArticleBlock =
   | {
       type: "faq";
       items: { question: string; answer: string }[];
+      title?: string;
+      description?: string;
+      image?: string;
+      imageAlt?: string;
+      imageTitle?: string;
+      imageCaption?: string;
+      imageDescription?: string;
     }
   | {
       type: "video";
       src: string;
       title: string;
       poster?: string;
+    }
+  | {
+      type: "editorMeta";
+      coverImage?: string;
+      coverImageAlt?: string;
+      videoUrl?: string;
+      videoTitle?: string;
+      faqTitle?: string;
+      faqDescription?: string;
+      faqImage?: string;
+      faqImageAlt?: string;
+      faqImageTitle?: string;
+      faqImageCaption?: string;
+      faqImageDescription?: string;
+      seoKeywords?: string;
+      canonicalUrl?: string;
+      noIndex?: boolean;
+      schemaScript?: string;
+      isLatest?: boolean;
     };
 
 export interface ArticleSeo {
   title?: string;
   description?: string;
+  keywords?: string;
+  canonicalUrl?: string;
+  noIndex?: boolean;
+  schemaScript?: string;
+}
+
+export interface ArticleFaq {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  imageTitle?: string;
+  imageCaption?: string;
+  imageDescription?: string;
+  items: { question: string; answer: string }[];
 }
 
 export interface Article {
@@ -85,12 +126,17 @@ export interface Article {
   readingTime: number;
   image: string;
   imageAlt: string;
+  coverImage?: string;
+  coverImageAlt?: string;
   featured?: boolean;
   popular?: boolean;
   popularRank?: number;
   tags?: string[];
   content: ArticleBlock[];
   seo?: ArticleSeo;
+  videoUrl?: string;
+  videoTitle?: string;
+  faq?: ArticleFaq;
 }
 
 export interface NavItem {
