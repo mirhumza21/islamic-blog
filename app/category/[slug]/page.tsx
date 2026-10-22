@@ -12,7 +12,7 @@ import {
   fetchAuthorById,
   fetchCategoryBySlug,
 } from "@/lib/articles";
-import { BookOpen, Compass } from "lucide-react";
+import { BookOpen } from "lucide-react";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
@@ -56,10 +56,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <>
       <PageHero
-        eyebrow="Category"
         title={category.name}
         subtitle={category.description}
-        icon={<Compass className="h-3 w-3" />}
+        compact
       />
 
       {featured && author ? (
@@ -67,6 +66,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           article={featured}
           author={author}
           category={category}
+          content={{ badge: "" }}
         />
       ) : null}
 

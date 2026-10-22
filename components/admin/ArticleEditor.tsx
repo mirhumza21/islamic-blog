@@ -112,7 +112,7 @@ export function ArticleEditor({
     unpacked.meta.relatedSlugs || []
   );
   const [articleChoices, setArticleChoices] = useState<
-    { id: string; slug: string; title: string; status?: string }[]
+    { id: string; slug: string; title: string; status?: string; image?: string }[]
   >([]);
 
   const [seoTitle, setSeoTitle] = useState(
@@ -191,6 +191,7 @@ export function ArticleEditor({
             slug: String(item.slug || ""),
             title: String(item.title || "Untitled"),
             status: item.status,
+            image: item.image || "",
           }))
         );
       })
@@ -832,7 +833,7 @@ export function ArticleEditor({
                           )
                         }
                         placeholder="Question"
-                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-semibold outline-none focus:border-emerald-500"
+                        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm font-semibold text-gray-900 placeholder:text-gray-500 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                       />
                       <textarea
                         rows={2}
@@ -845,7 +846,7 @@ export function ArticleEditor({
                           )
                         }
                         placeholder="Answer"
-                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-emerald-500 resize-none"
+                        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 resize-none"
                       />
                     </div>
                   ))}

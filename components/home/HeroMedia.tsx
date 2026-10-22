@@ -103,12 +103,12 @@ export function HeroMedia({ content }: { content?: typeof heroContent }) {
         aria-hidden
       />
 
-      {/* Elegant English Calligraphy Branding on Top Right */}
+      {/* Elegant English Calligraphy Branding on Top Right (desktop only so it never overlaps tablet copy) */}
       <div
-        className="pointer-events-none absolute right-5 top-5 z-20 hidden select-none text-right md:block lg:right-10 lg:top-7"
+        className="pointer-events-none absolute right-6 top-6 z-20 hidden select-none text-right lg:block xl:right-10 xl:top-7"
         aria-hidden
       >
-        <div className="font-script text-[28px] leading-[1.08] text-white/95 drop-shadow-[0_3px_10px_rgba(0,0,0,0.55)] sm:text-[34px] lg:text-[42px]">
+        <div className="font-script text-[32px] leading-[1.08] text-white/95 drop-shadow-[0_3px_10px_rgba(0,0,0,0.55)] xl:text-[42px]">
           <span className="block">Better</span>
           <span className="block">Knowledge</span>
           <span className="block">Closer to</span>
@@ -130,7 +130,7 @@ export function HeroMedia({ content }: { content?: typeof heroContent }) {
 
       {/* Slide Landmark Caption */}
       {active.caption ? (
-        <div className="pointer-events-none absolute bottom-32 right-4 z-20 hidden text-right sm:block lg:bottom-36 lg:right-8">
+        <div className="pointer-events-none absolute bottom-24 right-8 z-20 hidden text-right lg:block">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
             {active.caption}
           </p>
@@ -140,7 +140,7 @@ export function HeroMedia({ content }: { content?: typeof heroContent }) {
       {/* Vertical Carousel Indicators on the Right Side of the Image */}
       {slides.length > 1 ? (
         <div
-          className="absolute right-3.5 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-2.5 rounded-full border border-white/20 bg-black/40 px-2 py-3 backdrop-blur-md shadow-2xl sm:right-6 lg:right-7"
+          className="absolute right-3.5 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-2.5 rounded-full border border-white/20 bg-black/40 px-2 py-3 backdrop-blur-md shadow-2xl md:flex sm:right-6 lg:right-7"
           role="tablist"
           aria-label="Sacred landmark carousel slides"
         >

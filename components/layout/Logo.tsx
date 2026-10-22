@@ -1,13 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export function Logo({
-  className,
-  showTagline = true,
-}: {
-  className?: string;
-  showTagline?: boolean;
-}) {
+export function Logo({ className }: { className?: string }) {
   return (
     <Link
       href="/"
@@ -49,11 +43,6 @@ export function Logo({
           <span className="text-[#075846]">Umrah</span>
           <span className="text-[#b8894a]">Zone</span>
         </span>
-        {showTagline ? (
-          <span className="mt-1 hidden text-[10px] font-semibold uppercase tracking-[0.14em] text-muted sm:block">
-            Knowledge Today, A Closer Tomorrow
-          </span>
-        ) : null}
       </span>
     </Link>
   );

@@ -25,10 +25,12 @@ export function FeaturedArticle({
       />
       <div className="container-editorial relative grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
         <div className="lg:col-span-5">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-sand/15 px-3 py-0.5 text-[11px] font-bold uppercase tracking-[0.16em] text-sand">
-            {copy.badge}
-          </div>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-green">
+          {copy.badge ? (
+            <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-sand/15 px-3 py-0.5 text-[11px] font-bold uppercase tracking-[0.16em] text-sand">
+              {copy.badge}
+            </div>
+          ) : null}
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-green">
             {category.name}
           </p>
           <h2 className="mt-3 font-serif text-3xl font-bold leading-[1.15] tracking-tight text-[#141d1a] sm:text-4xl lg:text-[2.75rem]">

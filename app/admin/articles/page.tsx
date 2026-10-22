@@ -266,6 +266,20 @@ export default function AdminArticlesPage() {
                     className="hover:bg-gray-50/80 transition-colors"
                   >
                     <td className="py-3.5 px-4 max-w-sm">
+                      <div className="flex items-center gap-3">
+                        {article.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={article.image}
+                            alt=""
+                            className="h-12 w-16 shrink-0 rounded-lg object-cover bg-gray-100"
+                          />
+                        ) : (
+                          <span className="flex h-12 w-16 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-[9px] font-semibold text-gray-400">
+                            No image
+                          </span>
+                        )}
+                        <div className="min-w-0">
                       <Link
                         href={`/admin/articles/${article.id}/edit`}
                         className="font-semibold text-gray-900 hover:text-emerald-600 line-clamp-1 block"
@@ -278,6 +292,8 @@ export default function AdminArticlesPage() {
                       <p className="mt-1 text-[11px] font-semibold text-emerald-700">
                         Continue Reading {readRelatedSlugs(article.content).length}/4
                       </p>
+                        </div>
+                      </div>
                     </td>
 
                     <td className="py-3.5 px-4 text-gray-600 whitespace-nowrap">
@@ -406,6 +422,7 @@ export default function AdminArticlesPage() {
               slug: item.slug,
               title: item.title,
               status: item.status,
+              image: item.image,
             }))}
             currentSlug={readingArticle?.slug}
             value={readingSlugs}

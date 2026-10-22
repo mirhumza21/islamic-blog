@@ -78,7 +78,7 @@ export default function AdminLoginPage() {
                 <input
                   type="email"
                   required
-                  placeholder="admin@umrahzone.com"
+                  placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-white border border-gray-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all"
@@ -112,15 +112,6 @@ export default function AdminLoginPage() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          <div className="mt-6 pt-5 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-500">
-              Admin credentials configured in{" "}
-              <code className="text-emerald-700 bg-emerald-50 font-mono px-1.5 py-0.5 rounded border border-emerald-200">
-                .env.local
-              </code>
-            </p>
-          </div>
         </div>
 
         {/* Back link */}

@@ -46,7 +46,7 @@ export function MobileMenu({
         aria-label="Mobile navigation"
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <Logo showTagline={false} />
+          <Logo />
           <Button
             type="button"
             size="icon"

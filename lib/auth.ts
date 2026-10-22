@@ -56,10 +56,11 @@ export async function getAdminSession(): Promise<AdminUser | null> {
  * Verify credentials against environment variables
  */
 export function validateAdminCredentials(email: string, password: string): boolean {
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@umrahzone.com";
-  const adminPassword = process.env.ADMIN_PASSWORD || "adminpassword123";
+  const adminEmail = process.env.ADMIN_EMAIL?.trim();
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminEmail || !adminPassword) return false;
 
-  return email.trim().toLowerCase() === adminEmail.trim().toLowerCase() && password === adminPassword;
+  return email.trim().toLowerCase() === adminEmail.toLowerCase() && password === adminPassword;
 }
 
 export { COOKIE_NAME };
