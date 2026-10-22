@@ -12,8 +12,12 @@ import {
   Flame,
   CheckCircle2,
   Clock,
+  BookOpen,
 } from "lucide-react";
 import { TableSkeleton } from "@/components/admin/AdminSkeletons";
+import { ContinueReadingPicker } from "@/components/admin/ContinueReadingPicker";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { readRelatedSlugs, withRelatedSlugs } from "@/lib/articleEditor";
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<any[]>([]);
@@ -23,6 +27,9 @@ export default function AdminArticlesPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [readingArticle, setReadingArticle] = useState<any | null>(null);
+  const [readingSlugs, setReadingSlugs] = useState<string[]>([]);
+  const [savingReading, setSavingReading] = useState(false);
 
   const fetchArticles = async () => {
     const isFirstLoad = articles.length === 0;
@@ -96,6 +103,40 @@ export default function AdminArticlesPage() {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const openContinueReading = (article: any) => {
+    setReadingArticle(article);
+    setReadingSlugs(readRelatedSlugs(article.content));
+  };
+
+  const saveContinueReading = async () => {
+    if (!readingArticle) return;
+    setSavingReading(true);
+    const content = withRelatedSlugs(readingArticle.content, readingSlugs);
+    try {
+      const res = await fetch(`/api/admin/articles/${readingArticle.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Could not save Continue Reading posts.");
+        return;
+      }
+      setArticles((prev) =>
+        prev.map((item) =>
+          item.id === readingArticle.id ? { ...item, content } : item
+        )
+      );
+      setReadingArticle(null);
+    } catch (err) {
+      console.error(err);
+      alert("Could not save Continue Reading posts.");
+    } finally {
+      setSavingReading(false);
     }
   };
 
@@ -234,6 +275,9 @@ export default function AdminArticlesPage() {
                       <p className="text-[11px] text-gray-400 line-clamp-1 mt-0.5 font-mono">
                         /{article.slug}
                       </p>
+                      <p className="mt-1 text-[11px] font-semibold text-emerald-700">
+                        Continue Reading {readRelatedSlugs(article.content).length}/4
+                      </p>
                     </td>
 
                     <td className="py-3.5 px-4 text-gray-600 whitespace-nowrap">
@@ -297,6 +341,14 @@ export default function AdminArticlesPage() {
 
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
                       <div className="inline-flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => openContinueReading(article)}
+                          className="p-1.5 text-gray-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                          title="Set Continue Reading posts"
+                        >
+                          <BookOpen className="w-4 h-4" />
+                        </button>
                         <Link
                           href={`/admin/articles/${article.id}/edit`}
                           className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
@@ -330,6 +382,55 @@ export default function AdminArticlesPage() {
           </div>
         )}
       </div>
+
+      <Dialog
+        open={Boolean(readingArticle)}
+        onOpenChange={(open) => {
+          if (!open && !savingReading) setReadingArticle(null);
+        }}
+      >
+        <DialogContent className="max-h-[85vh] w-[min(92vw,560px)] overflow-y-auto bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Continue Reading</DialogTitle>
+            <p className="text-xs text-gray-500">
+              Choose the four posts shown under{" "}
+              <span className="font-semibold text-gray-800">
+                {readingArticle?.title}
+              </span>
+              .
+            </p>
+          </DialogHeader>
+          <ContinueReadingPicker
+            articles={articles.map((item) => ({
+              id: item.id,
+              slug: item.slug,
+              title: item.title,
+              status: item.status,
+            }))}
+            currentSlug={readingArticle?.slug}
+            value={readingSlugs}
+            onChange={setReadingSlugs}
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setReadingArticle(null)}
+              disabled={savingReading}
+              className="rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={saveContinueReading}
+              disabled={savingReading}
+              className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+            >
+              {savingReading ? "Saving..." : "Save selection"}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

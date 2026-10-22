@@ -24,6 +24,7 @@ import {
   Tag,
   Video,
   MousePointerClick,
+  BookOpen,
 } from "lucide-react";
 import { TiptapEditor, type TiptapEditorHandle } from "./TiptapEditor";
 import { toast, ToastContainer } from "./Toast";
@@ -35,6 +36,7 @@ import { slugify } from "@/lib/utils";
 import { resolveBlogThumbnail, resolveBlogCover } from "@/lib/blogImage";
 import { normalizeBlogFaqs } from "@/lib/blogFaq";
 import { packArticleContent, unpackArticleContent } from "@/lib/articleEditor";
+import { ContinueReadingPicker } from "@/components/admin/ContinueReadingPicker";
 import type { Article } from "@/types/blog";
 
 interface ArticleEditorProps {
@@ -106,6 +108,12 @@ export function ArticleEditor({
     unpacked.meta.faqImageDescription || ""
   );
   const [faqs, setFaqs] = useState(normalizeBlogFaqs(unpacked.faqs));
+  const [relatedSlugs, setRelatedSlugs] = useState<string[]>(
+    unpacked.meta.relatedSlugs || []
+  );
+  const [articleChoices, setArticleChoices] = useState<
+    { id: string; slug: string; title: string; status?: string }[]
+  >([]);
 
   const [seoTitle, setSeoTitle] = useState(
     currentArticle?.seo?.title || currentArticle?.seo_title || ""
@@ -173,6 +181,21 @@ export function ArticleEditor({
       })
       .catch((err) => console.error("Could not load categories:", err));
 
+    fetch("/api/admin/articles")
+      .then((res) => res.json())
+      .then((data) => {
+        const list = Array.isArray(data?.articles) ? data.articles : [];
+        setArticleChoices(
+          list.map((item: any) => ({
+            id: String(item.id),
+            slug: String(item.slug || ""),
+            title: String(item.title || "Untitled"),
+            status: item.status,
+          }))
+        );
+      })
+      .catch((err) => console.error("Could not load articles:", err));
+
     fetch("/api/admin/authors")
       .then((res) => res.json())
       .then((data) => {
@@ -229,7 +252,7 @@ export function ArticleEditor({
     };
     const baseStyle =
       "display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 54px; padding: 18px 42px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; border-radius: 8px; text-decoration: none; margin: 0; cursor: pointer;";
-    const html = `<div class="blog-cta-row"><a href="${link}" class="blog-cta-button blog-cta-button--${variant}" contenteditable="false" style="${baseStyle} ${variantStyles[variant]}">${text}</a></div>`;
+    const html = `<p class="blog-cta-row" style="text-align:center"><a href="${link}" class="blog-cta-button blog-cta-button--${variant}" contenteditable="false" style="${baseStyle} ${variantStyles[variant]}">${text}</a></p>`;
     if (tiptapRef.current) tiptapRef.current.insertHTML(html);
     else setContent((prev) => prev + " " + html);
   };
@@ -333,6 +356,7 @@ export function ArticleEditor({
         faqImageTitle,
         faqImageCaption,
         faqImageDescription,
+        relatedSlugs,
         seoKeywords,
         canonicalUrl,
         noIndex,
@@ -670,6 +694,22 @@ export function ArticleEditor({
                   />
                 </div>
               </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-2xs space-y-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-700">
+                <BookOpen className="w-4 h-4 text-emerald-600" />
+                Continue Reading
+              </div>
+              <p className="text-xs text-gray-400">
+                Pick the four articles shown at the bottom of this post. Order is the order on the page.
+              </p>
+              <ContinueReadingPicker
+                articles={articleChoices}
+                currentSlug={slug}
+                value={relatedSlugs}
+                onChange={setRelatedSlugs}
+              />
             </div>
 
             {/* FAQ */}

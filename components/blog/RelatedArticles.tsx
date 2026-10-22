@@ -22,7 +22,7 @@ export function RelatedArticles({
         icon={<BookOpen className="h-3 w-3" />}
         tone="sand"
       />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 xl:gap-8">
         {articles.map((article) => (
           <ArticleCard
             key={article.id}

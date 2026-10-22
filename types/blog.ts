@@ -92,6 +92,7 @@ export type ArticleBlock =
       noIndex?: boolean;
       schemaScript?: string;
       isLatest?: boolean;
+      relatedSlugs?: string[];
     };
 
 export interface ArticleSeo {
@@ -137,6 +138,7 @@ export interface Article {
   videoUrl?: string;
   videoTitle?: string;
   faq?: ArticleFaq;
+  relatedSlugs?: string[];
 }
 
 export interface NavItem {

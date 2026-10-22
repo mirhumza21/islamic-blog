@@ -19,6 +19,7 @@ export interface ArticleEditorMeta {
   noIndex?: boolean;
   schemaScript?: string;
   isLatest?: boolean;
+  relatedSlugs?: string[];
 }
 
 export interface UnpackedArticleContent {
@@ -196,8 +197,15 @@ export function unpackArticleContent(
         if (typeof block.title === "string") meta.videoTitle = meta.videoTitle || block.title;
       }
       if (block.type === "editorMeta") {
-        Object.assign(meta, block);
-        delete (meta as { type?: string }).type;
+        for (const [key, value] of Object.entries(block)) {
+          if (key === "type" || value == null) continue;
+          if (key === "relatedSlugs") {
+            meta.relatedSlugs = normalizeRelatedSlugs(value);
+            continue;
+          }
+          if (typeof value === "string" && !value.trim()) continue;
+          (meta as Record<string, unknown>)[key] = value;
+        }
       }
     }
   }
@@ -266,6 +274,7 @@ export function packArticleContent(input: {
 
   const hasMeta = Object.values(input.meta).some((value) => {
     if (typeof value === "boolean") return value;
+    if (Array.isArray(value)) return value.length > 0;
     return Boolean(String(value || "").trim());
   });
 
@@ -281,4 +290,37 @@ export function packArticleContent(input: {
 
 export function extractEditorMeta(content: ArticleBlock[] | string | undefined): ArticleEditorMeta {
   return unpackArticleContent(content).meta;
+}
+
+export const CONTINUE_READING_LIMIT = 4;
+
+export function normalizeRelatedSlugs(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  const slugs: string[] = [];
+  for (const item of value) {
+    if (typeof item !== "string") continue;
+    const slug = item.trim();
+    if (!slug || seen.has(slug)) continue;
+    seen.add(slug);
+    slugs.push(slug);
+    if (slugs.length >= CONTINUE_READING_LIMIT) break;
+  }
+  return slugs;
+}
+
+export function readRelatedSlugs(content: unknown): string[] {
+  return normalizeRelatedSlugs(unpackArticleContent(content).meta.relatedSlugs);
+}
+
+export function withRelatedSlugs(content: unknown, slugs: string[]): ArticleBlock[] {
+  const unpacked = unpackArticleContent(content);
+  return packArticleContent({
+    html: unpacked.html,
+    faqs: unpacked.faqs,
+    meta: {
+      ...unpacked.meta,
+      relatedSlugs: normalizeRelatedSlugs(slugs),
+    },
+  });
 }

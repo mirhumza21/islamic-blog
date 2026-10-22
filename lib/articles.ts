@@ -44,6 +44,9 @@ export function mapDbArticle(row: any): Article {
     },
     videoUrl: unpacked.meta.videoUrl || undefined,
     videoTitle: unpacked.meta.videoTitle || undefined,
+    relatedSlugs: unpacked.meta.relatedSlugs?.length
+      ? unpacked.meta.relatedSlugs
+      : undefined,
     faq: unpacked.faqs.length
       ? {
           title: unpacked.meta.faqTitle || faqFromBlock?.title,
@@ -220,10 +223,17 @@ export async function fetchArticlesByCategory(
 
 export async function fetchRelatedArticles(
   article: Article,
-  limit = 3,
+  limit = 4,
   articles?: Article[]
 ): Promise<Article[]> {
   const list = articles ?? (await fetchAllArticles());
+  const bySlug = new Map(list.map((item) => [item.slug, item]));
+  const chosen = (article.relatedSlugs || [])
+    .map((slug) => bySlug.get(slug))
+    .filter((item): item is Article => Boolean(item) && item.id !== article.id)
+    .slice(0, limit);
+  if (chosen.length > 0) return chosen;
+
   return list
     .filter(
       (item) =>
@@ -309,7 +319,15 @@ export function getArticlesByCategory(categorySlug: string): Article[] {
   );
 }
 
-export function getRelatedArticles(article: Article, limit = 3): Article[] {
+export function getRelatedArticles(article: Article, limit = 4): Article[] {
+  const all = getAllArticles();
+  const bySlug = new Map(all.map((item) => [item.slug, item]));
+  const chosen = (article.relatedSlugs || [])
+    .map((slug) => bySlug.get(slug))
+    .filter((item): item is Article => Boolean(item) && item.id !== article.id)
+    .slice(0, limit);
+  if (chosen.length > 0) return chosen;
+
   return getAllArticles()
     .filter(
       (item) =>

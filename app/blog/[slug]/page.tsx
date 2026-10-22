@@ -5,7 +5,6 @@ import { ArticleBody } from "@/components/blog/ArticleBody";
 import { ArticleFaqSection } from "@/components/blog/ArticleFaqSection";
 import { ArticleFeedback } from "@/components/blog/ArticleFeedback";
 import { ArticleHeader } from "@/components/blog/ArticleHeader";
-import { ArticleTakeaways } from "@/components/blog/ArticleTakeaways";
 import { ArticleVideoEmbed } from "@/components/blog/ArticleVideoEmbed";
 import { AuthorBioCard } from "@/components/blog/AuthorBioCard";
 import { PrevNextNavigation } from "@/components/blog/PrevNextNavigation";
@@ -19,7 +18,6 @@ import {
   fetchAllCategories,
   fetchArticleBySlug,
   fetchAuthorById,
-  fetchCategoryBySlug,
   fetchPrevNextArticles,
   fetchRelatedArticles,
 } from "@/lib/articles";
@@ -95,9 +93,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const article = await fetchArticleBySlug(slug);
   if (!article) notFound();
 
-  const [author, category, allArticles, categories] = await Promise.all([
+  const [author, allArticles, categories] = await Promise.all([
     fetchAuthorById(article.authorId),
-    fetchCategoryBySlug(article.categorySlug),
     fetchAllArticles(),
     fetchAllCategories(),
   ]);
@@ -107,18 +104,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     avatar: "",
     bio: "UmrahZone editorial team",
   };
-  const resolvedCategory = category ?? {
-    id: article.categorySlug || "guides",
-    slug: article.categorySlug || "umrah-guides",
-    name: "Guides",
-    description: "",
-    shortDescription: "",
-    image: article.image,
-    icon: "kaaba",
-  };
 
   const toc = extractTableOfContents(article);
-  const related = await fetchRelatedArticles(article, 3, allArticles);
+  const related = await fetchRelatedArticles(article, 4, allArticles);
   const { prev, next } = await fetchPrevNextArticles(article.slug, allArticles);
   const url = absoluteUrl(`/blog/${article.slug}`);
 
@@ -192,49 +180,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     <>
       <ReadingProgress />
 
-      <main className="relative overflow-hidden bg-ivory">
+      <main className="relative overflow-clip bg-ivory">
         <div
           className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-35"
           aria-hidden
         />
-        <div className="container-editorial relative py-8 sm:py-10 lg:py-12">
-        <ArticleHeader
-          article={article}
-          author={resolvedAuthor}
-          category={resolvedCategory}
-        />
+        <div className="container-editorial relative pt-6 pb-10 sm:pt-8 lg:pb-12">
+        <ArticleHeader article={article} author={resolvedAuthor} />
 
         <div className="mt-10 grid items-start gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
           <div className="order-last min-w-0 lg:order-1 lg:col-span-8">
-            <ArticleTakeaways article={article} />
-
             <article id="article-content" className="w-full">
               <ArticleBody content={article.content} />
             </article>
 
             <ArticleVideoEmbed url={article.videoUrl} title={article.videoTitle} />
-
-            <ArticleFaqSection
-              faq={
-                article.faq ||
-                (() => {
-                  const faqBlock = article.content.find((block) => block.type === "faq");
-                  if (!faqBlock || faqBlock.type !== "faq" || !faqBlock.items?.length) {
-                    return undefined;
-                  }
-                  return {
-                    title: faqBlock.title,
-                    description: faqBlock.description,
-                    image: faqBlock.image,
-                    imageAlt: faqBlock.imageAlt,
-                    imageTitle: faqBlock.imageTitle,
-                    imageCaption: faqBlock.imageCaption,
-                    imageDescription: faqBlock.imageDescription,
-                    items: faqBlock.items,
-                  };
-                })()
-              }
-            />
 
             {article.tags && article.tags.length > 0 ? (
               <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-border/80 pt-6">
@@ -265,13 +225,37 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
           </div>
 
-          <aside className="order-first min-w-0 lg:order-2 lg:col-span-4">
+          <aside className="order-first min-w-0 lg:order-2 lg:col-span-4 lg:self-stretch">
             <TableOfContents
               items={toc}
               articleTitle={article.title}
               shareUrl={url}
             />
           </aside>
+        </div>
+
+        <div className="mt-14 sm:mt-16">
+          <ArticleFaqSection
+            faq={
+              article.faq ||
+              (() => {
+                const faqBlock = article.content.find((block) => block.type === "faq");
+                if (!faqBlock || faqBlock.type !== "faq" || !faqBlock.items?.length) {
+                  return undefined;
+                }
+                return {
+                  title: faqBlock.title,
+                  description: faqBlock.description,
+                  image: faqBlock.image,
+                  imageAlt: faqBlock.imageAlt,
+                  imageTitle: faqBlock.imageTitle,
+                  imageCaption: faqBlock.imageCaption,
+                  imageDescription: faqBlock.imageDescription,
+                  items: faqBlock.items,
+                };
+              })()
+            }
+          />
         </div>
 
         <RelatedArticles articles={related} categories={categories} />
