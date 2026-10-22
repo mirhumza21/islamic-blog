@@ -229,8 +229,11 @@ export async function fetchRelatedArticles(
   const list = articles ?? (await fetchAllArticles());
   const bySlug = new Map(list.map((item) => [item.slug, item]));
   const chosen = (article.relatedSlugs || [])
-    .map((slug) => bySlug.get(slug))
-    .filter((item): item is Article => Boolean(item) && item.id !== article.id)
+    .flatMap((slug) => {
+      const item = bySlug.get(slug);
+      if (!item || item.id === article.id) return [];
+      return [item];
+    })
     .slice(0, limit);
   if (chosen.length > 0) return chosen;
 
@@ -323,8 +326,11 @@ export function getRelatedArticles(article: Article, limit = 4): Article[] {
   const all = getAllArticles();
   const bySlug = new Map(all.map((item) => [item.slug, item]));
   const chosen = (article.relatedSlugs || [])
-    .map((slug) => bySlug.get(slug))
-    .filter((item): item is Article => Boolean(item) && item.id !== article.id)
+    .flatMap((slug) => {
+      const item = bySlug.get(slug);
+      if (!item || item.id === article.id) return [];
+      return [item];
+    })
     .slice(0, limit);
   if (chosen.length > 0) return chosen;
 

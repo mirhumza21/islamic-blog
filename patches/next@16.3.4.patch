@@ -1,0 +1,24 @@
+diff --git a/dist/compiled/@next/font/dist/google/loader.js b/dist/compiled/@next/font/dist/google/loader.js
+--- a/dist/compiled/@next/font/dist/google/loader.js
++++ b/dist/compiled/@next/font/dist/google/loader.js
+@@ -119,6 +119,7 @@
+             if (fontFileBuffer == null) {
+                 (0, next_font_error_1.nextFontError)(`Failed to fetch \`${fontFamily}\` from Google Fonts.`);
+             }
+-            const ext = /\.(woff|woff2|eot|ttf|otf)$/.exec(googleFontFileUrl)[1];
++            const extMatch = /\.(woff|woff2|eot|ttf|otf)$/.exec(googleFontFileUrl);
++            const ext = extMatch ? extMatch[1] : "woff2";
+             // Emit font file to .next/static/media
+             const selfHostedFileUrl = emitFontFile(fontFileBuffer, ext, preloadFontFile, !!adjustFontFallbackMetrics);
+diff --git a/dist/server/image-optimizer.js b/dist/server/image-optimizer.js
+--- a/dist/server/image-optimizer.js
++++ b/dist/server/image-optimizer.js
+@@ -1217,7 +1217,7 @@
+     const fileName = getFileNameWithExtension(url, contentType);
+-    res.setHeader('Content-Disposition', (0, _contentdisposition.default)(fileName, {
++    res.setHeader('Content-Disposition', imagesConfig.contentDispositionType === 'inline' ? 'inline' : (0, _contentdisposition.default)(fileName, {
+         type: imagesConfig.contentDispositionType
+     }));
+     res.setHeader('Content-Security-Policy', imagesConfig.contentSecurityPolicy);
+     res.setHeader('X-Nextjs-Cache', xCache);
+     return {

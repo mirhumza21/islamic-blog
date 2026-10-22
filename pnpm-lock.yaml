@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  next@16.3.4:
+    hash: a566273b39a357ae76a0e9c9d90b97f2dbf67c18eb987e92958bb4a50e60931b
+    path: patches/next@16.3.4.patch
+
 importers:
 
   .:
@@ -91,7 +96,7 @@ importers:
         version: 1.44.0(react@19.2.8)
       next:
         specifier: 16.3.4
-        version: 16.3.4(@babel/core@7.29.7)(@types/node@20.19.43)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 16.3.4(patch_hash=a566273b39a357ae76a0e9c9d90b97f2dbf67c18eb987e92958bb4a50e60931b)(@babel/core@7.29.7)(@types/node@20.19.43)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -4828,7 +4833,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next@16.3.4(@babel/core@7.29.7)(@types/node@20.19.43)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  next@16.3.4(patch_hash=a566273b39a357ae76a0e9c9d90b97f2dbf67c18eb987e92958bb4a50e60931b)(@babel/core@7.29.7)(@types/node@20.19.43)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       '@next/env': 16.3.4
       '@swc/helpers': 0.5.23
