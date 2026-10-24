@@ -143,6 +143,8 @@ export interface Article {
   videoTitle?: string;
   faq?: ArticleFaq;
   relatedSlugs?: string[];
+  relatedTitle?: string;
+  relatedDescription?: string;
 }
 
 export interface NavItem {
