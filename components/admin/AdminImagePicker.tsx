@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { UploadCloud, Loader2, X } from "lucide-react";
+import { toRenderableImageSrc } from "@/lib/mediaUrl";
 import { uploadClientImage } from "@/lib/uploadClientImage";
 import { toast } from "@/components/admin/Toast";
 import { cn } from "@/lib/utils";

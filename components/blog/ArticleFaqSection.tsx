@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { HelpCircle, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { SectionHeader } from "@/components/home/SectionHeader";
 import { cn } from "@/lib/utils";
 import type { ArticleFaq } from "@/types/blog";
@@ -14,18 +14,13 @@ export function ArticleFaqSection({ faq }: { faq?: ArticleFaq }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   if (!faq?.items?.length) return null;
 
-  const title = faq.title?.trim() || faq.imageCaption?.trim() || "";
-  const description = faq.description?.trim() || faq.imageDescription?.trim() || "";
+  const title = faq.title?.trim() || "";
+  const description = faq.description?.trim() || "";
   const hasImage = Boolean(faq.image?.trim());
 
   return (
     <section>
-      <SectionHeader
-        eyebrow="FAQs"
-        title={title || "Questions"}
-        icon={<HelpCircle className="h-3 w-3" />}
-        tone="sand"
-      />
+      <SectionHeader title={title || "Questions"} />
       {description ? (
         <p className="-mt-3 mb-8 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
           {description}
@@ -49,20 +44,12 @@ export function ArticleFaqSection({ faq }: { faq?: ArticleFaq }) {
                 <Image
                   src={faq.image!}
                   alt={faq.imageAlt?.trim() || title || "FAQ illustration"}
-                  title={faq.imageTitle?.trim() || undefined}
                   fill
                   sizes="(max-width: 1024px) 100vw, 420px"
                   className="object-cover object-center"
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent" />
               </div>
-              {faq.imageCaption?.trim() && faq.imageCaption.trim() !== title ? (
-                <figcaption className="sr-only">{faq.imageCaption}</figcaption>
-              ) : null}
-              {faq.imageDescription?.trim() &&
-              faq.imageDescription.trim() !== description ? (
-                <p className="sr-only">{faq.imageDescription}</p>
-              ) : null}
             </figure>
           ) : null}
 

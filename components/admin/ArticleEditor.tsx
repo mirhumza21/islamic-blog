@@ -34,6 +34,7 @@ import { uploadClientImage } from "@/lib/uploadClientImage";
 import { uploadClientFile } from "@/lib/uploadClientFile";
 import { slugify } from "@/lib/utils";
 import { resolveBlogThumbnail, resolveBlogCover } from "@/lib/blogImage";
+import { toPublicImageLink } from "@/lib/mediaUrl";
 import { normalizeBlogFaqs } from "@/lib/blogFaq";
 import { packArticleContent, unpackArticleContent } from "@/lib/articleEditor";
 import { ContinueReadingPicker } from "@/components/admin/ContinueReadingPicker";
@@ -68,14 +69,19 @@ export function ArticleEditor({
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [title, setTitle] = useState(currentArticle?.title || "");
-  const [imageUrl, setImageUrl] = useState(currentArticle?.image || "");
+  const [imageUrl, setImageUrl] = useState(toPublicImageLink(currentArticle?.image || ""));
   const [coverImageUrl, setCoverImageUrl] = useState(
-    unpacked.meta.coverImage || currentArticle?.coverImage || currentArticle?.cover_image || ""
+    toPublicImageLink(
+      unpacked.meta.coverImage || currentArticle?.coverImage || currentArticle?.cover_image || ""
+    )
   );
   const [imageAlt, setImageAlt] = useState(
     currentArticle?.imageAlt || currentArticle?.image_alt || ""
   );
   const [coverImageAlt, setCoverImageAlt] = useState(unpacked.meta.coverImageAlt || "");
+  const [bannerDescription, setBannerDescription] = useState(
+    unpacked.meta.bannerDescription || ""
+  );
   const [videoUrl, setVideoUrl] = useState(unpacked.meta.videoUrl || "");
   const [videoTitle, setVideoTitle] = useState(unpacked.meta.videoTitle || "");
   const [content, setContent] = useState(
@@ -100,7 +106,7 @@ export function ArticleEditor({
 
   const [faqTitle, setFaqTitle] = useState(unpacked.meta.faqTitle || "");
   const [faqDescription, setFaqDescription] = useState(unpacked.meta.faqDescription || "");
-  const [faqImage, setFaqImage] = useState(unpacked.meta.faqImage || "");
+  const [faqImage, setFaqImage] = useState(toPublicImageLink(unpacked.meta.faqImage || ""));
   const [faqImageAlt, setFaqImageAlt] = useState(unpacked.meta.faqImageAlt || "");
   const [faqImageTitle, setFaqImageTitle] = useState(unpacked.meta.faqImageTitle || "");
   const [faqImageCaption, setFaqImageCaption] = useState(unpacked.meta.faqImageCaption || "");
@@ -110,6 +116,10 @@ export function ArticleEditor({
   const [faqs, setFaqs] = useState(normalizeBlogFaqs(unpacked.faqs));
   const [relatedSlugs, setRelatedSlugs] = useState<string[]>(
     unpacked.meta.relatedSlugs || []
+  );
+  const [relatedTitle, setRelatedTitle] = useState(unpacked.meta.relatedTitle || "");
+  const [relatedDescription, setRelatedDescription] = useState(
+    unpacked.meta.relatedDescription || ""
   );
   const [articleChoices, setArticleChoices] = useState<
     { id: string; slug: string; title: string; status?: string; image?: string }[]
@@ -346,18 +356,21 @@ export function ArticleEditor({
       html: content,
       faqs,
       meta: {
-        coverImage: coverImageUrl,
+        coverImage: toPublicImageLink(coverImageUrl),
         coverImageAlt,
+        bannerDescription,
         videoUrl,
         videoTitle,
         faqTitle,
         faqDescription,
-        faqImage,
+        faqImage: toPublicImageLink(faqImage),
         faqImageAlt,
         faqImageTitle,
         faqImageCaption,
         faqImageDescription,
         relatedSlugs,
+        relatedTitle,
+        relatedDescription,
         seoKeywords,
         canonicalUrl,
         noIndex,
@@ -372,7 +385,7 @@ export function ArticleEditor({
       excerpt: seoDescription.trim() || title.trim(),
       category_slug: category,
       author_id: authorId,
-      image: imageUrl || coverImageUrl,
+      image: toPublicImageLink(imageUrl || coverImageUrl),
       image_alt: imageAlt || title,
       featured: isFeatured,
       popular: isLatest,
@@ -587,6 +600,21 @@ export function ArticleEditor({
                   onUpload={(e) => handleImageUpload(e, true)}
                 />
               </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-gray-600">
+                  Banner description
+                </label>
+                <textarea
+                  rows={3}
+                  value={bannerDescription}
+                  onChange={(e) => setBannerDescription(e.target.value)}
+                  placeholder="Short line shown on the cover, under the title"
+                  className={`${inputClass} resize-y leading-relaxed`}
+                />
+                <p className="text-[10px] text-gray-400">
+                  Shown on the article banner. Leave blank to show only the title.
+                </p>
+              </div>
             </div>
 
             {/* Tiptap body */}
@@ -705,6 +733,30 @@ export function ArticleEditor({
               <p className="text-xs text-gray-400">
                 Pick the four articles shown at the bottom of this post. Order is the order on the page.
               </p>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-600">Heading</label>
+                  <input
+                    type="text"
+                    value={relatedTitle}
+                    onChange={(e) => setRelatedTitle(e.target.value)}
+                    placeholder="Continue Reading"
+                    className={inputClass}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-gray-600">
+                    Description
+                  </label>
+                  <textarea
+                    value={relatedDescription}
+                    onChange={(e) => setRelatedDescription(e.target.value)}
+                    placeholder="Optional line shown under the heading"
+                    rows={2}
+                    className={`${inputClass} resize-y`}
+                  />
+                </div>
+              </div>
               <ContinueReadingPicker
                 articles={articleChoices}
                 currentSlug={slug}
@@ -1069,6 +1121,9 @@ export function ArticleEditor({
                   placeholder="Compelling meta description for Google..."
                   className={`${inputClass} resize-none leading-relaxed`}
                 />
+                <p className="text-[10px] text-gray-400">
+                  Shown in Google search results.
+                </p>
                 <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
                   <div
                     className={`h-full transition-all ${
@@ -1407,12 +1462,14 @@ function ImageCard({
         placeholder="Alt text (SEO)"
         className={inputClass}
       />
-      <input
-        type="url"
+      <textarea
         value={url.startsWith("blob:") ? "" : url}
         onChange={(e) => onUrl(e.target.value)}
-        placeholder="Or paste image URL"
-        className={inputClass}
+        onBlur={() => onUrl(toPublicImageLink(url))}
+        placeholder="https://umrahzone.com/media/..."
+        rows={3}
+        spellCheck={false}
+        className={`${inputClass} resize-y break-all leading-relaxed`}
       />
     </div>
   );

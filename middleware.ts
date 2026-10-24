@@ -7,6 +7,14 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.ADMIN_JWT_SECRET || "umrahzone_secure_jwt_secret_token_983742849182374921"
 );
 
+function nextWithPath(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", request.nextUrl.pathname);
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -25,7 +33,7 @@ export async function middleware(request: NextRequest) {
           // Token invalid, proceed to login page
         }
       }
-      return NextResponse.next();
+      return nextWithPath(request);
     }
 
     // Check token for all other /admin routes
@@ -41,7 +49,7 @@ export async function middleware(request: NextRequest) {
       if (payload.role !== "admin") {
         return NextResponse.redirect(new URL("/admin/login", request.url));
       }
-      return NextResponse.next();
+      return nextWithPath(request);
     } catch {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }

@@ -1,3 +1,5 @@
+import { toRenderableImageSrc } from "@/lib/mediaUrl";
+
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&q=80&w=1200";
 
@@ -5,10 +7,7 @@ function normalizeImageUrl(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return "";
   if (trimmed.startsWith("blob:")) return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-  if (trimmed.startsWith("/")) return trimmed;
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  return `/${trimmed.replace(/^\/+/, "")}`;
+  return toRenderableImageSrc(trimmed);
 }
 
 export function resolveBlogImage(

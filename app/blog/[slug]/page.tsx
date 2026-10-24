@@ -1,39 +1,48 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleBody } from "@/components/blog/ArticleBody";
 import { ArticleFaqSection } from "@/components/blog/ArticleFaqSection";
-import { ArticleFeedback } from "@/components/blog/ArticleFeedback";
 import { ArticleHeader } from "@/components/blog/ArticleHeader";
 import { ArticleVideoEmbed } from "@/components/blog/ArticleVideoEmbed";
-import { AuthorBioCard } from "@/components/blog/AuthorBioCard";
-import { PrevNextNavigation } from "@/components/blog/PrevNextNavigation";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
 import { RelatedArticles } from "@/components/blog/RelatedArticles";
 import { TableOfContents } from "@/components/blog/TableOfContents";
-import { GlobalNewsletter } from "@/components/home/GlobalNewsletter";
 import {
   extractTableOfContents,
   fetchAllArticles,
   fetchAllCategories,
   fetchArticleBySlug,
   fetchAuthorById,
-  fetchPrevNextArticles,
   fetchRelatedArticles,
 } from "@/lib/articles";
 import { absoluteUrl } from "@/lib/utils";
-import { Tag } from "lucide-react";
 
-function extractCustomSchema(script?: string): unknown | null {
-  if (!script?.trim()) return null;
-  const raw = script.trim();
-  const match = raw.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/i);
-  const jsonText = (match?.[1] || raw).trim();
-  try {
-    return JSON.parse(jsonText);
-  } catch {
-    return null;
+function extractJsonLdPayloads(script?: string): string[] {
+  if (!script?.trim()) return [];
+  let text = script.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+
+  const fromTags: string[] = [];
+  const scriptRe =
+    /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let match: RegExpExecArray | null;
+  while ((match = scriptRe.exec(text))) {
+    const inner = match[1]?.trim();
+    if (inner) fromTags.push(inner);
   }
+
+  const chunks = fromTags.length
+    ? fromTags
+    : [text.replace(/<\/?script[^>]*>/gi, "").trim()];
+
+  return chunks
+    .map((chunk) => {
+      try {
+        return JSON.stringify(JSON.parse(chunk));
+      } catch {
+        return chunk.startsWith("{") || chunk.startsWith("[") ? chunk : "";
+      }
+    })
+    .filter(Boolean);
 }
 
 type ArticlePageProps = {
@@ -53,7 +62,8 @@ export async function generateMetadata({
   const url = canonicalPath.startsWith("http")
     ? canonicalPath
     : absoluteUrl(canonicalPath);
-  const heroImage = article.coverImage || article.image;
+  const heroPath = article.coverImage || article.image;
+  const heroImage = heroPath.startsWith("/") ? absoluteUrl(heroPath) : heroPath;
   const heroAlt = article.coverImageAlt || article.imageAlt;
 
   return {
@@ -68,8 +78,8 @@ export async function generateMetadata({
         : canonicalPath,
     },
     robots: article.seo?.noIndex
-      ? { index: false, follow: false }
-      : { index: true, follow: true },
+      ? { index: false, follow: true, googleBot: { index: false, follow: true } }
+      : { index: true, follow: true, googleBot: { index: true, follow: true } },
     openGraph: {
       type: "article",
       title,
@@ -107,10 +117,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const toc = extractTableOfContents(article);
   const related = await fetchRelatedArticles(article, 4, allArticles);
-  const { prev, next } = await fetchPrevNextArticles(article.slug, allArticles);
   const url = absoluteUrl(`/blog/${article.slug}`);
 
-  const heroImage = article.coverImage || article.image;
+  const heroPath = article.coverImage || article.image;
+  const heroImage = heroPath.startsWith("/") ? absoluteUrl(heroPath) : heroPath;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -174,7 +184,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         }
       : null;
 
-  const customSchema = extractCustomSchema(article.seo?.schemaScript);
+  const customSchemas = extractJsonLdPayloads(article.seo?.schemaScript);
+  const pageSchemas = customSchemas.length
+    ? customSchemas
+    : [jsonLd, breadcrumbJsonLd, faqJsonLd].filter(Boolean).map((schema) => JSON.stringify(schema));
 
   return (
     <>
@@ -195,42 +208,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </article>
 
             <ArticleVideoEmbed url={article.videoUrl} title={article.videoTitle} />
-
-            {article.tags && article.tags.length > 0 ? (
-              <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-border/80 pt-6">
-                <span className="mr-1 flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-muted">
-                  <Tag className="h-3.5 w-3.5 text-sand" />
-                  Topics
-                </span>
-                {article.tags.map((tag) => (
-                  <Link
-                    key={tag}
-                    href={`/search?q=${encodeURIComponent(tag)}`}
-                    className="rounded-full border border-[#e6dfd3] bg-white/80 px-3.5 py-1 text-xs font-medium text-foreground/80 transition-colors hover:border-[#c59a53]/50 hover:text-[#063b2f]"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
-            ) : null}
-
-            <ArticleFeedback />
-
-            <div className="mt-8">
-              <AuthorBioCard author={resolvedAuthor} />
-            </div>
-
-            <div className="mt-8">
-              <PrevNextNavigation prev={prev} next={next} />
-            </div>
           </div>
 
           <aside className="order-first min-w-0 lg:order-2 lg:col-span-4 lg:self-stretch">
-            <TableOfContents
-              items={toc}
-              articleTitle={article.title}
-              shareUrl={url}
-            />
+            <TableOfContents items={toc} />
           </aside>
         </div>
 
@@ -258,20 +239,22 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           />
         </div>
 
-        <RelatedArticles articles={related} categories={categories} />
+        <RelatedArticles
+          articles={related}
+          categories={categories}
+          title={article.relatedTitle}
+          description={article.relatedDescription}
+        />
         </div>
       </main>
 
-      <GlobalNewsletter />
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
-            [jsonLd, breadcrumbJsonLd, faqJsonLd, customSchema].filter(Boolean)
-          ),
-        }}
-      />
+      {pageSchemas.map((schema, index) => (
+        <script
+          key={`article-schema-${index}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: schema }}
+        />
+      ))}
     </>
   );
 }

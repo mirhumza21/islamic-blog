@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import {
   Amiri,
   Aref_Ruqaa,
@@ -8,9 +9,16 @@ import {
   Noto_Nastaliq_Urdu,
   Reem_Kufi,
 } from "next/font/google";
+import { SiteFooterScripts } from "@/components/layout/SiteFooterScripts";
+import { SiteHeadScripts } from "@/components/layout/SiteHeadScripts";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { siteConfig } from "@/data/categories";
-import { getGlobalSubscribe } from "@/lib/pages";
+import { getCustomScripts, getGlobalSubscribe } from "@/lib/pages";
+import {
+  extractGoogleSiteVerification,
+  getEnabledFooterHtml,
+  getEnabledHeadHtml,
+} from "@/lib/parseSiteScripts";
 import { absoluteUrl } from "@/lib/utils";
 import "./globals.css";
 
@@ -64,7 +72,11 @@ const arefRuqaa = Aref_Ruqaa({
   display: "swap",
 });
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const scripts = await getCustomScripts();
+  const googleVerification = extractGoogleSiteVerification(getEnabledHeadHtml(scripts));
+
+  return {
   metadataBase: new URL(siteConfig.url),
   title: {
     default: `${siteConfig.name} | ${siteConfig.tagline}`,
@@ -108,10 +120,16 @@ export const metadata: Metadata = {
     description: siteConfig.description,
   },
   robots: {
-    index: true,
+    index: false,
     follow: true,
+    googleBot: {
+      index: false,
+      follow: true,
+    },
   },
-};
+  ...(googleVerification ? { verification: { google: googleVerification } } : {}),
+  };
+}
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
@@ -140,11 +158,20 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const subscribe = await getGlobalSubscribe();
+  const scripts = await getCustomScripts();
+  const pathname = (await headers()).get("x-pathname") || "";
+  const isAdmin = pathname.startsWith("/admin");
+  const headHtml = isAdmin ? "" : getEnabledHeadHtml(scripts);
+  const footerHtml = isAdmin ? "" : getEnabledFooterHtml(scripts);
+
   return (
     <html
       lang="en"
       className={`${manrope.variable} ${cormorant.variable} ${amiri.variable} ${greatVibes.variable} ${notoNastaliq.variable} ${reemKufi.variable} ${arefRuqaa.variable} h-full`}
     >
+      <head>
+        <SiteHeadScripts html={headHtml} />
+      </head>
       <body className="min-h-full flex flex-col">
         <a
           href="#main-content"
@@ -153,6 +180,7 @@ export default async function RootLayout({
           Skip to content
         </a>
         <SiteShell subscribeLabel={subscribe.headerButtonLabel}>{children}</SiteShell>
+        <SiteFooterScripts html={footerHtml} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

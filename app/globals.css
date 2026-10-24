@@ -388,6 +388,27 @@
   font-weight: 500;
 }
 
+.blog-article-body .quran-quote-card,
+.blog-article-body .hadith-quote-card,
+.blog-article-body .dua-card,
+.blog-article-body .islamic-callout,
+.blog-article-body .quran-quote-card *,
+.blog-article-body .hadith-quote-card *,
+.blog-article-body .dua-card *,
+.blog-article-body .islamic-callout * {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font-style: normal !important;
+  font-weight: inherit !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  padding: 0 !important;
+}
+
 .blog-article-body blockquote {
   border-left: 4px solid #b8894a;
   background: linear-gradient(to right, rgba(244, 238, 227, 0.8), #ffffff);

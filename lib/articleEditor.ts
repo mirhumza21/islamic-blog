@@ -1,10 +1,12 @@
 import { normalizeBlogFaqs, type BlogFaqItem } from "@/lib/blogFaq";
+import { rewriteHtmlMediaUrls } from "@/lib/mediaUrl";
 import { getVideoEmbedUrl } from "@/lib/videoEmbed";
 import type { ArticleBlock } from "@/types/blog";
 
 export interface ArticleEditorMeta {
   coverImage?: string;
   coverImageAlt?: string;
+  bannerDescription?: string;
   videoUrl?: string;
   videoTitle?: string;
   faqTitle?: string;
@@ -20,6 +22,8 @@ export interface ArticleEditorMeta {
   schemaScript?: string;
   isLatest?: boolean;
   relatedSlugs?: string[];
+  relatedTitle?: string;
+  relatedDescription?: string;
 }
 
 export interface UnpackedArticleContent {
@@ -30,6 +34,65 @@ export interface UnpackedArticleContent {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+const HIGHLIGHT_CARD =
+  /<(div)\b(?=[^>]*(?:quran-quote-card|hadith-quote-card|dua-card|islamic-callout|data-quran|data-hadith|data-dua|data-callout))[^>]*>/gi;
+
+function plainCardInner(inner: string): string {
+  const parts = [...inner.matchAll(/<(p|div)\b([^>]*)>([\s\S]*?)<\/\1>/gi)];
+  const source = parts.length
+    ? parts.map((part) => ({ attrs: part[2] || "", body: part[3] || "" }))
+    : [{ attrs: "", body: inner }];
+
+  return source
+    .map(({ attrs, body }) => {
+      const cleaned = body
+        .replace(/\sclass=(["'])[\s\S]*?\1/gi, "")
+        .replace(/\sstyle=(["'])[\s\S]*?\1/gi, "")
+        .trim();
+      const text = cleaned.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      if (!text || /^(tip|warning|note)$/i.test(text)) return "";
+      const dir = /\bdir=(["'])rtl\1/i.test(attrs) ? ' dir="rtl"' : "";
+      return `<p${dir}>${cleaned}</p>`;
+    })
+    .join("");
+}
+
+/** Turn colored Quran, hadith, dua, and callout cards into normal paragraphs. */
+export function plainHighlightCards(html: string): string {
+  if (!html || !HIGHLIGHT_CARD.test(html)) return html;
+  HIGHLIGHT_CARD.lastIndex = 0;
+
+  let result = "";
+  let last = 0;
+  let match: RegExpExecArray | null;
+  while ((match = HIGHLIGHT_CARD.exec(html))) {
+    result += html.slice(last, match.index);
+    const innerStart = HIGHLIGHT_CARD.lastIndex;
+    const tagRe = /<\/?div\b[^>]*>/gi;
+    tagRe.lastIndex = innerStart;
+    let depth = 1;
+    let end = -1;
+    let tag: RegExpExecArray | null;
+    while ((tag = tagRe.exec(html))) {
+      if (tag[0].startsWith("</")) depth -= 1;
+      else if (!tag[0].endsWith("/>")) depth += 1;
+      if (depth === 0) {
+        end = tag.index;
+        HIGHLIGHT_CARD.lastIndex = tagRe.lastIndex;
+        break;
+      }
+    }
+    if (end === -1) {
+      result += match[0];
+      last = innerStart;
+      continue;
+    }
+    result += plainCardInner(html.slice(innerStart, end));
+    last = HIGHLIGHT_CARD.lastIndex;
+  }
+  return result + html.slice(last);
 }
 
 export function blocksToHtml(blocks: ArticleBlock[] | string | undefined): string {
@@ -72,58 +135,30 @@ export function blocksToHtml(blocks: ArticleBlock[] | string | undefined): strin
           }</figure>`;
         case "quran":
           return `
-            <div class="quran-quote-card my-8 p-6 rounded-2xl border-2 border-emerald-300 bg-emerald-50/70 shadow-xs" data-quran="true">
-              ${
-                block.arabic
-                  ? `<p class="text-right font-serif text-2xl sm:text-3xl text-emerald-950 mb-3 leading-loose" dir="rtl">${block.arabic}</p>`
-                  : ""
-              }
-              <p class="text-base sm:text-lg text-gray-800 italic leading-relaxed mb-3">"${
-                block.translation
-              }"</p>
-              <div class="text-xs font-bold uppercase tracking-wider text-emerald-800">— Surah ${
-                block.surah
-              } (${block.ayah})</div>
-            </div>
+            ${
+              block.arabic
+                ? `<p dir="rtl">${block.arabic}</p>`
+                : ""
+            }
+            <p>"${block.translation}"</p>
+            <p>— Surah ${block.surah} (${block.ayah})</p>
           `;
         case "hadith":
           return `
-            <div class="hadith-quote-card my-8 p-6 rounded-2xl border-2 border-teal-300 bg-teal-50/70 shadow-xs" data-hadith="true">
-              <p class="text-base sm:text-lg text-gray-800 italic leading-relaxed mb-3">"${
-                block.text
-              }"</p>
-              <div class="text-xs font-bold uppercase tracking-wider text-teal-800">— ${
-                block.source
-              }${block.grade ? ` · Grade: ${block.grade}` : ""}</div>
-            </div>
+            <p>"${block.text}"</p>
+            <p>— ${block.source}${block.grade ? ` · Grade: ${block.grade}` : ""}</p>
           `;
         case "dua":
           return `
-            <div class="dua-card my-8 p-6 rounded-2xl border-2 border-amber-300 bg-amber-50/70 shadow-xs" data-dua="true">
-              <div class="text-xs font-bold uppercase tracking-widest text-amber-800 mb-2">${
-                block.title
-              }</div>
-              <p class="text-right font-serif text-2xl text-amber-950 mb-3 leading-loose" dir="rtl">${
-                block.arabic
-              }</p>
-              ${
-                block.transliteration
-                  ? `<p class="text-xs text-amber-900/80 italic mb-1">${block.transliteration}</p>`
-                  : ""
-              }
-              <p class="text-sm sm:text-base text-gray-800 leading-relaxed">${
-                block.translation
-              }</p>
-            </div>
+            <p>${block.title}</p>
+            <p dir="rtl">${block.arabic}</p>
+            ${block.transliteration ? `<p>${block.transliteration}</p>` : ""}
+            <p>${block.translation}</p>
           `;
         case "callout":
           return `
-            <div class="islamic-callout my-6 p-5 rounded-2xl border-2 border-emerald-300 bg-emerald-50 text-emerald-900 shadow-xs" data-callout="${
-              block.variant || "tip"
-            }">
-              <div class="font-bold text-sm mb-1">${block.title || "Note"}</div>
-              <p class="text-sm leading-relaxed">${block.text}</p>
-            </div>
+            ${block.title ? `<p>${block.title}</p>` : ""}
+            <p>${block.text}</p>
           `;
         case "table":
           return `
@@ -236,7 +271,7 @@ export function unpackArticleContent(
     }
   }
 
-  return { html, faqs, meta };
+  return { html: plainHighlightCards(html), faqs, meta };
 }
 
 export function packArticleContent(input: {
@@ -245,7 +280,7 @@ export function packArticleContent(input: {
   meta: ArticleEditorMeta;
 }): ArticleBlock[] {
   const blocks: ArticleBlock[] = [
-    { type: "html", text: input.html || "<p></p>" },
+    { type: "html", text: plainHighlightCards(rewriteHtmlMediaUrls(input.html || "<p></p>")) },
   ];
 
   const embed = getVideoEmbedUrl(input.meta.videoUrl);
@@ -315,12 +350,28 @@ export function readRelatedSlugs(content: unknown): string[] {
 
 export function withRelatedSlugs(content: unknown, slugs: string[]): ArticleBlock[] {
   const unpacked = unpackArticleContent(content);
+  return withRelatedSection(content, {
+    slugs,
+    title: unpacked.meta.relatedTitle,
+    description: unpacked.meta.relatedDescription,
+  });
+}
+
+export function withRelatedSection(
+  content: unknown,
+  section: { slugs: string[]; title?: string; description?: string }
+): ArticleBlock[] {
+  const unpacked = unpackArticleContent(content);
+  const title = section.title?.trim() || undefined;
+  const description = section.description?.trim() || undefined;
   return packArticleContent({
     html: unpacked.html,
     faqs: unpacked.faqs,
     meta: {
       ...unpacked.meta,
-      relatedSlugs: normalizeRelatedSlugs(slugs),
+      relatedSlugs: normalizeRelatedSlugs(section.slugs),
+      relatedTitle: title,
+      relatedDescription: description,
     },
   });
 }

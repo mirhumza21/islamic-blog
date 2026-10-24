@@ -1,10 +1,7 @@
 import Image from "next/image";
 import { ChevronDown, ExternalLink } from "lucide-react";
-import { DuaCard } from "@/components/islamic/DuaCard";
-import { HadithQuote } from "@/components/islamic/HadithQuote";
-import { IslamicCallout } from "@/components/islamic/IslamicCallout";
-import { QuranQuote } from "@/components/islamic/QuranQuote";
 import { ensureHeadingIds, getHeadingId } from "@/lib/articles";
+import { toRenderableImageSrc } from "@/lib/mediaUrl";
 import type { ArticleBlock } from "@/types/blog";
 
 export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
@@ -182,43 +179,47 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
           }
           case "quran":
             return (
-              <QuranQuote
-                key={index}
-                arabic={block.arabic}
-                translation={block.translation}
-                surah={block.surah}
-                ayah={block.ayah}
-                note={block.note}
-              />
+              <div key={index} className="my-6">
+                {block.arabic ? (
+                  <p dir="rtl" className="mb-4 leading-loose">
+                    {block.arabic}
+                  </p>
+                ) : null}
+                <p className="mb-3">“{block.translation}”</p>
+                <p>
+                  — Surah {block.surah} ({block.ayah})
+                </p>
+                {block.note ? <p className="mt-3">{block.note}</p> : null}
+              </div>
             );
           case "hadith":
             return (
-              <HadithQuote
-                key={index}
-                text={block.text}
-                source={block.source}
-                grade={block.grade}
-                note={block.note}
-              />
+              <div key={index} className="my-6">
+                <p className="mb-3">“{block.text}”</p>
+                <p>
+                  — {block.source}
+                  {block.grade ? ` · Grade: ${block.grade}` : ""}
+                </p>
+                {block.note ? <p className="mt-3">{block.note}</p> : null}
+              </div>
             );
           case "dua":
             return (
-              <DuaCard
-                key={index}
-                title={block.title}
-                arabic={block.arabic}
-                transliteration={block.transliteration}
-                translation={block.translation}
-              />
+              <div key={index} className="my-6">
+                {block.title ? <p className="mb-3">{block.title}</p> : null}
+                <p dir="rtl" className="mb-3 leading-loose">
+                  {block.arabic}
+                </p>
+                {block.transliteration ? <p className="mb-3">{block.transliteration}</p> : null}
+                <p>{block.translation}</p>
+              </div>
             );
           case "callout":
             return (
-              <IslamicCallout
-                key={index}
-                variant={block.variant}
-                title={block.title}
-                text={block.text}
-              />
+              <div key={index} className="my-6">
+                {block.title ? <p className="mb-2">{block.title}</p> : null}
+                <p>{block.text}</p>
+              </div>
             );
           case "table":
             return (

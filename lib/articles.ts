@@ -3,7 +3,8 @@ import { authors as staticAuthors } from "@/data/authors";
 import { categories as staticCategories } from "@/data/categories";
 import type { Article, Author, Category, SearchResult } from "@/types/blog";
 import { supabase } from "@/lib/supabase";
-import { unpackArticleContent } from "@/lib/articleEditor";
+import { plainHighlightCards, unpackArticleContent } from "@/lib/articleEditor";
+import { rewriteHtmlMediaUrls, toRenderableImageSrc } from "@/lib/mediaUrl";
 
 function isSupabaseConfigured() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -25,10 +26,13 @@ export function mapDbArticle(row: any): Article {
     publishedAt: row.published_at,
     updatedAt: row.updated_at,
     readingTime: row.reading_time || 5,
-    image: row.image,
+    image: toRenderableImageSrc(row.image || ""),
     imageAlt: row.image_alt || row.title,
-    coverImage: unpacked.meta.coverImage || undefined,
+    coverImage: unpacked.meta.coverImage
+      ? toRenderableImageSrc(unpacked.meta.coverImage)
+      : undefined,
     coverImageAlt: unpacked.meta.coverImageAlt || undefined,
+    bannerDescription: unpacked.meta.bannerDescription || undefined,
     featured: Boolean(row.featured),
     popular: Boolean(row.popular),
     popularRank: row.popular_rank || undefined,
@@ -47,11 +51,15 @@ export function mapDbArticle(row: any): Article {
     relatedSlugs: unpacked.meta.relatedSlugs?.length
       ? unpacked.meta.relatedSlugs
       : undefined,
+    relatedTitle: unpacked.meta.relatedTitle || undefined,
+    relatedDescription: unpacked.meta.relatedDescription || undefined,
     faq: unpacked.faqs.length
       ? {
           title: unpacked.meta.faqTitle || faqFromBlock?.title,
           description: unpacked.meta.faqDescription || faqFromBlock?.description,
-          image: unpacked.meta.faqImage || faqFromBlock?.image,
+          image: unpacked.meta.faqImage || faqFromBlock?.image
+            ? toRenderableImageSrc(unpacked.meta.faqImage || faqFromBlock?.image || "")
+            : undefined,
           imageAlt: unpacked.meta.faqImageAlt || faqFromBlock?.imageAlt,
           imageTitle: unpacked.meta.faqImageTitle || faqFromBlock?.imageTitle,
           imageCaption: unpacked.meta.faqImageCaption || faqFromBlock?.imageCaption,
@@ -405,7 +413,7 @@ export function stripHtml(value: string): string {
 }
 
 export function ensureHeadingIds(html: string): string {
-  return html.replace(
+  return plainHighlightCards(rewriteHtmlMediaUrls(html)).replace(
     /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi,
     (match, level, attrs, inner) => {
       if (/\sid\s*=/i.test(attrs)) return match;

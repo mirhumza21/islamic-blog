@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { normalizeCustomScripts } from "@/lib/customScripts";
 import { getAdminSupabase } from "@/lib/supabase";
 import { siteConfig } from "@/data/categories";
 

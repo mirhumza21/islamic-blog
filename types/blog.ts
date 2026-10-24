@@ -78,6 +78,7 @@ export type ArticleBlock =
       type: "editorMeta";
       coverImage?: string;
       coverImageAlt?: string;
+      bannerDescription?: string;
       videoUrl?: string;
       videoTitle?: string;
       faqTitle?: string;
@@ -93,6 +94,8 @@ export type ArticleBlock =
       schemaScript?: string;
       isLatest?: boolean;
       relatedSlugs?: string[];
+      relatedTitle?: string;
+      relatedDescription?: string;
     };
 
 export interface ArticleSeo {
@@ -129,6 +132,7 @@ export interface Article {
   imageAlt: string;
   coverImage?: string;
   coverImageAlt?: string;
+  bannerDescription?: string;
   featured?: boolean;
   popular?: boolean;
   popularRank?: number;

@@ -47,11 +47,6 @@ import {
   Minus,
   RemoveFormatting,
   X,
-  BookOpen,
-  Sparkles,
-  Quote,
-  Layers,
-  ChevronDown,
   MousePointerClick,
 } from "lucide-react";
 import { uploadClientImage } from "@/lib/uploadClientImage";
@@ -244,31 +239,15 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
     const [imageAltModal, setImageAltModal] = useState<ImageAltModalState>(null);
     const [altDraft, setAltDraft] = useState("");
     const [modalMounted, setModalMounted] = useState(false);
-    const [showIslamicMenu, setShowIslamicMenu] = useState(false);
     const [, setSelectionTick] = useState(0);
 
     const imageInputRef = useRef<HTMLInputElement>(null);
     const altInputRef = useRef<HTMLInputElement>(null);
-    const islamicMenuRef = useRef<HTMLDivElement>(null);
     const openAltModalRef = useRef<(state: Exclude<ImageAltModalState, null>) => void>(
       () => {}
     );
 
     useEffect(() => setModalMounted(true), []);
-
-    // Close islamic menu on outside click
-    useEffect(() => {
-      const handleOutside = (e: MouseEvent) => {
-        if (
-          islamicMenuRef.current &&
-          !islamicMenuRef.current.contains(e.target as HTMLElement)
-        ) {
-          setShowIslamicMenu(false);
-        }
-      };
-      document.addEventListener("mousedown", handleOutside);
-      return () => document.removeEventListener("mousedown", handleOutside);
-    }, []);
 
     const editor = useEditor({
       immediatelyRender: false,
@@ -451,75 +430,6 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
         onChange(sourceValue);
         setShowSource(false);
       }
-    };
-
-    // Quick Insert Islamic Blocks
-    const insertQuranSnippet = () => {
-      const arabic = window.prompt("Enter Arabic text (optional):", "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ") || "";
-      const trans = window.prompt("Enter Translation:", "Our Lord, give us in this world that which is good and in the Hereafter that which is good and protect us from the punishment of the Fire.") || "";
-      const ref = window.prompt("Surah & Ayah reference:", "Surah Al-Baqarah (2:201)") || "";
-      
-      const html = `
-        <div class="quran-quote-card my-8 p-6 rounded-2xl border-2 border-emerald-300 bg-emerald-50/70 shadow-xs" data-quran="true">
-          ${arabic ? `<p class="text-right font-serif text-2xl sm:text-3xl text-emerald-950 mb-3 leading-loose" dir="rtl">${arabic}</p>` : ""}
-          <p class="text-base sm:text-lg text-gray-800 italic leading-relaxed mb-3">"${trans}"</p>
-          <div class="text-xs font-bold uppercase tracking-wider text-emerald-800">— ${ref}</div>
-        </div>
-      `;
-      editor.chain().focus().insertContent(html).run();
-      setShowIslamicMenu(false);
-      toast.success("Quran verse card inserted");
-    };
-
-    const insertHadithSnippet = () => {
-      const text = window.prompt("Enter Hadith text:", "The best among you are those who have the best manners and character.") || "";
-      const source = window.prompt("Hadith Source:", "Sahih al-Bukhari 6029") || "";
-      const grade = window.prompt("Grade (optional):", "Sahih") || "";
-
-      const html = `
-        <div class="hadith-quote-card my-8 p-6 rounded-2xl border-2 border-teal-300 bg-teal-50/70 shadow-xs" data-hadith="true">
-          <p class="text-base sm:text-lg text-gray-800 italic leading-relaxed mb-3">"${text}"</p>
-          <div class="text-xs font-bold uppercase tracking-wider text-teal-800">— ${source}${grade ? ` · Grade: ${grade}` : ""}</div>
-        </div>
-      `;
-      editor.chain().focus().insertContent(html).run();
-      setShowIslamicMenu(false);
-      toast.success("Hadith card inserted");
-    };
-
-    const insertDuaSnippet = () => {
-      const title = window.prompt("Dua Title:", "Dua for Traveling") || "";
-      const arabic = window.prompt("Arabic text:", "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ") || "";
-      const trans = window.prompt("Translation:", "Glory to Him who has subjected this to us, and we could never have done it by ourselves.") || "";
-
-      const html = `
-        <div class="dua-card my-8 p-6 rounded-2xl border-2 border-amber-300 bg-amber-50/70 shadow-xs" data-dua="true">
-          <div class="text-xs font-bold uppercase tracking-widest text-amber-800 mb-2">${title}</div>
-          <p class="text-right font-serif text-2xl text-amber-950 mb-3 leading-loose" dir="rtl">${arabic}</p>
-          <p class="text-sm sm:text-base text-gray-800 leading-relaxed">${trans}</p>
-        </div>
-      `;
-      editor.chain().focus().insertContent(html).run();
-      setShowIslamicMenu(false);
-      toast.success("Dua card inserted");
-    };
-
-    const insertCalloutSnippet = (variant: "tip" | "warning" | "note") => {
-      const colors = {
-        tip: "border-emerald-300 bg-emerald-50 text-emerald-900",
-        warning: "border-amber-300 bg-amber-50 text-amber-900",
-        note: "border-blue-300 bg-blue-50 text-blue-900",
-      }[variant];
-
-      const html = `
-        <div class="islamic-callout my-6 p-5 rounded-2xl border-2 ${colors} shadow-xs" data-callout="${variant}">
-          <div class="font-bold text-sm mb-1">${variant.toUpperCase()}</div>
-          <p class="text-sm leading-relaxed">Write your guidance or practical advisory here...</p>
-        </div>
-      `;
-      editor.chain().focus().insertContent(html).run();
-      setShowIslamicMenu(false);
-      toast.success(`${variant.toUpperCase()} callout inserted`);
     };
 
     const currentBlock = editor.isActive("heading", { level: 2 })
@@ -785,68 +695,6 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, TiptapEditorProps>(
               </span>
             </button>
           ) : null}
-
-          {/* Islamic Snippets Quick Menu */}
-          <div className="relative" ref={islamicMenuRef}>
-            <button
-              type="button"
-              onClick={() => setShowIslamicMenu((p) => !p)}
-              className="h-8 px-2.5 inline-flex items-center gap-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-2xs transition-colors cursor-pointer"
-              title="Insert Islamic Blocks"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Islamic Inserts</span>
-              <ChevronDown className="w-3 h-3" />
-            </button>
-
-            {showIslamicMenu && (
-              <div className="absolute top-full left-0 mt-1.5 w-56 rounded-xl bg-white border border-gray-200 shadow-xl py-1.5 z-50 animate-in fade-in zoom-in-95">
-                <button
-                  type="button"
-                  onClick={insertQuranSnippet}
-                  className="w-full px-3.5 py-2 text-left text-xs font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center gap-2 transition-colors cursor-pointer"
-                >
-                  <BookOpen className="w-4 h-4 text-emerald-600" />
-                  <span>☽ Quran Verse Card</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={insertHadithSnippet}
-                  className="w-full px-3.5 py-2 text-left text-xs font-medium text-gray-700 hover:bg-teal-50 hover:text-teal-800 flex items-center gap-2 transition-colors cursor-pointer"
-                >
-                  <Quote className="w-4 h-4 text-teal-600" />
-                  <span>📖 Hadith Quote Card</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={insertDuaSnippet}
-                  className="w-full px-3.5 py-2 text-left text-xs font-medium text-gray-700 hover:bg-amber-50 hover:text-amber-800 flex items-center gap-2 transition-colors cursor-pointer"
-                >
-                  <Sparkles className="w-4 h-4 text-amber-600" />
-                  <span>🤲 Dua Card</span>
-                </button>
-                <div className="h-px bg-gray-100 my-1" />
-                <button
-                  type="button"
-                  onClick={() => insertCalloutSnippet("tip")}
-                  className="w-full px-3.5 py-1.5 text-left text-xs font-medium text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2 transition-colors cursor-pointer"
-                >
-                  <Layers className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>💡 Islamic Tip Box</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertCalloutSnippet("warning")}
-                  className="w-full px-3.5 py-1.5 text-left text-xs font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 flex items-center gap-2 transition-colors cursor-pointer"
-                >
-                  <Layers className="w-3.5 h-3.5 text-amber-600" />
-                  <span>⚠️ Guidance Note</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          <Divider />
 
           {/* Horizontal Rule */}
           <ToolbarButton

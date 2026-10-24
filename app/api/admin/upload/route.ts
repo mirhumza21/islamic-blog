@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { toPublicImageLink } from "@/lib/mediaUrl";
 import { getAdminSupabase } from "@/lib/supabase";
 
 export async function POST(request: Request) {
@@ -57,12 +58,9 @@ export async function POST(request: Request) {
                 upsert: true,
               });
             if (!retry.error) {
-              const { data: pubData } = supabase.storage
-                .from(BUCKET_NAME)
-                .getPublicUrl(retry.data.path);
               return NextResponse.json({
                 success: true,
-                url: pubData.publicUrl,
+                url: toPublicImageLink(`/media/${BUCKET_NAME}/${retry.data.path}`),
               });
             }
           }
@@ -79,13 +77,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: publicUrlData } = supabase.storage
-      .from("blog-images")
-      .getPublicUrl(data.path);
-
     return NextResponse.json({
       success: true,
-      url: publicUrlData.publicUrl,
+      url: toPublicImageLink(`/media/${BUCKET_NAME}/${data.path}`),
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

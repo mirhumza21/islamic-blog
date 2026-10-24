@@ -1,3 +1,4 @@
+import { normalizeCustomScripts, type CustomScript } from "@/lib/customScripts";
 import { getAdminSupabase } from "@/lib/supabase";
 import { heroContent as defaultHeroContent } from "@/data/navigation";
 import { defaultNewsletterSection, mergeHomeCopy } from "@/data/home-sections";
@@ -220,4 +221,20 @@ export async function getGlobalSubscribe() {
   }
 
   return defaultNewsletterSection;
+}
+
+export async function getCustomScripts(): Promise<CustomScript[]> {
+  try {
+    const supabase = getAdminSupabase();
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "site_config")
+      .maybeSingle();
+    const value = data?.value as { customScripts?: CustomScript[] } | undefined;
+    return normalizeCustomScripts({ customScripts: value?.customScripts });
+  } catch (err) {
+    console.error("Could not fetch custom scripts:", err);
+    return [];
+  }
 }

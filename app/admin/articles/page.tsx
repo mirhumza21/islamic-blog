@@ -17,7 +17,7 @@ import {
 import { TableSkeleton } from "@/components/admin/AdminSkeletons";
 import { ContinueReadingPicker } from "@/components/admin/ContinueReadingPicker";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { readRelatedSlugs, withRelatedSlugs } from "@/lib/articleEditor";
+import { readRelatedSlugs, unpackArticleContent, withRelatedSection } from "@/lib/articleEditor";
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<any[]>([]);
@@ -29,6 +29,8 @@ export default function AdminArticlesPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [readingArticle, setReadingArticle] = useState<any | null>(null);
   const [readingSlugs, setReadingSlugs] = useState<string[]>([]);
+  const [readingTitle, setReadingTitle] = useState("");
+  const [readingDescription, setReadingDescription] = useState("");
   const [savingReading, setSavingReading] = useState(false);
 
   const fetchArticles = async () => {
@@ -107,14 +109,21 @@ export default function AdminArticlesPage() {
   };
 
   const openContinueReading = (article: any) => {
+    const meta = unpackArticleContent(article.content).meta;
     setReadingArticle(article);
     setReadingSlugs(readRelatedSlugs(article.content));
+    setReadingTitle(meta.relatedTitle || "");
+    setReadingDescription(meta.relatedDescription || "");
   };
 
   const saveContinueReading = async () => {
     if (!readingArticle) return;
     setSavingReading(true);
-    const content = withRelatedSlugs(readingArticle.content, readingSlugs);
+    const content = withRelatedSection(readingArticle.content, {
+      slugs: readingSlugs,
+      title: readingTitle,
+      description: readingDescription,
+    });
     try {
       const res = await fetch(`/api/admin/articles/${readingArticle.id}`, {
         method: "PUT",
@@ -416,6 +425,28 @@ export default function AdminArticlesPage() {
               .
             </p>
           </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-gray-600">Heading</label>
+              <input
+                type="text"
+                value={readingTitle}
+                onChange={(e) => setReadingTitle(e.target.value)}
+                placeholder="Continue Reading"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-800 outline-none focus:border-emerald-500 focus:bg-white"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-gray-600">Description</label>
+              <textarea
+                value={readingDescription}
+                onChange={(e) => setReadingDescription(e.target.value)}
+                placeholder="Optional line shown under the heading"
+                rows={2}
+                className="w-full resize-y rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-800 outline-none focus:border-emerald-500 focus:bg-white"
+              />
+            </div>
+          </div>
           <ContinueReadingPicker
             articles={articles.map((item) => ({
               id: item.id,
