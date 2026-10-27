@@ -608,11 +608,11 @@ export function ArticleEditor({
                   rows={3}
                   value={bannerDescription}
                   onChange={(e) => setBannerDescription(e.target.value)}
-                  placeholder="Short line shown on the cover, under the title"
+                  placeholder="Optional text shown on the banner, under the title"
                   className={`${inputClass} resize-y leading-relaxed`}
                 />
                 <p className="text-[10px] text-gray-400">
-                  Shown on the article banner. Leave blank to show only the title.
+                  This is the line on the cover. It is separate from the Google meta description. Leave it blank to show only the title.
                 </p>
               </div>
             </div>

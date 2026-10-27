@@ -24,7 +24,10 @@ export default function AdminSettingsPage() {
         if (res.ok) {
           const data = await res.json();
           if (data.settings) {
-            setSettings(data.settings);
+            setSettings({
+              ...data.settings,
+              customScripts: normalizeCustomScripts(data.settings),
+            });
           }
         }
       } catch (err) {
@@ -256,9 +259,6 @@ export default function AdminSettingsPage() {
             </div>
           </div>
         </div>
-      </form>
-    </div>
-  );
 
         <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -268,7 +268,7 @@ export default function AdminSettingsPage() {
                 <span>Global Scripts</span>
               </div>
               <p className="mt-1 text-gray-500">
-                Paste Google Search Console, Tawk.to, Analytics, or any other site-wide code.
+                Paste Google Analytics, Search Console, Tawk.to, or any other site-wide code.
               </p>
             </div>
             <button
@@ -316,7 +316,7 @@ export default function AdminSettingsPage() {
                         }
                         className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-gray-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                       >
-                        <option value="header">Header — Search Console, meta tags</option>
+                        <option value="header">Header — Analytics, Search Console</option>
                         <option value="footer">Footer — Tawk.to, chat widgets</option>
                       </select>
                     </div>
@@ -360,4 +360,7 @@ export default function AdminSettingsPage() {
             </div>
           )}
         </div>
+      </form>
+    </div>
+  );
 }

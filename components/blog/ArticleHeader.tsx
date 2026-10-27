@@ -58,7 +58,7 @@ export function ArticleHeader({
 
   return (
     <header className="w-full">
-      <div className="relative w-full overflow-hidden rounded-[24px] border border-[#e6dfd3] bg-cream shadow-[0_12px_40px_-16px_rgba(6,59,47,0.18)] lg:rounded-[28px]">
+      <div className="relative flex min-h-[20rem] w-full flex-col justify-end overflow-hidden rounded-[24px] border border-[#e6dfd3] bg-cream shadow-[0_12px_40px_-16px_rgba(6,59,47,0.18)] sm:min-h-[24rem] lg:min-h-[28rem] lg:rounded-[28px]">
         <Image
           src={article.coverImage || article.image}
           alt={article.coverImageAlt || article.imageAlt}
