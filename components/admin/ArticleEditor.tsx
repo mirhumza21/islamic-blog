@@ -612,7 +612,7 @@ export function ArticleEditor({
                   className={`${inputClass} resize-y leading-relaxed`}
                 />
                 <p className="text-[10px] text-gray-400">
-                  This is the line on the cover. It is separate from the Google meta description. Leave it blank to show only the title.
+                  Shown under the title on the cover, up to 6 lines. Extra text is cut off. This is separate from the Google meta description. Leave it blank to show only the title.
                 </p>
               </div>
             </div>

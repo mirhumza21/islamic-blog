@@ -15,6 +15,8 @@ import {
   fetchAuthorById,
   fetchRelatedArticles,
 } from "@/lib/articles";
+import { SocialIcons } from "@/components/layout/SocialIcons";
+import { getSocialLinks } from "@/lib/pages";
 import { absoluteUrl } from "@/lib/utils";
 
 function extractJsonLdPayloads(script?: string): string[] {
@@ -103,10 +105,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const article = await fetchArticleBySlug(slug);
   if (!article) notFound();
 
-  const [author, allArticles, categories] = await Promise.all([
+  const [author, allArticles, categories, socialLinks] = await Promise.all([
     fetchAuthorById(article.authorId),
     fetchAllArticles(),
     fetchAllCategories(),
+    getSocialLinks(),
   ]);
   const resolvedAuthor = author ?? {
     id: article.authorId || "umrahzone",
@@ -208,6 +211,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </article>
 
             <ArticleVideoEmbed url={article.videoUrl} title={article.videoTitle} />
+
+            {socialLinks.length > 0 ? (
+              <div className="mt-10 flex flex-col gap-4 border-t border-[#e6dfd3] pt-8 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-[#063b2f]">Follow UmrahZone</p>
+                  <p className="mt-1 text-sm text-muted">Guides, reminders, and updates on our social pages.</p>
+                </div>
+                <SocialIcons links={socialLinks} />
+              </div>
+            ) : null}
           </div>
 
           <aside className="order-first min-w-0 lg:order-2 lg:col-span-4 lg:self-stretch">

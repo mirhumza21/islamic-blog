@@ -75,7 +75,7 @@ export function ArticleHeader({
               {article.title}
             </h1>
             {showDescription ? (
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85 sm:mt-3.5 sm:text-base">
+              <p className="mt-3 line-clamp-6 max-w-2xl text-sm leading-snug text-white/85 sm:mt-3.5 sm:text-base">
                 {description}
               </p>
             ) : null}

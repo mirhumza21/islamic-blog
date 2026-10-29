@@ -9,6 +9,15 @@ import {
   normalizeCustomScripts,
   type CustomScript,
 } from "@/lib/customScripts";
+import {
+  SOCIAL_PLATFORMS,
+  createSocialLink,
+  nextSocialPlatform,
+  normalizeSocialLinks,
+  socialObjectFromLinks,
+  type SocialLink,
+  type SocialPlatform,
+} from "@/lib/socialLinks";
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<any>(defaultSiteConfig);
@@ -24,9 +33,12 @@ export default function AdminSettingsPage() {
         if (res.ok) {
           const data = await res.json();
           if (data.settings) {
+            const socialLinks = normalizeSocialLinks(data.settings);
             setSettings({
               ...data.settings,
               customScripts: normalizeCustomScripts(data.settings),
+              socialLinks,
+              social: socialObjectFromLinks(socialLinks),
             });
           }
         }
@@ -47,15 +59,18 @@ export default function AdminSettingsPage() {
     setSettings((prev: any) => ({ ...prev, [key]: value }));
   };
 
-  const handleSocialChange = (platform: string, value: string) => {
+  const setSocialLinks = (socialLinks: SocialLink[]) => {
     setSettings((prev: any) => ({
       ...prev,
-      social: {
-        ...(prev.social || {}),
-        [platform]: value,
-      },
+      socialLinks,
+      social: socialObjectFromLinks(socialLinks),
     }));
   };
+
+  const socialLinks: SocialLink[] = Array.isArray(settings.socialLinks)
+    ? settings.socialLinks
+    : normalizeSocialLinks(settings);
+  const availablePlatform = nextSocialPlatform(socialLinks);
 
   const updateScript = (id: string, patch: Partial<CustomScript>) => {
     setSettings((prev: any) => ({
@@ -198,66 +213,83 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Social Media Links */}
         <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl space-y-4">
-          <div className="flex items-center gap-2 text-gray-900 font-bold text-sm">
-            <Share2 className="w-4 h-4 text-emerald-600" />
-            <span>Official Social Profiles</span>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-gray-900 font-bold text-sm">
+                <Share2 className="w-4 h-4 text-emerald-600" />
+                <span>Social Icons</span>
+              </div>
+              <p className="mt-1 text-xs text-gray-500">
+                These icons show in the footer and at the end of every blog article. Leave the URL blank to hide an icon.
+              </p>
+            </div>
+            <button
+              type="button"
+              disabled={!availablePlatform}
+              onClick={() => {
+                if (!availablePlatform) return;
+                setSocialLinks([...socialLinks, createSocialLink(availablePlatform)]);
+              }}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-gray-300 bg-white px-3 py-2 text-xs font-semibold text-gray-800 hover:border-emerald-600 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add icon
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1.5">
-                Instagram Profile URL
-              </label>
-              <input
-                type="url"
-                value={settings.social?.instagram || ""}
-                onChange={(e) => handleSocialChange("instagram", e.target.value)}
-                placeholder="https://instagram.com/umrahzone"
-                className="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-gray-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-              />
+          {socialLinks.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-gray-300 px-4 py-6 text-center text-gray-500">
+              No social icons yet. Add Facebook, Instagram, YouTube, WhatsApp, or any other profile.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {socialLinks.map((item) => (
+                <div key={item.id} className="grid grid-cols-1 gap-3 sm:grid-cols-[180px_1fr_auto]">
+                  <select
+                    value={item.platform}
+                    onChange={(e) =>
+                      setSocialLinks(
+                        socialLinks.map((link) =>
+                          link.id === item.id
+                            ? { ...link, platform: e.target.value as SocialPlatform }
+                            : link
+                        )
+                      )
+                    }
+                    className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-gray-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                  >
+                    {SOCIAL_PLATFORMS.map((platform) => (
+                      <option key={platform.id} value={platform.id}>
+                        {platform.label}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="url"
+                    value={item.url}
+                    onChange={(e) =>
+                      setSocialLinks(
+                        socialLinks.map((link) =>
+                          link.id === item.id ? { ...link, url: e.target.value } : link
+                        )
+                      )
+                    }
+                    placeholder="https://"
+                    className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-gray-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setSocialLinks(socialLinks.filter((link) => link.id !== item.id))}
+                    className="inline-flex items-center justify-center gap-1 rounded-xl px-3 py-2 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Remove
+                  </button>
+                </div>
+              ))}
             </div>
-
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1.5">
-                YouTube Channel URL
-              </label>
-              <input
-                type="url"
-                value={settings.social?.youtube || ""}
-                onChange={(e) => handleSocialChange("youtube", e.target.value)}
-                placeholder="https://youtube.com/@umrahzone"
-                className="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-gray-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1.5">
-                Facebook Page URL
-              </label>
-              <input
-                type="url"
-                value={settings.social?.facebook || ""}
-                onChange={(e) => handleSocialChange("facebook", e.target.value)}
-                placeholder="https://facebook.com/umrahzone"
-                className="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-gray-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 font-semibold mb-1.5">
-                X / Twitter URL
-              </label>
-              <input
-                type="url"
-                value={settings.social?.x || ""}
-                onChange={(e) => handleSocialChange("x", e.target.value)}
-                placeholder="https://x.com/umrahzone"
-                className="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-gray-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-              />
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl space-y-4">

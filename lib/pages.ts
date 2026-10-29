@@ -1,4 +1,5 @@
 import { normalizeCustomScripts, type CustomScript } from "@/lib/customScripts";
+import { publicSocialLinks, type SocialLink } from "@/lib/socialLinks";
 import { getAdminSupabase } from "@/lib/supabase";
 import { heroContent as defaultHeroContent } from "@/data/navigation";
 import { defaultNewsletterSection, mergeHomeCopy } from "@/data/home-sections";
@@ -221,6 +222,21 @@ export async function getGlobalSubscribe() {
   }
 
   return defaultNewsletterSection;
+}
+
+export async function getSocialLinks(): Promise<SocialLink[]> {
+  try {
+    const supabase = getAdminSupabase();
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "site_config")
+      .maybeSingle();
+    return publicSocialLinks(data?.value as { socialLinks?: SocialLink[]; social?: Record<string, string> } | null);
+  } catch (err) {
+    console.error("Could not fetch social links:", err);
+    return publicSocialLinks(null);
+  }
 }
 
 export async function getCustomScripts(): Promise<CustomScript[]> {

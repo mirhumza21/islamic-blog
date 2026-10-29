@@ -13,7 +13,7 @@ import { SiteFooterScripts } from "@/components/layout/SiteFooterScripts";
 import { SiteHeadScripts } from "@/components/layout/SiteHeadScripts";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { siteConfig } from "@/data/categories";
-import { getCustomScripts, getGlobalSubscribe } from "@/lib/pages";
+import { getCustomScripts, getGlobalSubscribe, getSocialLinks } from "@/lib/pages";
 import {
   extractGoogleSiteVerification,
   getEnabledFooterHtml,
@@ -131,14 +131,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: siteConfig.name,
-  url: siteConfig.url,
-  description: siteConfig.description,
-  sameAs: Object.values(siteConfig.social),
-};
+function organizationJsonLd(sameAs: string[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    description: siteConfig.description,
+    sameAs,
+  };
+}
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
@@ -157,8 +159,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const subscribe = await getGlobalSubscribe();
-  const scripts = await getCustomScripts();
+  const [subscribe, scripts, socialLinks] = await Promise.all([
+    getGlobalSubscribe(),
+    getCustomScripts(),
+    getSocialLinks(),
+  ]);
   const pathname = (await headers()).get("x-pathname") || "";
   const isAdmin = pathname.startsWith("/admin");
   const headHtml = isAdmin ? "" : getEnabledHeadHtml(scripts);
@@ -179,12 +184,17 @@ export default async function RootLayout({
         >
           Skip to content
         </a>
-        <SiteShell subscribeLabel={subscribe.headerButtonLabel}>{children}</SiteShell>
+        <SiteShell subscribeLabel={subscribe.headerButtonLabel} socialLinks={socialLinks}>
+          {children}
+        </SiteShell>
         <SiteFooterScripts html={footerHtml} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([organizationJsonLd, websiteJsonLd]),
+            __html: JSON.stringify([
+              organizationJsonLd(socialLinks.map((item) => item.url)),
+              websiteJsonLd,
+            ]),
           }}
         />
       </body>
