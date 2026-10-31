@@ -117,46 +117,47 @@ export function ArticleHeader({
             </div>
 
             <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-              <button
-                type="button"
-                onClick={handleCopy}
-                aria-label={copied ? "Copied" : "Copy link"}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/40 bg-white/90 px-2.5 text-xs font-semibold text-[#141d1a] shadow-sm transition-colors hover:bg-white sm:px-3.5"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-3.5 w-3.5 text-green" />
-                    <span className="hidden sm:inline">Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <Link2 className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Copy link</span>
-                  </>
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={handleNativeShare}
-                aria-label="Share"
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/40 bg-white/90 px-2.5 text-xs font-semibold text-[#141d1a] shadow-sm transition-colors hover:bg-white sm:px-3.5"
-              >
-                <Share2 className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Share</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setBookmarked(!bookmarked)}
-                className={`inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors ${bookmarked
-                    ? "border-[#063b2f] bg-[#063b2f] text-white"
-                    : "border-white/40 bg-white/90 text-[#141d1a] hover:bg-white"
-                  }`}
-                aria-label={bookmarked ? "Bookmarked" : "Bookmark article"}
-              >
-                <Bookmark className="h-3.5 w-3.5" fill={bookmarked ? "currentColor" : "none"} />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleCopy}
+              aria-label={copied ? "Copied" : "Copy link"}
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/40 bg-white/90 px-2.5 text-xs font-semibold text-[#141d1a] shadow-sm transition-colors hover:bg-white sm:px-3.5"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-green" />
+                  <span className="hidden sm:inline">Copied</span>
+                </>
+              ) : (
+                <>
+                  <Link2 className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Copy link</span>
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleNativeShare}
+              aria-label="Share"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/40 bg-white/90 px-2.5 text-xs font-semibold text-[#141d1a] shadow-sm transition-colors hover:bg-white sm:px-3.5"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Share</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setBookmarked(!bookmarked)}
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors ${
+                bookmarked
+                  ? "border-[#063b2f] bg-[#063b2f] text-white"
+                  : "border-white/40 bg-white/90 text-[#141d1a] hover:bg-white"
+              }`}
+              aria-label={bookmarked ? "Bookmarked" : "Bookmark article"}
+            >
+              <Bookmark className="h-3.5 w-3.5" fill={bookmarked ? "currentColor" : "none"} />
+            </button>
           </div>
+        </div>
         </div>
       </div>
     </header>

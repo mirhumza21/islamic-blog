@@ -167,24 +167,24 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const faqItems = article.faq?.items?.length
     ? article.faq.items
     : (() => {
-      const faqBlock = article.content.find((block) => block.type === "faq");
-      return faqBlock && faqBlock.type === "faq" ? faqBlock.items : [];
-    })();
+        const faqBlock = article.content.find((block) => block.type === "faq");
+        return faqBlock && faqBlock.type === "faq" ? faqBlock.items : [];
+      })();
 
   const faqJsonLd =
     faqItems.length > 0
       ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: faqItems.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer,
-          },
-        })),
-      }
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqItems.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: item.answer,
+            },
+          })),
+        }
       : null;
 
   const customSchemas = extractJsonLdPayloads(article.seo?.schemaScript);
@@ -205,62 +205,62 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           aria-hidden
         />
         <div className="container-editorial relative pt-3 pb-12 sm:pt-4 lg:pb-16">
-          <ArticleHeader article={article} author={resolvedAuthor} />
+        <ArticleHeader article={article} author={resolvedAuthor} />
 
-          <div className="mt-10 grid items-start gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
-            <div className="order-last min-w-0 lg:order-1 lg:col-span-8">
-              <article id="article-content" className="w-full">
-                <ArticleBody content={article.content} />
-              </article>
+        <div className="mt-10 grid items-start gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
+          <div className="order-last min-w-0 lg:order-1 lg:col-span-8">
+            <article id="article-content" className="w-full">
+              <ArticleBody content={article.content} />
+            </article>
 
-              <ArticleVideoEmbed url={article.videoUrl} title={article.videoTitle} />
+            <ArticleVideoEmbed url={article.videoUrl} title={article.videoTitle} />
 
-              {socialLinks.length > 0 ? (
-                <div className="mt-10 flex flex-col gap-4 border-t border-[#e6dfd3] pt-8 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-[#063b2f]">Follow UmrahZone</p>
-                    <p className="mt-1 text-sm text-muted">Guides, reminders, and updates on our social pages.</p>
-                  </div>
-                  <SocialIcons links={socialLinks} />
+            {socialLinks.length > 0 ? (
+              <div className="mt-10 flex flex-col gap-4 border-t border-[#e6dfd3] pt-8 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-[#063b2f]">Follow UmrahZone</p>
+                  <p className="mt-1 text-sm text-muted">Guides, reminders, and updates on our social pages.</p>
                 </div>
-              ) : null}
-            </div>
-
-            <aside className="order-first min-w-0 lg:order-2 lg:col-span-4 lg:self-stretch">
-              <TableOfContents items={toc} />
-            </aside>
+                <SocialIcons links={socialLinks} />
+              </div>
+            ) : null}
           </div>
 
-          <div className="mt-14 sm:mt-16">
-            <ArticleFaqSection
-              faq={
-                article.faq ||
-                (() => {
-                  const faqBlock = article.content.find((block) => block.type === "faq");
-                  if (!faqBlock || faqBlock.type !== "faq" || !faqBlock.items?.length) {
-                    return undefined;
-                  }
-                  return {
-                    title: faqBlock.title,
-                    description: faqBlock.description,
-                    image: faqBlock.image,
-                    imageAlt: faqBlock.imageAlt,
-                    imageTitle: faqBlock.imageTitle,
-                    imageCaption: faqBlock.imageCaption,
-                    imageDescription: faqBlock.imageDescription,
-                    items: faqBlock.items,
-                  };
-                })()
-              }
-            />
-          </div>
+          <aside className="order-first min-w-0 lg:order-2 lg:col-span-4 lg:self-stretch">
+            <TableOfContents items={toc} />
+          </aside>
+        </div>
 
-          <RelatedArticles
-            articles={related}
-            categories={categories}
-            title={article.relatedTitle}
-            description={article.relatedDescription}
+        <div className="mt-14 sm:mt-16">
+          <ArticleFaqSection
+            faq={
+              article.faq ||
+              (() => {
+                const faqBlock = article.content.find((block) => block.type === "faq");
+                if (!faqBlock || faqBlock.type !== "faq" || !faqBlock.items?.length) {
+                  return undefined;
+                }
+                return {
+                  title: faqBlock.title,
+                  description: faqBlock.description,
+                  image: faqBlock.image,
+                  imageAlt: faqBlock.imageAlt,
+                  imageTitle: faqBlock.imageTitle,
+                  imageCaption: faqBlock.imageCaption,
+                  imageDescription: faqBlock.imageDescription,
+                  items: faqBlock.items,
+                };
+              })()
+            }
           />
+        </div>
+
+        <RelatedArticles
+          articles={related}
+          categories={categories}
+          title={article.relatedTitle}
+          description={article.relatedDescription}
+        />
         </div>
       </main>
 
