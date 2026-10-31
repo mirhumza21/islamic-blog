@@ -19,6 +19,27 @@ import { SocialIcons } from "@/components/layout/SocialIcons";
 import { getSocialLinks } from "@/lib/pages";
 import { absoluteUrl } from "@/lib/utils";
 
+function normalizeJsonLdObject(raw: any): any[] {
+  if (!raw || typeof raw !== "object") return [];
+  if (Array.isArray(raw)) {
+    return raw.flatMap(normalizeJsonLdObject);
+  }
+  // Handles SEO extension export format { microdata: null, jsonld: [...], graph: null }
+  if (Array.isArray(raw.jsonld) || Array.isArray(raw.graph)) {
+    const list = [...(raw.jsonld || []), ...(raw.graph || [])];
+    return list.flatMap(normalizeJsonLdObject);
+  }
+  if (raw["@graph"] && Array.isArray(raw["@graph"])) {
+    const ctx = raw["@context"] || "https://schema.org";
+    return [{ ...raw, "@context": ctx }];
+  }
+  if (raw["@type"] || raw["@context"]) {
+    const ctx = raw["@context"] || "https://schema.org";
+    return [{ ...raw, "@context": ctx }];
+  }
+  return [];
+}
+
 function extractJsonLdPayloads(script?: string): string[] {
   if (!script?.trim()) return [];
   let text = script.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
@@ -36,14 +57,20 @@ function extractJsonLdPayloads(script?: string): string[] {
     ? fromTags
     : [text.replace(/<\/?script[^>]*>/gi, "").trim()];
 
-  return chunks
-    .map((chunk) => {
-      try {
-        return JSON.stringify(JSON.parse(chunk));
-      } catch {
-        return chunk.startsWith("{") || chunk.startsWith("[") ? chunk : "";
+  const parsedItems: any[] = [];
+  for (const chunk of chunks) {
+    try {
+      const parsed = JSON.parse(chunk);
+      parsedItems.push(...normalizeJsonLdObject(parsed));
+    } catch {
+      if (chunk.startsWith("{") || chunk.startsWith("[")) {
+        parsedItems.push(chunk);
       }
-    })
+    }
+  }
+
+  return parsedItems
+    .map((item) => (typeof item === "string" ? item : JSON.stringify(item)))
     .filter(Boolean);
 }
 
