@@ -1,6 +1,7 @@
 import { socialPlatformLabel, type SocialLink, type SocialPlatform } from "@/lib/socialLinks";
+import { toRenderableImageSrc } from "@/lib/mediaUrl";
 
-function Icon({ platform, className }: { platform: SocialPlatform; className?: string }) {
+export function SocialIconGlyph({ platform, className }: { platform: SocialPlatform; className?: string }) {
   const common = { viewBox: "0 0 24 24", className, fill: "currentColor", "aria-hidden": true as const };
 
   if (platform === "facebook") {
@@ -59,9 +60,20 @@ function Icon({ platform, className }: { platform: SocialPlatform; className?: s
       </svg>
     );
   }
+  if (platform === "pinterest") {
+    return (
+      <svg {...common}>
+        <path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.3 9.2-.1-.8-.2-2 0-2.8.2-.8 1.3-5.5 1.3-5.5s-.3-.7-.3-1.6c0-1.5.9-2.6 2-2.6.9 0 1.4.7 1.4 1.6 0 1-.6 2.4-.9 3.7-.3 1.1.5 2 1.6 2 1.9 0 3.2-2.4 3.2-5.3 0-2.2-1.5-3.8-4.2-3.8-3 0-4.9 2.3-4.9 4.8 0 .9.3 1.8.7 2.4.1.1.1.2.1.3l-.3 1c0 .2-.1.2-.3.1-1.3-.5-1.9-2-1.9-3.6 0-2.7 2.3-5.9 6.8-5.9 3.6 0 6 2.6 6 5.4 0 3.7-2.1 6.5-5.1 6.5-1 0-2-.5-2.3-1.2l-.6 2.4c-.2.9-.8 2-1.2 2.7.9.3 1.9.4 2.9.4 5.5 0 10-4.5 10-10S17.5 2 12 2z" />
+      </svg>
+    );
+  }
+
+  // Fallback for custom channels or unspecified icons (Globe / Web icon)
   return (
     <svg {...common}>
-      <path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.3 9.2-.1-.8-.2-2 0-2.8.2-.8 1.3-5.5 1.3-5.5s-.3-.7-.3-1.6c0-1.5.9-2.6 2-2.6.9 0 1.4.7 1.4 1.6 0 1-.6 2.4-.9 3.7-.3 1.1.5 2 1.6 2 1.9 0 3.2-2.4 3.2-5.3 0-2.2-1.5-3.8-4.2-3.8-3 0-4.9 2.3-4.9 4.8 0 .9.3 1.8.7 2.4.1.1.1.2.1.3l-.3 1c0 .2-.1.2-.3.1-1.3-.5-1.9-2-1.9-3.6 0-2.7 2.3-5.9 6.8-5.9 3.6 0 6 2.6 6 5.4 0 3.7-2.1 6.5-5.1 6.5-1 0-2-.5-2.3-1.2l-.6 2.4c-.2.9-.8 2-1.2 2.7.9.3 1.9.4 2.9.4 5.5 0 10-4.5 10-10S17.5 2 12 2z" />
+      <path
+        d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm7.93 9h-3.18a15.7 15.7 0 0 0-1.37-5.06A8.02 8.02 0 0 1 19.93 11zM12 4.07c.97 1.63 1.73 4.14 1.94 6.93H10.06C10.27 8.21 11.03 5.7 12 4.07zM4.07 13h3.18a15.7 15.7 0 0 0 1.37 5.06A8.02 8.02 0 0 1 4.07 13zm3.18-2H4.07a8.02 8.02 0 0 1 4.55-5.06A15.7 15.7 0 0 0 7.25 11zM12 19.93c-.97-1.63-1.73-4.14-1.94-6.93h3.88c-.21 2.79-.97 5.3-1.94 6.93zm3.38-1.87a15.7 15.7 0 0 0 1.37-5.06h3.18a8.02 8.02 0 0 1-4.55 5.06z"
+      />
     </svg>
   );
 }
@@ -73,23 +85,38 @@ export function SocialIcons({
   links: SocialLink[];
   className?: string;
 }) {
-  const visible = links.filter((item) => item.url.trim());
+  const visible = links.filter((item) => item.url?.trim());
   if (!visible.length) return null;
 
   return (
     <div className={className}>
-      {visible.map((item) => (
-        <a
-          key={item.id}
-          href={item.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={socialPlatformLabel(item.platform)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#e6dfd3] bg-white/80 text-muted transition-colors hover:border-[#c59a53]/50 hover:text-[#063b2f]"
-        >
-          <Icon platform={item.platform} className="h-4 w-4" />
-        </a>
-      ))}
+      {visible.map((item) => {
+        const label = socialPlatformLabel(item.platform, item.title);
+        const iconSrc = item.iconUrl ? toRenderableImageSrc(item.iconUrl) : null;
+
+        return (
+          <a
+            key={item.id}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={label}
+            title={label}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#e6dfd3] bg-white/80 text-muted transition-colors hover:border-[#c59a53]/50 hover:text-[#063b2f] p-2.5 overflow-hidden shadow-xs hover:shadow-sm"
+          >
+            {iconSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={iconSrc}
+                alt={label}
+                className="h-full w-full object-contain"
+              />
+            ) : (
+              <SocialIconGlyph platform={item.platform} className="h-4 w-4" />
+            )}
+          </a>
+        );
+      })}
     </div>
   );
 }

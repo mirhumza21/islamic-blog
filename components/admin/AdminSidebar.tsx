@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -16,6 +17,7 @@ import {
   MessageSquare,
   X,
 } from "lucide-react";
+import { toRenderableImageSrc } from "@/lib/mediaUrl";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -37,6 +39,21 @@ export function AdminSidebar({
   onClose: () => void;
 }) {
   const pathname = usePathname();
+  const [brand, setBrand] = useState<{ name?: string; logoUrl?: string }>({});
+
+  useEffect(() => {
+    fetch("/api/admin/settings")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.settings) {
+          setBrand({
+            name: data.settings.name,
+            logoUrl: data.settings.headerLogoUrl || data.settings.logoUrl,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <aside
@@ -47,12 +64,21 @@ export function AdminSidebar({
       <div>
         <div className="p-5 border-b border-gray-100 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-md shrink-0">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <span className="font-bold text-base text-gray-900 tracking-tight block leading-tight">
-                UmrahZone
+            {brand.logoUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={toRenderableImageSrc(brand.logoUrl)}
+                alt={brand.name || "Logo"}
+                className="w-10 h-10 object-contain rounded-xl bg-white border border-gray-100 p-1 shrink-0 shadow-xs"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-md shrink-0">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+            )}
+            <div className="min-w-0">
+              <span className="font-bold text-base text-gray-900 tracking-tight block leading-tight truncate">
+                {brand.name || "UmrahZone"}
               </span>
               <span className="text-[11px] uppercase tracking-wider text-emerald-600 font-semibold block">
                 Admin Panel

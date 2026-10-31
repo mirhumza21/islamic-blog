@@ -19,6 +19,18 @@ export async function POST(request: Request) {
     const ext = file.name.split(".").pop() || "jpg";
     const filename = `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}.${ext}`;
 
+    const mime =
+      file.type ||
+      (ext.toLowerCase() === "ico"
+        ? "image/x-icon"
+        : ext.toLowerCase() === "svg"
+        ? "image/svg+xml"
+        : ext.toLowerCase() === "png"
+        ? "image/png"
+        : ext.toLowerCase() === "webp"
+        ? "image/webp"
+        : "application/octet-stream");
+
     const BUCKET_NAME = "blog-images";
 
     // Auto-create bucket if it doesn't exist
@@ -38,7 +50,7 @@ export async function POST(request: Request) {
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
       .upload(filename, buffer, {
-        contentType: file.type,
+        contentType: mime,
         upsert: true,
       });
 
@@ -54,7 +66,7 @@ export async function POST(request: Request) {
             const retry = await supabase.storage
               .from(BUCKET_NAME)
               .upload(filename, buffer, {
-                contentType: file.type,
+                contentType: mime,
                 upsert: true,
               });
             if (!retry.error) {

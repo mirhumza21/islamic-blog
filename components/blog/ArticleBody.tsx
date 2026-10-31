@@ -42,16 +42,23 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
               />
             );
           case "paragraph": {
+            if (!block.text || !block.text.trim() || block.text === "<p></p>" || block.text === "<p><br></p>" || block.text === "<p>&nbsp;</p>") {
+              return null;
+            }
+
             const isFirst = !hasRenderedFirstParagraph;
             hasRenderedFirstParagraph = true;
             // Support HTML from Tiptap (contains tags) or legacy plain text
             const isHtml = block.text?.includes("<");
+            const prevBlock = index > 0 ? content[index - 1] : null;
+            const isAfterHeading = prevBlock?.type === "heading";
+            const verticalSpacing = isAfterHeading ? "mt-2.5 mb-6" : "my-6";
 
             if (isHtml) {
               return (
                 <div
                   key={index}
-                  className={`my-6 text-[17.5px] leading-[1.85] text-foreground/85 sm:text-[18.5px] [&_strong]:font-bold [&_em]:italic [&_a]:text-emerald-700 [&_a]:underline [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 ${
+                  className={`${verticalSpacing} text-[17.5px] leading-[1.85] text-foreground/85 sm:text-[18.5px] [&_strong]:font-bold [&_em]:italic [&_a]:text-emerald-700 [&_a]:underline [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 ${
                     isFirst
                       ? "first-letter:float-left first-letter:mr-3.5 first-letter:mt-1 first-letter:font-serif first-letter:text-5xl first-letter:font-bold first-letter:leading-none first-letter:text-green-dark sm:first-letter:text-6xl"
                       : ""
@@ -64,7 +71,7 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
             return (
               <p
                 key={index}
-                className={`my-6 text-[17.5px] leading-[1.85] text-foreground/85 sm:text-[18.5px] ${
+                className={`${verticalSpacing} text-[17.5px] leading-[1.85] text-foreground/85 sm:text-[18.5px] ${
                   isFirst
                     ? "first-letter:float-left first-letter:mr-3.5 first-letter:mt-1 first-letter:font-serif first-letter:text-5xl first-letter:font-bold first-letter:leading-none first-letter:text-green-dark sm:first-letter:text-6xl"
                     : ""
@@ -78,14 +85,14 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
             const id = block.id ?? getHeadingId(block.text);
             if (block.level === 2) {
               return (
-                <div key={index} className="group mt-14 mb-6 scroll-mt-28 first:mt-0">
+                <div key={index} className="group mt-12 mb-2 scroll-mt-28 first:mt-0">
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-sand">
                     <span>Part</span>
                     <span className="h-px w-8 bg-sand/40" />
                   </div>
                   <h2
                     id={id}
-                    className="mt-1 pb-3 font-serif text-2xl font-bold tracking-tight text-foreground border-b border-border/80 sm:text-3xl lg:text-[2.2rem]"
+                    className="mt-1 pb-2 font-serif text-2xl font-bold tracking-tight text-foreground border-b border-border/80 sm:text-3xl lg:text-[2.2rem]"
                   >
                     <a
                       href={`#${id}`}
@@ -101,7 +108,7 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
               );
             }
             return (
-              <div key={index} className="group mt-10 mb-4 scroll-mt-28">
+              <div key={index} className="group mt-9 mb-2 scroll-mt-28">
                 <h3
                   id={id}
                   className="font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl"

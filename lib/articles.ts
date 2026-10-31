@@ -412,8 +412,20 @@ export function stripHtml(value: string): string {
   return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+export function cleanEmptyParagraphs(html: string): string {
+  if (!html) return "";
+  return html
+    // Remove empty paragraphs right after headings
+    .replace(/(<\/h[1-6]>)\s*(?:<p[^>]*>\s*(?:<br\s*\/?>|&nbsp;|\u00a0|\s)*\s*<\/p>\s*)+/gi, "$1")
+    // Remove empty paragraphs anywhere in the content
+    .replace(/<p[^>]*>\s*(?:<br\s*\/?>|&nbsp;|\u00a0|\s)*\s*<\/p>/gi, "")
+    // Remove trailing br tags inside headings
+    .replace(/(<h[1-6][^>]*>[\s\S]*?)(?:<br\s*\/?>|\s)+<\/h([1-6])>/gi, "$1</h$2>");
+}
+
 export function ensureHeadingIds(html: string): string {
-  return plainHighlightCards(rewriteHtmlMediaUrls(html)).replace(
+  const cleaned = cleanEmptyParagraphs(html);
+  return plainHighlightCards(rewriteHtmlMediaUrls(cleaned)).replace(
     /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi,
     (match, level, attrs, inner) => {
       if (/\sid\s*=/i.test(attrs)) return match;

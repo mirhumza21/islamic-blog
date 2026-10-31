@@ -13,9 +13,17 @@ import { cn } from "@/lib/utils";
 export function MobileMenu({
   onClose,
   subscribeLabel = "Subscribe",
+  logoUrl,
+  logoAlt,
+  showSiteNameWithLogo,
+  siteName,
 }: {
   onClose: () => void;
   subscribeLabel?: string;
+  logoUrl?: string;
+  logoAlt?: string;
+  showSiteNameWithLogo?: boolean;
+  siteName?: string;
 }) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
@@ -46,7 +54,13 @@ export function MobileMenu({
         aria-label="Mobile navigation"
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <Logo />
+          <Logo
+            logoUrl={logoUrl}
+            logoAlt={logoAlt}
+            showSiteNameWithLogo={showSiteNameWithLogo}
+            siteName={siteName}
+            onClick={onClose}
+          />
           <Button
             type="button"
             size="icon"

@@ -13,7 +13,19 @@ import { Button } from "@/components/ui/button";
 import { mainNav } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 
-export function Header({ subscribeLabel = "Subscribe" }: { subscribeLabel?: string }) {
+export function Header({
+  subscribeLabel = "Subscribe",
+  logoUrl,
+  logoAlt,
+  showSiteNameWithLogo,
+  siteName,
+}: {
+  subscribeLabel?: string;
+  logoUrl?: string;
+  logoAlt?: string;
+  showSiteNameWithLogo?: boolean;
+  siteName?: string;
+}) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -53,7 +65,12 @@ export function Header({ subscribeLabel = "Subscribe" }: { subscribeLabel?: stri
       >
         <div className="container-editorial flex h-full items-center gap-3 lg:gap-4 xl:gap-8">
           <div className="min-w-0 shrink-0">
-            <Logo />
+            <Logo
+              logoUrl={logoUrl}
+              logoAlt={logoAlt}
+              showSiteNameWithLogo={showSiteNameWithLogo}
+              siteName={siteName}
+            />
           </div>
 
           <nav
@@ -102,7 +119,14 @@ export function Header({ subscribeLabel = "Subscribe" }: { subscribeLabel?: stri
 
       <AnimatePresence>
         {mobileOpen ? (
-          <MobileMenu onClose={() => setMobileOpen(false)} subscribeLabel={subscribeLabel} />
+          <MobileMenu
+            onClose={() => setMobileOpen(false)}
+            subscribeLabel={subscribeLabel}
+            logoUrl={logoUrl}
+            logoAlt={logoAlt}
+            showSiteNameWithLogo={showSiteNameWithLogo}
+            siteName={siteName}
+          />
         ) : null}
       </AnimatePresence>
 

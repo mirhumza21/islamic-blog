@@ -26,7 +26,21 @@ const legal = [
   { label: "Contact", href: "/contact" },
 ];
 
-export function Footer({ socialLinks = [] }: { socialLinks?: SocialLink[] }) {
+export function Footer({
+  socialLinks = [],
+  logoUrl,
+  logoAlt,
+  showSiteNameWithLogo,
+  siteName = "UmrahZone",
+  description,
+}: {
+  socialLinks?: SocialLink[];
+  logoUrl?: string;
+  logoAlt?: string;
+  showSiteNameWithLogo?: boolean;
+  siteName?: string;
+  description?: string;
+}) {
   return (
     <footer className="relative mt-auto overflow-hidden border-t border-[#e6dfd3] bg-cream/80">
       <div
@@ -37,16 +51,21 @@ export function Footer({ socialLinks = [] }: { socialLinks?: SocialLink[] }) {
       <div className="container-editorial relative py-14 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-4">
-            <Logo />
+            <Logo
+              logoUrl={logoUrl}
+              logoAlt={logoAlt}
+              showSiteNameWithLogo={showSiteNameWithLogo}
+              siteName={siteName}
+            />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">
-              {siteConfig.description}
+              {description || siteConfig.description}
             </p>
             <SocialIcons links={socialLinks} className="mt-6 flex items-center gap-2" />
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-5">
             <div>
-              <h2 className="text-sm font-semibold text-foreground">Quick Links</h2>
+              <p className="text-sm font-semibold text-foreground">Quick Links</p>
               <ul className="mt-4 space-y-2.5">
                 {quickLinks.map((link) => (
                   <li key={link.href}>
@@ -61,7 +80,7 @@ export function Footer({ socialLinks = [] }: { socialLinks?: SocialLink[] }) {
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-foreground">Topics</h2>
+              <p className="text-sm font-semibold text-foreground">Topics</p>
               <ul className="mt-4 space-y-2.5">
                 {topics.map((link) => (
                   <li key={link.href}>
@@ -76,7 +95,7 @@ export function Footer({ socialLinks = [] }: { socialLinks?: SocialLink[] }) {
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-foreground">Legal</h2>
+              <p className="text-sm font-semibold text-foreground">Legal</p>
               <ul className="mt-4 space-y-2.5">
                 {legal.map((link) => (
                   <li key={link.href}>
@@ -93,7 +112,7 @@ export function Footer({ socialLinks = [] }: { socialLinks?: SocialLink[] }) {
           </div>
 
           <div className="lg:col-span-3">
-            <h2 className="text-sm font-semibold text-foreground">Stay Connected</h2>
+            <p className="text-sm font-semibold text-foreground">Stay Connected</p>
             <p className="mt-4 text-sm leading-relaxed text-muted">
               Read thoughtfully. Prepare calmly. Grow closer to Allah — one article at a time.
             </p>
@@ -104,7 +123,7 @@ export function Footer({ socialLinks = [] }: { socialLinks?: SocialLink[] }) {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} UmrahZone. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {siteName || "UmrahZone"}. All rights reserved.</p>
           <p className="text-xs sm:text-sm">Content platform for knowledge and inspiration.</p>
         </div>
       </div>

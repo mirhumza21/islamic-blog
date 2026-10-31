@@ -342,27 +342,73 @@
 }
 
 .blog-article-body p {
-  margin-bottom: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1.25rem;
 }
 
-.blog-article-body h2 {
+.blog-article-body h2,
+.prose-editorial h2 {
   font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 700;
-  margin-top: 2.75rem;
-  margin-bottom: 1rem;
+  margin-top: 2.25rem;
+  margin-bottom: 0.5rem;
   color: #17201e;
   border-bottom: 1px solid #e6dfd3;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.35rem;
 }
 
-.blog-article-body h3 {
+.blog-article-body h3,
+.prose-editorial h3 {
   font-family: var(--font-serif);
   font-size: 1.5rem;
   font-weight: 700;
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
+  margin-top: 1.75rem;
+  margin-bottom: 0.4rem;
   color: #17201e;
+}
+
+.blog-article-body h4,
+.prose-editorial h4 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 1.35rem;
+  margin-bottom: 0.35rem;
+  color: #17201e;
+}
+
+/* Eliminate excessive gap between headings and following elements */
+.blog-article-body h2 + p,
+.blog-article-body h3 + p,
+.blog-article-body h4 + p,
+.prose-editorial h2 + p,
+.prose-editorial h3 + p,
+.prose-editorial h4 + p,
+.blog-article-body h2 + div,
+.blog-article-body h3 + div,
+.prose-editorial h2 + div,
+.prose-editorial h3 + div,
+.blog-article-body h2 + *,
+.blog-article-body h3 + *,
+.prose-editorial h2 + * {
+  margin-top: 0.35rem !important;
+}
+
+/* Remove and collapse phantom/empty paragraphs left over from editors */
+.blog-article-body p:empty,
+.blog-article-body p:blank,
+.blog-article-body p:has(> br:only-child),
+.blog-article-body p:has(> span:empty:only-child),
+.prose-editorial p:empty,
+.prose-editorial p:blank,
+.prose-editorial p:has(> br:only-child),
+.prose-editorial p:has(> span:empty:only-child) {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
 }
 
 .blog-article-body ul {

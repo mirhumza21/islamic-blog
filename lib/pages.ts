@@ -1,6 +1,7 @@
 import { normalizeCustomScripts, type CustomScript } from "@/lib/customScripts";
 import { publicSocialLinks, type SocialLink } from "@/lib/socialLinks";
 import { getAdminSupabase } from "@/lib/supabase";
+import { siteConfig } from "@/data/categories";
 import { heroContent as defaultHeroContent } from "@/data/navigation";
 import { defaultNewsletterSection, mergeHomeCopy } from "@/data/home-sections";
 import { defaultBlogPage } from "@/data/blog-page";
@@ -253,4 +254,73 @@ export async function getCustomScripts(): Promise<CustomScript[]> {
     console.error("Could not fetch custom scripts:", err);
     return [];
   }
+}
+
+export interface SiteConfigData {
+  name: string;
+  tagline: string;
+  description: string;
+  url: string;
+  email: string;
+  logoUrl?: string;
+  logoAlt?: string;
+  headerLogoUrl?: string;
+  headerLogoAlt?: string;
+  footerLogoUrl?: string;
+  footerLogoAlt?: string;
+  faviconUrl?: string;
+  faviconAlt?: string;
+  showSiteNameWithLogo?: boolean;
+  social?: Record<string, string>;
+  socialLinks?: SocialLink[];
+  customScripts?: CustomScript[];
+}
+
+export async function getSiteConfig(): Promise<SiteConfigData> {
+  try {
+    const supabase = getAdminSupabase();
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "site_config")
+      .maybeSingle();
+
+    if (data?.value && typeof data.value === "object") {
+      const val = data.value as Partial<SiteConfigData>;
+      const legacyLogo = typeof val.logoUrl === "string" ? val.logoUrl : "";
+      const headerLogo = typeof val.headerLogoUrl === "string" && val.headerLogoUrl ? val.headerLogoUrl : legacyLogo;
+      const footerLogo = typeof val.footerLogoUrl === "string" ? val.footerLogoUrl : "";
+      const headerLogoAlt = typeof val.headerLogoAlt === "string" ? val.headerLogoAlt : (typeof val.logoAlt === "string" ? val.logoAlt : "");
+      const footerLogoAlt = typeof val.footerLogoAlt === "string" ? val.footerLogoAlt : "";
+      const faviconAlt = typeof val.faviconAlt === "string" ? val.faviconAlt : "";
+      return {
+        ...siteConfig,
+        ...val,
+        logoUrl: headerLogo || legacyLogo,
+        logoAlt: headerLogoAlt,
+        headerLogoUrl: headerLogo,
+        headerLogoAlt,
+        footerLogoUrl: footerLogo,
+        footerLogoAlt,
+        faviconUrl: typeof val.faviconUrl === "string" ? val.faviconUrl : "",
+        faviconAlt,
+        showSiteNameWithLogo: typeof val.showSiteNameWithLogo === "boolean" ? val.showSiteNameWithLogo : false,
+      };
+    }
+  } catch (err) {
+    console.error("Could not fetch site_config from Supabase, using default:", err);
+  }
+
+  return {
+    ...siteConfig,
+    logoUrl: "",
+    logoAlt: "",
+    headerLogoUrl: "",
+    headerLogoAlt: "",
+    footerLogoUrl: "",
+    footerLogoAlt: "",
+    faviconUrl: "",
+    faviconAlt: "",
+    showSiteNameWithLogo: false,
+  };
 }
