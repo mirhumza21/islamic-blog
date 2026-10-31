@@ -264,8 +264,19 @@ export function unpackArticleContent(
     if (typeof extras.canonicalUrl === "string") meta.canonicalUrl = extras.canonicalUrl;
     if (typeof extras.canonicalLink === "string") meta.canonicalUrl = extras.canonicalLink;
     if (extras.no_index === true || extras.noIndex === true) meta.noIndex = true;
-    if (typeof extras.schema_script === "string") meta.schemaScript = extras.schema_script;
-    if (typeof extras.schemaScript === "string") meta.schemaScript = extras.schemaScript;
+    if (typeof extras.schema_script === "string" && extras.schema_script.trim()) {
+      meta.schemaScript = extras.schema_script.trim();
+    }
+    if (typeof extras.schemaScript === "string" && extras.schemaScript.trim()) {
+      meta.schemaScript = extras.schemaScript.trim();
+    }
+    if (
+      isRecord(extras.seo) &&
+      typeof extras.seo.schemaScript === "string" &&
+      extras.seo.schemaScript.trim()
+    ) {
+      meta.schemaScript = extras.seo.schemaScript.trim();
+    }
     if (Array.isArray(extras.faqs) && extras.faqs.length) {
       faqs = normalizeBlogFaqs(extras.faqs);
     }

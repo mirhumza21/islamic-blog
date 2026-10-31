@@ -12,7 +12,15 @@ function isSupabaseConfigured() {
 }
 
 export function mapDbArticle(row: any): Article {
-  const content = Array.isArray(row.content) ? row.content : [];
+  let content = Array.isArray(row.content) ? row.content : [];
+  if (!content.length && typeof row.content === "string") {
+    try {
+      const parsed = JSON.parse(row.content);
+      if (Array.isArray(parsed)) content = parsed;
+    } catch {
+      // not JSON string
+    }
+  }
   const unpacked = unpackArticleContent(content, row);
   const faqFromBlock = content.find((block: any) => block?.type === "faq");
 
@@ -44,7 +52,12 @@ export function mapDbArticle(row: any): Article {
       keywords: unpacked.meta.seoKeywords || undefined,
       canonicalUrl: unpacked.meta.canonicalUrl || undefined,
       noIndex: unpacked.meta.noIndex === true,
-      schemaScript: unpacked.meta.schemaScript || undefined,
+      schemaScript:
+        unpacked.meta.schemaScript ||
+        row.schema_script ||
+        row.schemaScript ||
+        (row.seo && typeof row.seo === "object" ? row.seo.schemaScript : undefined) ||
+        undefined,
     },
     videoUrl: unpacked.meta.videoUrl || undefined,
     videoTitle: unpacked.meta.videoTitle || undefined,

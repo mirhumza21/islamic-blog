@@ -37,7 +37,8 @@ function normalizeJsonLdObject(raw: any): any[] {
     const ctx = raw["@context"] || "https://schema.org";
     return [{ ...raw, "@context": ctx }];
   }
-  return [];
+  const ctx = raw["@context"] || "https://schema.org";
+  return [{ ...raw, "@context": ctx }];
 }
 
 function extractJsonLdPayloads(script?: string): string[] {
@@ -45,8 +46,7 @@ function extractJsonLdPayloads(script?: string): string[] {
   let text = script.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 
   const fromTags: string[] = [];
-  const scriptRe =
-    /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  const scriptRe = /<script[^>]*>([\s\S]*?)<\/script>/gi;
   let match: RegExpExecArray | null;
   while ((match = scriptRe.exec(text))) {
     const inner = match[1]?.trim();
@@ -59,12 +59,20 @@ function extractJsonLdPayloads(script?: string): string[] {
 
   const parsedItems: any[] = [];
   for (const chunk of chunks) {
+    const trimmedChunk = chunk.trim();
+    if (!trimmedChunk) continue;
     try {
-      const parsed = JSON.parse(chunk);
+      const parsed = JSON.parse(trimmedChunk);
       parsedItems.push(...normalizeJsonLdObject(parsed));
     } catch {
-      if (chunk.startsWith("{") || chunk.startsWith("[")) {
-        parsedItems.push(chunk);
+      try {
+        const cleaned = trimmedChunk.replace(/,\s*([}\]])/g, "$1");
+        const parsed = JSON.parse(cleaned);
+        parsedItems.push(...normalizeJsonLdObject(parsed));
+      } catch {
+        if (trimmedChunk.startsWith("{") || trimmedChunk.startsWith("[")) {
+          parsedItems.push(trimmedChunk);
+        }
       }
     }
   }
@@ -215,12 +223,27 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       : null;
 
   const customSchemas = extractJsonLdPayloads(article.seo?.schemaScript);
-  const baseSchemas = [jsonLd, breadcrumbJsonLd, faqJsonLd]
-    .filter(Boolean)
-    .map((schema) => JSON.stringify(schema));
-  const pageSchemas = customSchemas.length
-    ? [...baseSchemas, ...customSchemas]
-    : baseSchemas;
+
+  let pageSchemas: string[];
+  if (customSchemas.length > 0) {
+    const customText = customSchemas.join(" ");
+    const hasFaq = /"FAQPage"/i.test(customText);
+    const hasBreadcrumb = /"BreadcrumbList"/i.test(customText);
+    const supplementary = [
+      !hasBreadcrumb ? breadcrumbJsonLd : null,
+      !hasFaq ? faqJsonLd : null,
+    ]
+      .filter(Boolean)
+      .map((schema) => JSON.stringify(schema));
+
+    // Custom schemas take priority, replace the automatic BlogPosting schema, and render FIRST
+    pageSchemas = [...customSchemas, ...supplementary];
+  } else {
+    // Default fallback: automatic BlogPosting + Breadcrumbs + FAQ
+    pageSchemas = [jsonLd, breadcrumbJsonLd, faqJsonLd]
+      .filter(Boolean)
+      .map((schema) => JSON.stringify(schema));
+  }
 
   return (
     <>

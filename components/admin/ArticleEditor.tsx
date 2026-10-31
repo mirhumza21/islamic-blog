@@ -143,7 +143,13 @@ export function ArticleEditor({
       (Array.isArray(currentArticle?.tags) ? currentArticle.tags.join(", ") : "")
   );
   const [canonicalUrl, setCanonicalUrl] = useState(unpacked.meta.canonicalUrl || "");
-  const [schemaScript, setSchemaScript] = useState(unpacked.meta.schemaScript || "");
+  const [schemaScript, setSchemaScript] = useState(
+    unpacked.meta.schemaScript ||
+      currentArticle?.seo?.schemaScript ||
+      currentArticle?.schema_script ||
+      currentArticle?.schemaScript ||
+      ""
+  );
 
   const schemaValidation = useMemo(() => {
     const trimmed = schemaScript.trim();
