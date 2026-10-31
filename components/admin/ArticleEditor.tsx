@@ -25,6 +25,10 @@ import {
   Video,
   MousePointerClick,
   BookOpen,
+  Code2,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
 } from "lucide-react";
 import { TiptapEditor, type TiptapEditorHandle } from "./TiptapEditor";
 import { toast, ToastContainer } from "./Toast";
@@ -140,6 +144,55 @@ export function ArticleEditor({
   );
   const [canonicalUrl, setCanonicalUrl] = useState(unpacked.meta.canonicalUrl || "");
   const [schemaScript, setSchemaScript] = useState(unpacked.meta.schemaScript || "");
+
+  const schemaValidation = useMemo(() => {
+    const trimmed = schemaScript.trim();
+    if (!trimmed) return null;
+    try {
+      let toParse = trimmed;
+      const scriptMatch = trimmed.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+      if (scriptMatch) {
+        toParse = scriptMatch[1].trim();
+      }
+      const parsed = JSON.parse(toParse);
+      const isObj = typeof parsed === "object" && parsed !== null;
+      let label = "Valid JSON";
+      if (isObj) {
+        if (parsed["@type"]) label = `Valid ${parsed["@type"]}`;
+        else if (parsed["@graph"]) {
+          const count = Array.isArray(parsed["@graph"]) ? parsed["@graph"].length : "";
+          label = `Valid @graph (${count})`;
+        }
+      }
+      return { valid: true, label };
+    } catch {
+      return { valid: false, label: "Invalid JSON syntax" };
+    }
+  }, [schemaScript]);
+
+  const handleFormatSchema = () => {
+    const trimmed = schemaScript.trim();
+    if (!trimmed) return;
+    try {
+      let isWrapped = false;
+      let toParse = trimmed;
+      const scriptMatch = trimmed.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+      if (scriptMatch) {
+        isWrapped = true;
+        toParse = scriptMatch[1].trim();
+      }
+      const parsed = JSON.parse(toParse);
+      const formatted = JSON.stringify(parsed, null, 2);
+      if (isWrapped) {
+        setSchemaScript(`<script type="application/ld+json">\n${formatted}\n</script>`);
+      } else {
+        setSchemaScript(formatted);
+      }
+      toast.success("Schema formatted cleanly");
+    } catch {
+      toast.error("Invalid JSON syntax. Cannot auto-format.");
+    }
+  };
 
   const [categories, setCategories] = useState<{ slug: string; name: string }[]>([]);
   const [authors, setAuthors] = useState<{ id: string; name: string; avatar?: string }[]>([]);
@@ -1177,15 +1230,80 @@ export function ArticleEditor({
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-700">Custom JSON-LD Schema</label>
-                <textarea
-                  rows={3}
-                  value={schemaScript}
-                  onChange={(e) => setSchemaScript(e.target.value)}
-                  placeholder='{"@context":"https://schema.org",...}'
-                  className={`${inputClass} font-mono resize-none`}
-                />
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center justify-between gap-2">
+                  <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                    <Code2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Custom JSON-LD Schema</span>
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    {schemaScript.trim() ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={handleFormatSchema}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 rounded-md transition-colors"
+                          title="Auto-format and beautify JSON"
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          Format
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSchemaScript("")}
+                          className="px-1.5 py-0.5 text-[11px] font-medium text-gray-400 hover:text-rose-600 rounded hover:bg-gray-100 transition-colors"
+                          title="Clear schema"
+                        >
+                          Clear
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-gray-900 overflow-hidden focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all shadow-sm">
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-gray-800/90 border-b border-gray-700/60 text-[11px] font-mono">
+                    <span className="flex items-center gap-1.5 text-gray-300">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      application/ld+json
+                    </span>
+                    {schemaValidation ? (
+                      schemaValidation.valid ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.5 rounded">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                          {schemaValidation.label}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-400 bg-amber-950/70 border border-amber-500/30 px-1.5 py-0.5 rounded">
+                          <AlertCircle className="w-3 h-3 text-amber-400" />
+                          {schemaValidation.label}
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-[10px] text-gray-400">Auto Article Schema if empty</span>
+                    )}
+                  </div>
+                  <textarea
+                    rows={8}
+                    value={schemaScript}
+                    onChange={(e) => setSchemaScript(e.target.value)}
+                    placeholder={'{\n  "@context": "https://schema.org",\n  "@type": "Article",\n  "headline": "..."\n}'}
+                    className="w-full bg-transparent p-3 text-xs font-mono text-emerald-300 placeholder:text-gray-600 outline-none resize-y min-h-[190px] max-h-[600px] leading-relaxed selection:bg-emerald-800/60"
+                    spellCheck={false}
+                  />
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-gray-800/60 border-t border-gray-700/50 text-[10px] text-gray-400 font-mono">
+                    <span>
+                      {schemaScript.trim()
+                        ? `${schemaScript.split("\n").length} lines • ${schemaScript.length} chars`
+                        : "0 lines"}
+                    </span>
+                    <span className="text-[10px] text-gray-400">Drag ⇲ corner to resize</span>
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-gray-500 leading-normal">
+                  Paste raw JSON or a full &lt;script&gt; tag. Leave blank to automatically generate default Article schema.
+                </p>
               </div>
 
               {/* SERP preview */}
