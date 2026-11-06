@@ -6,6 +6,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const imageSlugRaw = formData.get("imageSlug") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -15,9 +16,24 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Sanitize filename
-    const ext = file.name.split(".").pop() || "jpg";
-    const filename = `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}.${ext}`;
+    // Build filename: use custom slug if provided, otherwise auto-generate
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+
+    let filename: string;
+    if (imageSlugRaw && imageSlugRaw.trim()) {
+      // Slugify the user-provided name: lowercase, replace spaces with hyphens,
+      // strip non-alphanumeric characters (except hyphens), collapse multiple hyphens
+      const cleanSlug = imageSlugRaw
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      filename = `${cleanSlug || "img"}.${ext}`;
+    } else {
+      filename = `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}.${ext}`;
+    }
 
     const mime =
       file.type ||

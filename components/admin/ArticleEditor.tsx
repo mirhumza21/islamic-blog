@@ -82,6 +82,8 @@ export function ArticleEditor({
   const [imageAlt, setImageAlt] = useState(
     currentArticle?.imageAlt || currentArticle?.image_alt || ""
   );
+  const [imageSlug, setImageSlug] = useState("");
+  const [coverImageSlug, setCoverImageSlug] = useState("");
   const [coverImageAlt, setCoverImageAlt] = useState(unpacked.meta.coverImageAlt || "");
   const [bannerDescription, setBannerDescription] = useState(
     unpacked.meta.bannerDescription || ""
@@ -351,7 +353,8 @@ export function ArticleEditor({
     if (isCover) setCoverImageUrl(localPreview);
     else setImageUrl(localPreview);
     try {
-      const result = await uploadClientImage(file);
+      const slug = isCover ? coverImageSlug : imageSlug;
+      const result = await uploadClientImage(file, slug || undefined);
       if (result.success && result.imageUrl) {
         if (isCover) setCoverImageUrl(result.imageUrl);
         else setImageUrl(result.imageUrl);
@@ -635,11 +638,13 @@ export function ArticleEditor({
                   url={imageUrl}
                   preview={thumbnailPreview}
                   alt={imageAlt}
+                  imageSlug={imageSlug}
                   uploading={uploadingImage}
                   inputRef={thumbnailInputRef}
                   aspect="aspect-[4/3]"
                   onRemove={() => setImageUrl("")}
                   onAlt={setImageAlt}
+                  onSlug={setImageSlug}
                   onUrl={setImageUrl}
                   onUpload={(e) => handleImageUpload(e, false)}
                 />
@@ -650,11 +655,13 @@ export function ArticleEditor({
                   url={coverImageUrl}
                   preview={coverPreview}
                   alt={coverImageAlt}
+                  imageSlug={coverImageSlug}
                   uploading={uploadingCover}
                   inputRef={coverInputRef}
                   aspect="aspect-[21/9]"
                   onRemove={() => setCoverImageUrl("")}
                   onAlt={setCoverImageAlt}
+                  onSlug={setCoverImageSlug}
                   onUrl={setCoverImageUrl}
                   onUpload={(e) => handleImageUpload(e, true)}
                 />
@@ -1506,11 +1513,13 @@ function ImageCard({
   url,
   preview,
   alt,
+  imageSlug,
   uploading,
   inputRef,
   aspect,
   onRemove,
   onAlt,
+  onSlug,
   onUrl,
   onUpload,
 }: {
@@ -1520,11 +1529,13 @@ function ImageCard({
   url: string;
   preview: string;
   alt: string;
+  imageSlug: string;
   uploading: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
   aspect: string;
   onRemove: () => void;
   onAlt: (v: string) => void;
+  onSlug: (v: string) => void;
   onUrl: (v: string) => void;
   onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
@@ -1542,6 +1553,39 @@ function ImageCard({
           </button>
         ) : null}
       </div>
+
+      {/* Image Slug Field */}
+      <div className="space-y-1">
+        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+          <span>Image Slug / Filename</span>
+          <span className="font-normal text-gray-400 normal-case tracking-normal">(optional — set before uploading)</span>
+        </label>
+        <div className="relative">
+          <input
+            type="text"
+            value={imageSlug}
+            onChange={(e) => {
+              // Allow only slug-safe chars while typing, auto-convert spaces to hyphens
+              const raw = e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+              onSlug(raw);
+            }}
+            placeholder="e.g. umrah-mubarak-cover"
+            className={`${inputClass} pr-16 font-mono text-[11px]`}
+          />
+          {imageSlug && (
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-mono bg-gray-100 px-1.5 py-0.5 rounded">
+              .{url ? (url.split(".").pop()?.split("?")[0] || "jpg") : "jpg"}
+            </span>
+          )}
+        </div>
+        {imageSlug && (
+          <p className="text-[10px] text-emerald-600 font-mono flex items-center gap-1">
+            <span>→</span>
+            <span className="truncate">{imageSlug}.{url ? (url.split(".").pop()?.split("?")[0] || "jpg") : "jpg"}</span>
+          </p>
+        )}
+      </div>
+
       {url ? (
         <div className={`relative w-full ${aspect} rounded-xl overflow-hidden border border-gray-200 bg-gray-50`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}

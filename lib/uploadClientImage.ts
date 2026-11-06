@@ -1,9 +1,13 @@
 export async function uploadClientImage(
-  file: File
+  file: File,
+  imageSlug?: string
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
   try {
     const formData = new FormData();
     formData.append("file", file);
+    if (imageSlug && imageSlug.trim()) {
+      formData.append("imageSlug", imageSlug.trim());
+    }
 
     const res = await fetch("/api/admin/upload", {
       method: "POST",
