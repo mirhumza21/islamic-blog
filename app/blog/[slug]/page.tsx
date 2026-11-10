@@ -252,14 +252,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       <ReadingProgress />
 
       <main className="relative overflow-clip bg-ivory">
+        {/* Full-width Hero Banner Section */}
+        <ArticleHeader article={article} author={resolvedAuthor} category={category} />
+
         <div
           className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-35"
           aria-hidden
         />
-        <div className="container-editorial relative pt-3 pb-12 sm:pt-4 lg:pb-16">
-        <ArticleHeader article={article} author={resolvedAuthor} category={category} />
-
-        <div className="mt-10 grid items-start gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
+        <div className="container-editorial relative pt-8 pb-12 sm:pt-10 lg:pt-12 lg:pb-16">
+          <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="order-last min-w-0 lg:order-1 lg:col-span-8">
             <article id="article-content" className="w-full">
               <ArticleBody content={article.content} />
