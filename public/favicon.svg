@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="uzBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#074e3e"/>
+      <stop offset="50%" stop-color="#063b2f"/>
+      <stop offset="100%" stop-color="#03241c"/>
+    </linearGradient>
+    <linearGradient id="uzGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fae2b2"/>
+      <stop offset="50%" stop-color="#d4af72"/>
+      <stop offset="100%" stop-color="#b8894a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Luxury rounded emerald container -->
+  <rect width="64" height="64" rx="14" fill="url(#uzBg)"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="url(#uzGold)" stroke-width="1.5" stroke-opacity="0.5"/>
+
+  <!-- Outer Islamic Arch (Mihrab) -->
+  <path d="M32 9C21 16 13 25 13 37v17h38v-17c0-12-8-21-19-28z"
+        fill="none" stroke="url(#uzGold)" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Inner Arch with subtle gold illumination -->
+  <path d="M32 17C24.5 22.5 19 29.5 19 39v15h26v-15c0-9.5-5.5-16.5-13-22z"
+        fill="url(#uzGold)" fill-opacity="0.22"
+        stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/>
+
+  <!-- Islamic Dome -->
+  <path d="M32 24c-4.5 4-7 8.5-7 14h14c0-5.5-2.5-10-7-14z"
+        fill="url(#uzGold)" fill-opacity="0.38" stroke="url(#uzGold)" stroke-width="1.5"/>
+
+  <!-- Dome Finial / Crescent Spire -->
+  <path d="M32 8v5M29.5 10.5h5" stroke="url(#uzGold)" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="32" cy="7" r="2" fill="url(#uzGold)"/>
+</svg>
+

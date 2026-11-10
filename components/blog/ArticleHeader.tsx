@@ -2,15 +2,19 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
+  BookOpen,
   Bookmark,
+  Calendar,
   Check,
   Clock,
   Link2,
+  RotateCcw,
   Share2,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import type { Article, Author } from "@/types/blog";
+import type { Article, Author, Category } from "@/types/blog";
 
 const FALLBACK_AVATAR =
   "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80";
@@ -18,9 +22,11 @@ const FALLBACK_AVATAR =
 export function ArticleHeader({
   article,
   author,
+  category,
 }: {
   article: Article;
   author: Author;
+  category?: Category;
 }) {
   const [copied, setCopied] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
@@ -53,111 +59,155 @@ export function ArticleHeader({
     }
   };
 
-  const description = article.bannerDescription?.trim() || "";
-  const showDescription = Boolean(description) && description !== article.title;
+  const description =
+    article.bannerDescription?.trim() || article.excerpt?.trim() || "";
+
+  const categoryName = category?.name || "Islamic Knowledge";
+  const categoryHref = category?.slug ? `/category/${category.slug}` : "/blog";
 
   return (
     <header className="w-full">
-      <div className="relative flex min-h-[calc(100svh-6rem)] min-h-[calc(100vh-6rem)] w-full flex-col justify-between overflow-hidden rounded-[24px] border border-[#e6dfd3] bg-cream shadow-[0_16px_48px_-16px_rgba(6,59,47,0.2)] lg:rounded-[30px]">
-        <Image
-          src={article.coverImage || article.image}
-          alt={article.coverImageAlt || article.imageAlt || article.title}
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1400px) 90vw, 1360px"
-          className="object-cover object-center"
+      <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl lg:rounded-[28px] border border-[#eee7da] bg-[#faf6ef] p-5 sm:p-7 lg:p-9 shadow-[0_4px_24px_-8px_rgba(6,59,47,0.06)]">
+        {/* Subtle decorative background watermark */}
+        <div
+          className="pointer-events-none absolute inset-0 pattern-geometric-cream opacity-25"
+          aria-hidden
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/85 via-black/45 to-black/85" />
-        <div className="pointer-events-none absolute inset-0 bg-black/15" />
 
-        <div className="relative z-10 flex h-full flex-1 flex-col justify-between gap-6 sm:gap-8 p-6 sm:p-9 lg:p-12 xl:p-14">
-          <div className="max-w-4xl space-y-3 sm:space-y-4">
-            <h1 className="font-serif text-3xl font-bold leading-[1.14] tracking-tight text-white sm:text-4xl lg:text-[2.85rem] xl:text-[3.25rem]">
-              {article.title}
-            </h1>
-            {showDescription ? (
-              <p className="max-w-3xl text-sm leading-relaxed text-white/90 sm:text-base md:text-lg sm:leading-relaxed">
-                {description}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-white/15 pt-3.5 sm:pt-4">
-            <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-              <Image
-                src={author.avatar || FALLBACK_AVATAR}
-                alt={author.name}
-                width={44}
-                height={44}
-                className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-white/80 sm:h-11 sm:w-11"
-              />
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-white">
-                  {author.name}
-                  {author.role ? (
-                    <span className="ml-2 hidden font-medium text-white/80 sm:inline">
-                      · {author.role}
-                    </span>
-                  ) : null}
-                </p>
-                <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[11px] text-white/80 sm:text-xs">
-                  <span>{formatDate(article.publishedAt)}</span>
-                  <span aria-hidden>·</span>
-                  <span className="inline-flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {article.readingTime} min read
-                  </span>
-                  {article.updatedAt ? (
-                    <span className="hidden md:inline">
-                      · Updated {formatDate(article.updatedAt)}
-                    </span>
-                  ) : null}
-                </p>
+        <div className="relative z-10 flex flex-col gap-6 sm:gap-8">
+          {/* Top Section: Left (Category, Title, Excerpt) & Right (Featured Image) */}
+          <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12 lg:gap-10">
+            {/* Left Column: Category badge, Title, Excerpt */}
+            <div className="space-y-3.5 sm:space-y-4 lg:col-span-7">
+              {/* Category Pill */}
+              <div>
+                <Link
+                  href={categoryHref}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[#063b2f] px-3.5 py-1 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#084e3f]"
+                >
+                  <BookOpen className="h-3.5 w-3.5 text-[#d4af72]" />
+                  <span>{categoryName}</span>
+                </Link>
               </div>
+
+              {/* Title */}
+              <h1 className="font-serif text-2xl font-bold leading-[1.18] tracking-tight text-[#141d1a] sm:text-3xl md:text-4xl lg:text-[2.65rem]">
+                {article.title}
+              </h1>
+
+              {/* Excerpt / Description */}
+              {description ? (
+                <p className="max-w-2xl text-sm leading-relaxed text-[#57534e] sm:text-base md:leading-relaxed">
+                  {description}
+                </p>
+              ) : null}
             </div>
 
-            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            <button
-              type="button"
-              onClick={handleCopy}
-              aria-label={copied ? "Copied" : "Copy link"}
-              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/40 bg-white/90 px-2.5 text-xs font-semibold text-[#141d1a] shadow-sm transition-colors hover:bg-white sm:px-3.5"
-            >
-              {copied ? (
+            {/* Right Column: Featured Image */}
+            <div className="lg:col-span-5">
+              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-[#e8dfd2] bg-[#f0ebe1] shadow-xs">
+                <Image
+                  src={article.coverImage || article.image}
+                  alt={article.coverImageAlt || article.imageAlt || article.title}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 45vw, 550px"
+                  className="object-cover object-center transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar: Author info & Action buttons */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#ede4d5] pt-4 sm:pt-5">
+            {/* Left: Author Avatar, Name, Date, Read Time, Updated */}
+            <div className="flex flex-wrap items-center gap-2.5 text-xs text-[#57534e] sm:gap-3">
+              <div className="flex items-center gap-2.5">
+                <Image
+                  src={author.avatar || FALLBACK_AVATAR}
+                  alt={author.name}
+                  width={40}
+                  height={40}
+                  className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-full object-cover border border-[#e5ddd0]"
+                />
+                <span className="font-semibold text-[#141d1a] text-xs sm:text-sm">
+                  {author.name}
+                </span>
+              </div>
+
+              <span className="text-[#d8d0c2] hidden sm:inline" aria-hidden>|</span>
+
+              <div className="flex items-center gap-1.5 text-[11px] sm:text-xs">
+                <Calendar className="h-3.5 w-3.5 text-[#736b5e]" />
+                <span>{formatDate(article.publishedAt)}</span>
+              </div>
+
+              <span className="text-[#d8d0c2] hidden sm:inline" aria-hidden>|</span>
+
+              <div className="flex items-center gap-1.5 text-[11px] sm:text-xs">
+                <Clock className="h-3.5 w-3.5 text-[#736b5e]" />
+                <span>{article.readingTime} min read</span>
+              </div>
+
+              {article.updatedAt && (
                 <>
-                  <Check className="h-3.5 w-3.5 text-green" />
-                  <span className="hidden sm:inline">Copied</span>
-                </>
-              ) : (
-                <>
-                  <Link2 className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Copy link</span>
+                  <span className="text-[#d8d0c2] hidden md:inline" aria-hidden>|</span>
+                  <div className="hidden md:flex items-center gap-1.5 text-[11px] sm:text-xs">
+                    <RotateCcw className="h-3.5 w-3.5 text-[#736b5e]" />
+                    <span>Updated: {formatDate(article.updatedAt)}</span>
+                  </div>
                 </>
               )}
-            </button>
-            <button
-              type="button"
-              onClick={handleNativeShare}
-              aria-label="Share"
-              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/40 bg-white/90 px-2.5 text-xs font-semibold text-[#141d1a] shadow-sm transition-colors hover:bg-white sm:px-3.5"
-            >
-              <Share2 className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Share</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setBookmarked(!bookmarked)}
-              className={`inline-flex h-9 w-9 items-center justify-center rounded-full border shadow-sm transition-colors ${
-                bookmarked
-                  ? "border-[#063b2f] bg-[#063b2f] text-white"
-                  : "border-white/40 bg-white/90 text-[#141d1a] hover:bg-white"
-              }`}
-              aria-label={bookmarked ? "Bookmarked" : "Bookmark article"}
-            >
-              <Bookmark className="h-3.5 w-3.5" fill={bookmarked ? "currentColor" : "none"} />
-            </button>
+            </div>
+
+            {/* Right: Actions (Copy Link, Share, Bookmark) */}
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+              <button
+                type="button"
+                onClick={handleCopy}
+                aria-label={copied ? "Copied" : "Copy link"}
+                className="inline-flex h-8 sm:h-9 items-center gap-1.5 rounded-full border border-[#e6dfd3] bg-white px-3 sm:px-3.5 text-xs font-semibold text-[#141d1a] shadow-2xs transition-colors hover:bg-gray-50"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-3.5 w-3.5 text-[#063b2f]" />
+                    <span>Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="h-3.5 w-3.5 text-[#063b2f]" />
+                    <span>Copy Link</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleNativeShare}
+                aria-label="Share"
+                className="inline-flex h-8 sm:h-9 items-center gap-1.5 rounded-full border border-[#e6dfd3] bg-white px-3 sm:px-3.5 text-xs font-semibold text-[#141d1a] shadow-2xs transition-colors hover:bg-gray-50"
+              >
+                <Share2 className="h-3.5 w-3.5 text-[#063b2f]" />
+                <span>Share</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setBookmarked(!bookmarked)}
+                className={`inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-[#e6dfd3] shadow-2xs transition-colors ${
+                  bookmarked
+                    ? "bg-[#063b2f] text-white border-[#063b2f]"
+                    : "bg-white text-[#141d1a] hover:bg-gray-50"
+                }`}
+                aria-label={bookmarked ? "Bookmarked" : "Bookmark article"}
+              >
+                <Bookmark
+                  className="h-3.5 w-3.5"
+                  fill={bookmarked ? "currentColor" : "none"}
+                />
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </header>

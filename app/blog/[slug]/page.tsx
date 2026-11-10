@@ -245,6 +245,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       .map((schema) => JSON.stringify(schema));
   }
 
+  const category = categories.find((c) => c.slug === article.categorySlug);
+
   return (
     <>
       <ReadingProgress />
@@ -255,7 +257,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           aria-hidden
         />
         <div className="container-editorial relative pt-3 pb-12 sm:pt-4 lg:pb-16">
-        <ArticleHeader article={article} author={resolvedAuthor} />
+        <ArticleHeader article={article} author={resolvedAuthor} category={category} />
 
         <div className="mt-10 grid items-start gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
           <div className="order-last min-w-0 lg:order-1 lg:col-span-8">

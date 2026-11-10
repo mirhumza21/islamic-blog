@@ -84,9 +84,6 @@ export async function generateMetadata(): Promise<Metadata> {
     getSiteConfig(),
   ]);
   const googleVerification = extractGoogleSiteVerification(getEnabledHeadHtml(scripts));
-  const effectiveFavicon = config.faviconUrl
-    ? toRenderableImageSrc(config.faviconUrl)
-    : "/favicon.ico";
   const name = config.name || siteConfig.name;
   const tagline = config.tagline || siteConfig.tagline;
   const description = config.description || siteConfig.description;
@@ -106,13 +103,13 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: name,
     icons: {
       icon: [
-        {
-          url: effectiveFavicon,
-          href: effectiveFavicon,
-        },
+        { url: "/favicon.svg", type: "image/svg+xml" },
+        { url: "/icon", type: "image/png", sizes: "32x32" },
       ],
-      shortcut: [effectiveFavicon],
-      apple: [effectiveFavicon],
+      shortcut: "/favicon.svg",
+      apple: [
+        { url: "/apple-icon", sizes: "180x180", type: "image/png" },
+      ],
     },
     keywords: [
       "Umrah",
@@ -161,7 +158,13 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-function organizationJsonLd(sameAs: string[], siteName?: string, logo?: string, siteUrl?: string) {
+function organizationJsonLd(
+  sameAs: string[],
+  siteName?: string,
+  logo?: string,
+  siteUrl?: string,
+  logoAlt?: string
+) {
   const effectiveUrl = siteUrl || siteConfig.url;
   return {
     "@type": "Organization",
@@ -169,7 +172,15 @@ function organizationJsonLd(sameAs: string[], siteName?: string, logo?: string, 
     name: siteName || siteConfig.name,
     url: effectiveUrl,
     description: siteConfig.description,
-    ...(logo ? { logo: { "@type": "ImageObject", url: logo } } : {}),
+    ...(logo
+      ? {
+          logo: {
+            "@type": "ImageObject",
+            url: logo,
+            caption: logoAlt || `${siteName || "UmrahZone"} Logo`,
+          },
+        }
+      : {}),
     ...(sameAs && sameAs.length ? { sameAs } : {}),
   };
 }
@@ -207,9 +218,6 @@ export default async function RootLayout({
   const isAdmin = pathname.startsWith("/admin");
   const headHtml = isAdmin ? "" : getEnabledHeadHtml(scripts);
   const footerHtml = isAdmin ? "" : getEnabledFooterHtml(scripts);
-  const faviconHref = currentSiteConfig.faviconUrl
-    ? toRenderableImageSrc(currentSiteConfig.faviconUrl)
-    : "/favicon.ico";
 
   const effectiveLogo = currentSiteConfig.headerLogoUrl || currentSiteConfig.logoUrl || "";
 
@@ -219,9 +227,9 @@ export default async function RootLayout({
       className={`${manrope.variable} ${cormorant.variable} ${amiri.variable} ${greatVibes.variable} ${notoNastaliq.variable} ${reemKufi.variable} ${arefRuqaa.variable} h-full`}
     >
       <head>
-        <link rel="icon" href={faviconHref} sizes="any" />
-        <link rel="shortcut icon" href={faviconHref} />
-        <link rel="apple-touch-icon" href={faviconHref} />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="alternate icon" href="/icon" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-icon" sizes="180x180" />
         <SiteHeadScripts html={headHtml} />
       </head>
       <body className="min-h-full flex flex-col">
@@ -257,7 +265,8 @@ export default async function RootLayout({
                   socialLinks.map((item) => item.url),
                   currentSiteConfig.name,
                   effectiveLogo ? toRenderableImageSrc(effectiveLogo) : undefined,
-                  currentSiteConfig.url
+                  currentSiteConfig.url,
+                  currentSiteConfig.headerLogoAlt || currentSiteConfig.logoAlt
                 ),
                 websiteJsonLd(currentSiteConfig.name, currentSiteConfig.url),
               ],
