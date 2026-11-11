@@ -31,6 +31,18 @@ export interface LiveHijriInfo {
   holidays: string[];
 }
 
+export interface CalendarDayItem {
+  dateStr: string;
+  dayNumber: number;
+  hijriDay: string;
+  hijriMonth: string;
+  hijriYear: string;
+  hijriReadable: string;
+  isToday: boolean;
+  schedule: PrayerTimeSchedule;
+  holidays?: string[];
+}
+
 export type PrayerKey = "fajr" | "dhuhr" | "asr" | "maghrib" | "isha";
 
 export interface CurrentPrayerStatus {
@@ -157,6 +169,9 @@ export function calculatePrayerTimes(city: PrayerCity, date: Date = new Date()):
     "Asia/Dubai": 240,
     "Europe/London": 60,
     "America/New_York": -240,
+    "America/Detroit": -240,
+    "America/Chicago": -300,
+    "America/Los_Angeles": -420,
     "Europe/Istanbul": 180,
     "Africa/Cairo": 180,
     "America/Toronto": -240,
@@ -330,6 +345,119 @@ export async function fetchLivePrayerData(
     return { schedule, hijri };
   } catch {
     return { schedule: fallbackSchedule, hijri: fallbackHijri };
+  }
+}
+
+// REAL LIVE Monthly Calendar & Timetable API (Aladhan USA / Global API)
+export async function fetchLiveMonthlyCalendar(
+  city: PrayerCity,
+  date: Date = new Date()
+): Promise<CalendarDayItem[]> {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const today = new Date();
+
+  // Generate fallback items using precise astronomical calculation
+  const fallbackList: CalendarDayItem[] = Array.from({ length: daysInMonth }, (_, i) => {
+    const day = i + 1;
+    const d = new Date(year, month - 1, day);
+    const daySchedule = calculatePrayerTimes(city, d);
+    const isToday =
+      day === today.getDate() &&
+      month - 1 === today.getMonth() &&
+      year === today.getFullYear();
+    return {
+      dateStr: d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }),
+      dayNumber: day,
+      hijriDay: String(day),
+      hijriMonth: "Rabīʿ al-thānī",
+      hijriYear: "1448",
+      hijriReadable: `${day} Rabīʿ al-thānī 1448 AH`,
+      isToday,
+      schedule: daySchedule,
+      holidays: [],
+    };
+  });
+
+  try {
+    const methodId = methodIdMap[city.method] ?? 2;
+    const url = `https://api.aladhan.com/v1/calendarByCity/${year}/${month}?city=${encodeURIComponent(
+      city.name
+    )}&country=${encodeURIComponent(city.country)}&method=${methodId}`;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+    const res = await fetch(url, {
+      signal: controller.signal,
+      next: { revalidate: 86400 },
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) return fallbackList;
+
+    const json = await res.json();
+    if (json.code !== 200 || !Array.isArray(json.data) || json.data.length === 0) {
+      return fallbackList;
+    }
+
+    return json.data.map((item: any, idx: number) => {
+      const dayNum = idx + 1;
+      const d = new Date(year, month - 1, dayNum);
+      const isToday =
+        dayNum === today.getDate() &&
+        month - 1 === today.getMonth() &&
+        year === today.getFullYear();
+
+      const t = item.timings;
+      const h = item.date?.hijri;
+
+      const fajrDate = parseTimeToDate(t.Fajr, d);
+      const sunriseDate = parseTimeToDate(t.Sunrise, d);
+      const dhuhrDate = parseTimeToDate(t.Dhuhr, d);
+      const asrDate = parseTimeToDate(t.Asr, d);
+      const sunsetDate = parseTimeToDate(t.Sunset, d);
+      const maghribDate = parseTimeToDate(t.Maghrib, d);
+      const ishaDate = parseTimeToDate(t.Isha, d);
+      const nextFajrDate = new Date(fajrDate);
+      nextFajrDate.setDate(nextFajrDate.getDate() + 1);
+
+      const schedule: PrayerTimeSchedule = {
+        fajr: convert24to12(t.Fajr),
+        sunrise: convert24to12(t.Sunrise),
+        dhuhr: convert24to12(t.Dhuhr),
+        asr: convert24to12(t.Asr),
+        sunset: convert24to12(t.Sunset),
+        maghrib: convert24to12(t.Maghrib),
+        isha: convert24to12(t.Isha),
+        midnight: convert24to12(t.Midnight || "23:57"),
+        lastThird: convert24to12(t.Lastthird || "02:15"),
+        rawDates: {
+          fajr: fajrDate,
+          sunrise: sunriseDate,
+          dhuhr: dhuhrDate,
+          asr: asrDate,
+          maghrib: maghribDate,
+          isha: ishaDate,
+          nextFajr: nextFajrDate,
+        },
+      };
+
+      return {
+        dateStr: d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }),
+        dayNumber: dayNum,
+        hijriDay: h?.day ?? String(dayNum),
+        hijriMonth: h?.month?.en ?? "Rabīʿ al-thānī",
+        hijriYear: h?.year ?? "1448",
+        hijriReadable: `${h?.day ?? dayNum} ${h?.month?.en ?? "Rabīʿ al-thānī"} ${h?.year ?? "1448"} AH`,
+        isToday,
+        schedule,
+        holidays: h?.holidays ?? [],
+      };
+    });
+  } catch {
+    return fallbackList;
   }
 }
 

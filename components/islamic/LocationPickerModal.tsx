@@ -19,12 +19,23 @@ export function LocationPickerModal({
   onSelectCity,
 }: LocationPickerModalProps) {
   const [search, setSearch] = useState("");
+  const [countryFilter, setCountryFilter] = useState<string>("all");
 
-  const filtered = prayerCities.filter(
-    (c) =>
+  const countries = [
+    { id: "all", label: "All" },
+    { id: "United States", label: "USA" },
+    { id: "Saudi Arabia", label: "Saudi Arabia" },
+    { id: "Pakistan", label: "Pakistan" },
+    { id: "United Kingdom", label: "UK" },
+  ];
+
+  const filtered = prayerCities.filter((c) => {
+    const matchesSearch =
       c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.country.toLowerCase().includes(search.toLowerCase())
-  );
+      c.country.toLowerCase().includes(search.toLowerCase());
+    const matchesCountry = countryFilter === "all" || c.country === countryFilter;
+    return matchesSearch && matchesCountry;
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -50,6 +61,24 @@ export function LocationPickerModal({
             onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-xl border border-border bg-ivory py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted/60 focus:border-green focus:outline-none focus:ring-1 focus:ring-green"
           />
+        </div>
+
+        {/* Quick Country Filter Pills */}
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {countries.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => setCountryFilter(c.id)}
+              className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                countryFilter === c.id
+                  ? "bg-green text-white"
+                  : "bg-ivory border border-border text-muted hover:text-foreground hover:bg-cream"
+              }`}
+            >
+              {c.label}
+            </button>
+          ))}
         </div>
 
         <div className="mt-4 max-h-72 space-y-1 overflow-y-auto pr-1">

@@ -23,7 +23,7 @@ export function PrayerTimesCard({
   timetableLabel?: string;
   locationLabel?: string;
 }) {
-  const [selectedCity, setSelectedCity] = useState<PrayerCity>(prayerCities[0]); // Default Lahore
+  const [selectedCity, setSelectedCity] = useState<PrayerCity>(prayerCities[0]); // Default USA (New York)
   const [schedule, setSchedule] = useState<PrayerTimeSchedule>(() =>
     calculatePrayerTimes(prayerCities[0])
   );
@@ -42,8 +42,21 @@ export function PrayerTimesCard({
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        const match = prayerCities.find((c) => c.id === parsed.id);
-        if (match) activeCity = match;
+        // If the user's browser previously cached the old default "lahore",
+        // automatically migrate to the new default (USA / New York)
+        if (parsed.id === "lahore") {
+          activeCity = prayerCities[0];
+          localStorage.setItem("umrahzone_selected_city", JSON.stringify(prayerCities[0]));
+        } else {
+          const match = prayerCities.find((c) => c.id === parsed.id);
+          if (match) activeCity = match;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      try {
+        localStorage.setItem("umrahzone_selected_city", JSON.stringify(prayerCities[0]));
       } catch (e) {
         console.error(e);
       }

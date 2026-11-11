@@ -38,18 +38,30 @@ export interface PrayerCity {
 }
 
 export const prayerCities: PrayerCity[] = [
+  // United States (USA Standard - ISNA Method)
+  { id: "newyork", name: "New York", country: "United States", lat: 40.7128, lng: -74.0060, timezone: "America/New_York", method: "ISNA" },
+  { id: "losangeles", name: "Los Angeles", country: "United States", lat: 34.0522, lng: -118.2437, timezone: "America/Los_Angeles", method: "ISNA" },
+  { id: "chicago", name: "Chicago", country: "United States", lat: 41.8781, lng: -87.6298, timezone: "America/Chicago", method: "ISNA" },
+  { id: "houston", name: "Houston", country: "United States", lat: 29.7604, lng: -95.3698, timezone: "America/Chicago", method: "ISNA" },
+  { id: "dallas", name: "Dallas", country: "United States", lat: 32.7767, lng: -96.7970, timezone: "America/Chicago", method: "ISNA" },
+  { id: "washingtondc", name: "Washington DC", country: "United States", lat: 38.9072, lng: -77.0369, timezone: "America/New_York", method: "ISNA" },
+  { id: "sanfrancisco", name: "San Francisco", country: "United States", lat: 37.7749, lng: -122.4194, timezone: "America/Los_Angeles", method: "ISNA" },
+  { id: "miami", name: "Miami", country: "United States", lat: 25.7617, lng: -80.1918, timezone: "America/New_York", method: "ISNA" },
+  { id: "atlanta", name: "Atlanta", country: "United States", lat: 33.7490, lng: -84.3880, timezone: "America/New_York", method: "ISNA" },
+  { id: "detroit", name: "Detroit", country: "United States", lat: 42.3314, lng: -83.0458, timezone: "America/Detroit", method: "ISNA" },
+
+  // Holy Sites & Global Capitals
+  { id: "makkah", name: "Makkah", country: "Saudi Arabia", lat: 21.3891, lng: 39.8579, timezone: "Asia/Riyadh", method: "UmmAlQura" },
+  { id: "madinah", name: "Madinah", country: "Saudi Arabia", lat: 24.5247, lng: 39.5692, timezone: "Asia/Riyadh", method: "UmmAlQura" },
+  { id: "london", name: "London", country: "United Kingdom", lat: 51.5074, lng: -0.1278, timezone: "Europe/London", method: "MWL" },
+  { id: "toronto", name: "Toronto", country: "Canada", lat: 43.6532, lng: -79.3832, timezone: "America/Toronto", method: "ISNA" },
   { id: "lahore", name: "Lahore", country: "Pakistan", lat: 31.5204, lng: 74.3587, timezone: "Asia/Karachi", method: "Karachi" },
   { id: "karachi", name: "Karachi", country: "Pakistan", lat: 24.8607, lng: 67.0011, timezone: "Asia/Karachi", method: "Karachi" },
   { id: "islamabad", name: "Islamabad", country: "Pakistan", lat: 33.6844, lng: 73.0479, timezone: "Asia/Karachi", method: "Karachi" },
-  { id: "makkah", name: "Makkah", country: "Saudi Arabia", lat: 21.3891, lng: 39.8579, timezone: "Asia/Riyadh", method: "UmmAlQura" },
-  { id: "madinah", name: "Madinah", country: "Saudi Arabia", lat: 24.5247, lng: 39.5692, timezone: "Asia/Riyadh", method: "UmmAlQura" },
   { id: "dubai", name: "Dubai", country: "UAE", lat: 25.2048, lng: 55.2708, timezone: "Asia/Dubai", method: "UmmAlQura" },
-  { id: "london", name: "London", country: "United Kingdom", lat: 51.5074, lng: -0.1278, timezone: "Europe/London", method: "MWL" },
-  { id: "newyork", name: "New York", country: "United States", lat: 40.7128, lng: -74.0060, timezone: "America/New_York", method: "ISNA" },
   { id: "istanbul", name: "Istanbul", country: "Turkey", lat: 41.0082, lng: 28.9784, timezone: "Europe/Istanbul", method: "MWL" },
   { id: "cairo", name: "Cairo", country: "Egypt", lat: 30.0444, lng: 31.2357, timezone: "Africa/Cairo", method: "Egypt" },
-  { id: "toronto", name: "Toronto", country: "Canada", lat: 43.6532, lng: -79.3832, timezone: "America/Toronto", method: "ISNA" },
-  { id: "kualalumpur", name: "Kuala Lumpur", country: "Malaysia", lat: 3.1390, lng: 101.6869, timezone: "Asia/Kuala_Lumpur", method: "MWL" }
+  { id: "kualalumpur", name: "Kuala Lumpur", country: "Malaysia", lat: 3.1390, lng: 101.6869, timezone: "Asia/Kuala_Lumpur", method: "MWL" },
 ];
 
 export const curatedDuas: DuaItem[] = [
