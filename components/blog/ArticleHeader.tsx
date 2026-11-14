@@ -109,9 +109,9 @@ export function ArticleHeader({
         </nav>
 
         {/* Main 2-Column Hero Grid */}
-        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-14">
+        <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12 lg:gap-8 xl:gap-10">
           {/* Left Column: Category, Title, Excerpt, Author & Action Meta */}
-          <div className="space-y-4 sm:space-y-5 lg:col-span-7">
+          <div className="flex flex-col justify-center space-y-3.5 sm:space-y-4 lg:col-span-5 xl:col-span-5">
             {/* Category Pill */}
             <div>
               <Link
@@ -124,13 +124,13 @@ export function ArticleHeader({
             </div>
 
             {/* Title */}
-            <h1 className="font-serif text-3xl font-bold leading-[1.18] tracking-tight text-[#141d1a] sm:text-4xl md:text-5xl lg:text-[2.65rem] xl:text-[3.1rem]">
+            <h1 className="font-serif text-3xl font-bold leading-[1.08] tracking-[-0.02em] text-[#141d1a] text-balance sm:text-4xl sm:leading-[1.08] md:text-[2.75rem] lg:text-[2.55rem] xl:text-[2.85rem]">
               {article.title}
             </h1>
 
             {/* Excerpt / Description */}
             {description ? (
-              <p className="max-w-2xl text-base leading-relaxed text-[#524d45] sm:text-lg sm:leading-relaxed">
+              <p className="max-w-xl text-base leading-relaxed text-[#524d45] sm:text-lg sm:leading-[1.55]">
                 {description}
               </p>
             ) : null}
@@ -227,15 +227,15 @@ export function ArticleHeader({
             </div>
           </div>
 
-          {/* Right Column: Featured Image */}
-          <div className="lg:col-span-5">
-            <div className="relative aspect-[16/10] sm:aspect-[4/3] lg:aspect-[5/4] w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-[#e5ddd0] bg-[#f0ebe1] shadow-lg transition-transform duration-500 hover:scale-[1.01]">
+          {/* Right Column: Featured Image — larger visual weight */}
+          <div className="lg:col-span-7 xl:col-span-7">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-[#e5ddd0] bg-[#f0ebe1] shadow-lg sm:aspect-[16/11] sm:rounded-[1.35rem] lg:aspect-auto lg:h-full lg:min-h-[340px] xl:min-h-[380px] transition-transform duration-500 hover:scale-[1.005]">
               <Image
                 src={article.coverImage || article.image}
                 alt={article.coverImageAlt || article.imageAlt || article.title}
                 fill
                 priority
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 45vw, 600px"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 58vw, 720px"
                 className="object-cover object-center"
               />
             </div>
