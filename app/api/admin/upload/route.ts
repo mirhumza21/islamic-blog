@@ -30,7 +30,7 @@ export async function POST(request: Request) {
         .replace(/[^a-z0-9-]/g, "")
         .replace(/-+/g, "-")
         .replace(/^-+|-+$/g, "");
-      filename = `${cleanSlug || "img"}.${ext}`;
+      filename = `${cleanSlug || "img"}-${Date.now().toString(36)}.${ext}`;
     } else {
       filename = `img_${Date.now()}_${Math.random().toString(36).slice(2, 7)}.${ext}`;
     }
