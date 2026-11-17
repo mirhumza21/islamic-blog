@@ -354,8 +354,24 @@
   margin-top: 2.25rem;
   margin-bottom: 0.5rem;
   color: #17201e;
-  border-bottom: 1px solid #e6dfd3;
-  padding-bottom: 0.35rem;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.blog-article-body h1,
+.blog-article-body h2,
+.blog-article-body h3,
+.blog-article-body h4,
+.blog-article-body h5,
+.blog-article-body h6,
+.prose-editorial h1,
+.prose-editorial h2,
+.prose-editorial h3,
+.prose-editorial h4,
+.prose-editorial h5,
+.prose-editorial h6 {
+  border-bottom: none !important;
+  text-decoration: none !important;
 }
 
 .blog-article-body h3,

@@ -92,7 +92,7 @@ export function ArticleBody({ content }: { content: ArticleBlock[] | string }) {
                   </div>
                   <h2
                     id={id}
-                    className="mt-1 pb-2 font-serif text-2xl font-bold tracking-tight text-foreground border-b border-border/80 sm:text-3xl lg:text-[2.2rem]"
+                    className="mt-1 font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-[2.2rem]"
                   >
                     <a
                       href={`#${id}`}
