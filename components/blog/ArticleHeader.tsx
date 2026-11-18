@@ -72,7 +72,7 @@ export function ArticleHeader({
   const displayImage = article.coverImage || article.image;
 
   return (
-    <header className="relative w-full flex items-center justify-center pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 min-h-[460px] sm:min-h-[520px] md:min-h-[580px] overflow-hidden">
+    <header className="relative w-full flex items-start justify-center min-h-[520px] overflow-hidden">
       {/* Background Full-bleed Cover Image with Cinematic Scale */}
       {displayImage ? (
         <div className="absolute inset-0 z-0 overflow-hidden">
@@ -117,7 +117,7 @@ export function ArticleHeader({
       />
 
       {/* Floating Hero Card */}
-      <div className="relative z-20 px-4 sm:px-6 max-w-4xl mx-auto w-full mt-4 sm:mt-6 flex flex-col items-center">
+      <div className="relative z-20 px-4 sm:px-6 max-w-4xl mx-auto w-full pt-20 sm:pt-22 pb-16 sm:pb-20 flex flex-col items-center">
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Breadcrumb"
