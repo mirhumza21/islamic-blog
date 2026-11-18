@@ -7,9 +7,6 @@ import { SectionHeader } from "@/components/home/SectionHeader";
 import { cn } from "@/lib/utils";
 import type { ArticleFaq } from "@/types/blog";
 
-const FAQ_PANEL_HEIGHT =
-  "h-[250px] sm:h-[300px] lg:h-[min(420px,48vh)] lg:max-h-[420px]";
-
 export function ArticleFaqSection({ faq }: { faq?: ArticleFaq }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   if (!faq?.items?.length) return null;
@@ -35,20 +32,21 @@ export function ArticleFaqSection({ faq }: { faq?: ArticleFaq }) {
         >
           {hasImage ? (
             <figure className="min-w-0 lg:col-span-5">
-              <div
-                className={cn(
-                  "relative w-full overflow-hidden rounded-[24px] border border-[#e6dfd3] bg-cream shadow-[0_12px_40px_-16px_rgba(6,59,47,0.18)]",
-                  FAQ_PANEL_HEIGHT
-                )}
-              >
+              <div className="relative w-full overflow-hidden rounded-[24px] shadow-[0_16px_48px_-12px_rgba(6,59,47,0.22)] aspect-[4/3]">
                 <Image
                   src={faq.image!}
                   alt={faq.imageAlt?.trim() || title || "FAQ illustration"}
                   fill
-                  sizes="(max-width: 1024px) 100vw, 420px"
+                  sizes="(max-width: 1024px) 100vw, 480px"
                   className="object-cover object-center"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent" />
+                {/* Gold border frame */}
+                <div className="pointer-events-none absolute inset-0 rounded-[24px] ring-1 ring-inset ring-[#c59a53]/30" />
+                {/* Bottom gradient overlay */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
+                {/* Top-left decorative gold corner accent */}
+                <div className="absolute top-4 left-4 h-8 w-8 border-t-2 border-l-2 border-[#c59a53]/70 rounded-tl-lg" />
+                <div className="absolute bottom-4 right-4 h-8 w-8 border-b-2 border-r-2 border-[#c59a53]/70 rounded-br-lg" />
               </div>
             </figure>
           ) : null}
@@ -56,7 +54,6 @@ export function ArticleFaqSection({ faq }: { faq?: ArticleFaq }) {
           <div
             className={cn(
               "flex min-w-0 flex-col gap-2",
-              hasImage && cn("faq-list-scroll overflow-y-auto pr-1.5", FAQ_PANEL_HEIGHT),
               hasImage && "lg:col-span-7"
             )}
           >
